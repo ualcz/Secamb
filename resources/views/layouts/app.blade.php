@@ -18,10 +18,10 @@
 
                 {{-- Logotipo --}}
             <a href="{{ auth()->check() ? (auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->user()->isServidor() ? route('servidor.dashboard') : route('requerimentos.aluno'))) : url('/') }}" class="header-brand">
-                    <img src="{{ asset('img/logoVertical.png') }}" alt="Logo IFBA">
+                    <img src="{{ asset('img/logo_prefeitura_seabra.png') }}" alt="Logo Prefeitura de Seabra">
                     <div class="header-brand-text">
-                        <span class="header-brand-title">SDP</span>
-                        <span class="header-brand-subtitle">Sistema de Protocolos</span>
+                        <span class="header-brand-title">Secamb</span>
+                        <span class="header-brand-subtitle">Sistema de Requisição de Licenciamento Ambiental</span>
                     </div>
                 </a>
 
@@ -138,18 +138,18 @@
 
                 {{-- Logotipo --}}
             <a href="{{ route('home') }}" class="header-brand">
-                    <img src="{{ asset('img/logoVertical.png') }}" alt="Logo IFBA">
+                    <img src="{{ asset('img/logo_prefeitura_seabra.png') }}" alt="Logo Prefeitura Seabra">
                     <div class="header-brand-text">
-                        <span class="header-brand-title">SDP</span>
-                        <span class="header-brand-subtitle">Sistema de Protocolos</span>
+                        <span class="header-brand-title">Secamb</span>
+                        <span class="header-brand-subtitle">Requisição de Licenciamento Ambiental</span>
                     </div>
                 </a>
 
                    {{-- Centro: Links principais centralizados --}}
                 <ul class="hidden md:flex space-x-6 md:space-x-4 xl:space-x-8 text-sm md:text-xs xl:text-base font-medium absolute left-1/2 transform -translate-x-1/2">
-                    <li><a href="#inicio" class="nav-link scroll-link text-gray-700 hover:text-purple-600 transition">Início</a></li>
-                    <li><a href="#funcionalidades" class="nav-link scroll-link text-gray-700 hover:text-purple-600 transition">Funcionalidades</a></li>
-                    <li><a href="#sobre" class="nav-link scroll-link text-gray-700 hover:text-purple-600 transition">Sobre</a></li>
+                    <li><a href="#inicio" class="nav-link scroll-link text-gray-700 hover:text-purple-600 transition" style="margin-right:-25px;">Início</a></li>
+                    <li><a href="#funcionalidades" class="nav-link scroll-link text-gray-700 hover:text-purple-600 transition" style="margin-right:-25px;">Funcionalidades</a></li>
+                    <li><a href="#sobre" class="nav-link scroll-link text-gray-700 hover:text-purple-600 transition" style="margin-right:-25px;">Sobre</a></li>
                     <li><a href="#devs" class="nav-link scroll-link text-gray-700 hover:text-purple-600 transition">Desenvolvedores</a></li>
                 </ul>
 
@@ -168,7 +168,7 @@
 
 
                     <div class="header-user">
-                        <a class=" nav-link active" href="{{ route("login") }}">
+                        <a class=" nav-link active" href="{{ route('login') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                                 <polyline points="10 17 15 12 10 7"></polyline>
@@ -194,15 +194,15 @@
             <div class="footer-brand">
                 <img src="{{ asset('img/logoVertical.png') }}" alt="Logo IFBA" class="footer-logo">
                 <div>
-                    <div class="footer-brand-name">SDP</div>
-                    <div class="footer-brand-sub">Sistema de Protocolos e Requerimentos</div>
+                    <div class="footer-brand-name">Secamb</div>
+                    <div class="footer-brand-sub">Sistema de Requisição de Licenciamento Ambiental</div>
                 </div>
             </div>
 
         </div>
 
         <div class="footer-bottom">
-            SDP &mdash; IFBA Campus Seabra &copy; {{ date('Y') }}
+            Secamb &mdash; Prefeitura Municipal de Seabra &copy; {{ date('Y') }}
         </div>
     </footer>
 
