@@ -1,6 +1,6 @@
-# SDP - Sistema de Protocolos e Requerimentos
+# SECAMB - Sistema de Requisição de Licenciamento Ambiental
 
-Sistema do IFBA Campus Seabra para solicitar requerimentos academicos e administrativos sem uso de papel.
+Plataforma desenvolvida no âmbito do IFBA – Campus Seabra para a Secretaria Municipal de Desenvolvimento, Turismo e Meio Ambiente (Seabra-BA), com o objetivo de modernizar e facilitar a gestão de empreendimentos e processos de licenciamento ambiental.
 
 <div align="center">
 
@@ -11,28 +11,42 @@ Sistema do IFBA Campus Seabra para solicitar requerimentos academicos e administ
 ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-orange?style=for-the-badge)
 
 <p align="center">
-  <b>Geração, Assinatura Digital e Despacho Automatizado de Requerimentos por E-mail</b><br>
-  <i>Instituto Federal de Educação, Ciência e Tecnologia da Bahia (IFBA) — Campus Seabra</i>
+  <b>Sistema de Requisição de Licenciamento Ambiental</b><br>
+  <i>Instituto Federal de Educação, Ciência e Tecnologia da Bahia (IFBA) — Campus Seabra</i><br>
+  <i>Secretaria Municipal de Desenvolvimento, Turismo e Meio Ambiente (Seabra-BA)</i>
 </p>
 
 </div>
+
 ## O que o sistema faz
 
-- Autentica alunos e servidores com matricula e senha do SUAP.
-- Permite login local de administradores por e-mail e senha.
-- Exibe requerimentos organizados por setor, como CORES e COTEP.
-- Recebe justificativas e anexos enviados pelo aluno.
-- Gera um PDF do requerimento.
-- Envia o PDF e os anexos por e-mail ao aluno e ao setor responsavel.
-- Mantem o historico dos requerimentos no banco de dados.
+Conforme detalhado no **Manual do Usuário**:
+
+- **Cadastro e Autenticação:**
+  - Formulário dinâmico para **Pessoa Física** (Nome, CPF, Endereço, etc.) e **Pessoa Jurídica** (Razão Social, CNPJ, etc.).
+  - Controle de perfis de acesso: **Usuário Comum** e **Administrador** (servidores/gestores municipais).
+- **Módulo de Empreendimentos:**
+  - Consulta e listagem de empreendimentos vinculados.
+  - Busca de empreendimento por CNPJ.
+  - Solicitação de representação legal com aceite do Termo de Declaração.
+  - Cadastro de novos empreendimentos (Bacia Hidrográfica, Recurso Hídrico, Fase de Operação) e seus responsáveis legais.
+- **Módulo de Processos e Licenciamento:**
+  - Abertura de novos processos de licenciamento vinculados a um empreendimento.
+  - Geração automática de número de protocolo.
+  - Acompanhamento do status dos processos em tempo real (*Novo*, *Em Atendimento*, *Finalizado*, *Devolvido*, *Indeferido*, *Expirado*).
+  - Consulta rápida de processos através do número de protocolo.
+- **Área Administrativa:**
+  - Gestão e triagem de todos os empreendimentos e processos cadastrados no município.
+  - Atualização de status e emissão de pareceres/relatórios pela equipe da prefeitura.
 
 ## Fluxo principal
 
 ```text
-Login -> Escolha do requerimento -> Justificativa e anexos
-     -> Validacao -> Registro no banco -> PDF e e-mails
+Cadastro / Login -> Gestão de Empreendimento (Cadastro / Vínculo)
+                 -> Abertura de Processo de Licenciamento
+                 -> Geração Automática de Protocolo
+                 -> Análise e Atualização de Status pela Secretaria
 ```
-
 
 ## Requisitos
 
@@ -40,9 +54,8 @@ Login -> Escolha do requerimento -> Justificativa e anexos
 - Composer
 - Node.js 20 ou superior e npm
 - MySQL/MariaDB ou SQLite
-- Acesso ao SUAP para autenticacao de alunos e servidores
 
-## Instalacao rapida
+## Instalação rápida
 
 Na raiz do projeto, execute:
 
@@ -50,7 +63,7 @@ Na raiz do projeto, execute:
 composer run setup
 ```
 
-Esse comando instala as dependencias, cria o arquivo `.env`, gera a chave da aplicacao, executa as migrations e compila os assets.
+Esse comando instala as dependências, cria o arquivo `.env`, gera a chave da aplicação, executa as migrations e compila os assets.
 
 Para iniciar o ambiente de desenvolvimento:
 
@@ -60,9 +73,9 @@ composer run dev
 
 O comando inicia o servidor Laravel, o worker de filas e o Vite.
 
-## Configuracao
+## Configuração
 
-Copie `.env.example` para `.env` caso o arquivo ainda nao exista:
+Copie `.env.example` para `.env` caso o arquivo ainda não exista:
 
 ```bash
 cp .env.example .env
@@ -72,24 +85,23 @@ php artisan key:generate
 Configure principalmente:
 
 ```dotenv
+APP_NAME="SECAMB -  Seabra"
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=SDP
+DB_DATABASE=secamb
 DB_USERNAME=root
 DB_PASSWORD=
 
 MAIL_MAILER=log
-MAIL_FROM_ADDRESS="protocolos.seabra@ifba.edu.br"
-MAIL_FROM_NAME="SDP - IFBA Seabra"
-
-SUAP_BASE_URL="https://suap.ifba.edu.br"
-SUAP_API_URL="https://suap.ifba.edu.br/api/v2"
+MAIL_FROM_ADDRESS="[EMAIL_ADDRESS]"
+MAIL_FROM_NAME="SECAMB - Seabra"
 ```
 
 Para envio real de e-mails, altere `MAIL_MAILER` e informe os dados do servidor SMTP.
 
-## Comandos uteis
+## Comandos úteis
 
 ```bash
 # Rodar migrations
@@ -98,42 +110,7 @@ php artisan migrate
 # Executar os testes
 composer run test
 
-# Gerar os assets para producao
+# Gerar os assets para produção
 npm run build
 ```
 
-## Rotas principais
-
-| Metodo | Rota | Funcao |
-|---|---|---|
-| GET | `/login` | Tela de login |
-| POST | `/login` | Autenticacao |
-| POST | `/logout` | Encerramento da sessao |
-| GET | `/admin/dashboard` | Painel administrativo protegido por papel |
-| GET | `/requerimentos/aluno` | Painel do aluno |
-| GET | `/requerimentos/aluno/novo` | Novo requerimento |
-| POST | `/requerimentos/aluno/enviar-email` | Envio do requerimento |
-| GET | `/requerimentos/aluno/meusRequerimentos` | Historico do aluno |
-| GET | `/requerimentos/servidor` | Painel do servidor |
-| GET | `/requerimentos/gerar-pdf` | Geracao do PDF |
-
-## Estrutura essencial
-
-```text
-app/
-  Http/Controllers/          Controllers da aplicacao
-  Mail/                       E-mails enviados pelo sistema
-  Models/                     Usuarios e requerimentos
-  Services/                   Integracao e sincronizacao com o SUAP
-config/
-  modelos_requerimentos.php  Catalogo de requerimentos
-  setores.php                Destinatarios por setor
-database/migrations/          Estrutura do banco de dados
-resources/views/              Telas, e-mails e template do PDF
-routes/web.php                Rotas web
-scraper/                      Integracao alternativa com Playwright
-```
-
-## Configuracao dos requerimentos
-
-Os modelos disponiveis ficam em `config/modelos_requerimentos.php` e os destinatarios dos setores em `config/setores.php`.
