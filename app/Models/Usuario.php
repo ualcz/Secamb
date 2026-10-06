@@ -136,6 +136,35 @@ class Usuario extends Authenticatable
         return $this->hasMany(Empreendimento::class, 'usuario_id');
     }
 
+    /**
+     * Retorna a query de todos os empreendimentos vinculados ao usuário (criados ou representados).
+     */
+    public function todosEmpreendimentos()
+    {
+        return Empreendimento::where(function ($q) {
+            $q->where('usuario_id', $this->id)
+              ->orWhereHas('representantes', function ($sub) {
+                  $sub->where('usuario_id', $this->id);
+              });
+        });
+    }
+
+    /**
+     * Verifica se o usuário tem permissão para gerenciar/editar o empreendimento.
+     */
+    public function podeGerenciarEmpreendimento(Empreendimento $empreendimento): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if ((int) $empreendimento->usuario_id === (int) $this->id) {
+            return true;
+        }
+
+        return $this->empreendimentos()->where('empreendimentos.id', $empreendimento->id)->exists();
+    }
+
     /*
     |--------------------------------------------------------------------------
     | PROCESSOS DE LICENCIAMENTO

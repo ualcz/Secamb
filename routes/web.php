@@ -12,6 +12,7 @@ use App\Http\Controllers\AdminSetorController;
 use App\Http\Controllers\ResponsavelSetorController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\DocumentoRequerimentoController;
+use App\Http\Controllers\EmpreendimentoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -130,6 +131,20 @@ Route::middleware(['auth', 'role:cidadao'])->group(function () {
     Route::get('/requerimentos/aluno/visualizar/{requerimento}', [RequerimentoController::class, 'show'])
         ->name('requerimentos.aluno.visualizar');
     Route::post('/requerimentos/{requerimento}/reenviar', [RequerimentoController::class, 'reenviarRequerimento'])->name('requerimentos.reenviar');
+});
+
+/*
+|--------------------------------------------------------------------------
+| EMPREENDIMENTOS - GESTÃO E REPRESENTAÇÃO
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::get('/empreendimentos', [EmpreendimentoController::class, 'index'])->name('empreendimentos.index');
+    Route::get('/empreendimentos/novo', [EmpreendimentoController::class, 'create'])->name('empreendimentos.create');
+    Route::post('/empreendimentos', [EmpreendimentoController::class, 'store'])->name('empreendimentos.store');
+    Route::get('/empreendimentos/{empreendimento}/editar', [EmpreendimentoController::class, 'edit'])->name('empreendimentos.edit');
+    Route::put('/empreendimentos/{empreendimento}', [EmpreendimentoController::class, 'update'])->name('empreendimentos.update');
+    Route::post('/empreendimentos/{empreendimento}/vincular', [EmpreendimentoController::class, 'solicitarRepresentacao'])->name('empreendimentos.vincular');
 });
 
 /*
