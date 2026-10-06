@@ -20,9 +20,14 @@
                 </p>
                 <div class="hero-actions">
                     @auth
-                        <a href="{{ route('requerimentos.aluno.novo') }}" class="btn-primary">
-                            Novo Processo / Requerimento →
-                        </a>
+                        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                            <a href="{{ route('requerimentos.aluno.novo') }}" class="btn-primary">
+                                Novo Requerimento →
+                            </a>
+                            <a href="{{ route('empreendimentos.index') }}" class="btn-primary" style="background:#0284c7; border-color:#0284c7;">
+                                Meus Empreendimentos
+                            </a>
+                        </div>
                     @else
                         <div style="display:flex; gap:12px; flex-wrap:wrap;">
                             <a href="{{ route('login') }}" class="btn-primary">

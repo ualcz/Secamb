@@ -53,7 +53,8 @@
                         <tr>
                             <th class="req-col-data">Data</th>
                             <th class="req-col-protocolo">Protocolo</th>
-                            <th class="req-col-setor">Setor</th>
+                            <th class="req-col-setor">CPNJ</th>
+                            <th class="req-col-setor">Empreendimento</th>
                             <th class="req-col-objeto">Objeto do Requerimento</th>
                             <th class="req-col-status">Status</th>
                             <th class="req-col-acoes">Ações</th>
@@ -67,21 +68,28 @@
                                 </td>
                                 <td class="req-col-protocolo">
                                     <span class="req-badge-protocolo">
-                                        #{{ $requerimento['id'] ?? $requerimento->id ?? 'S/N' }}
+                                         <div >     
+                                            <span>{{ $requerimento->id }}</span>
+                                        </div>
                                     </span>
                                 </td>
                                 <td class="req-col-setor">
                                     <span class="req-text-setor">
-                                        {{ $requerimento->setor?->setor_sigla ?? $requerimento->setor_sigla ?? 'N/A' }}
+                                       {{ $requerimento->empreendimento?->cnpj ?? 'Sem CPNJ' }}
+                                    </span>
+                                </td>
+                                <td class="req-col-setor">
+                                    <span class="req-text-setor">
+                                       {{ $requerimento->empreendimento?->nome ?? 'Sem Empreendimento' }}
                                     </span>
                                 </td>
                                 <td class="req-col-objeto">
-                                    {{ $requerimento['objetoDoRequerimento'] ?? $requerimento->objetoDoRequerimento }}
+                                    <div> {{ $requerimento['objetoDoRequerimento'] ?? $requerimento->objetoDoRequerimento }}</div>
                                 </td>
                                 @if($requerimento->status)
-                                    <td class="req-col-objeto {{ $requerimento->status_aluno }}">
+                                    <td class="req-col-objeto {{ $requerimento->status }}">
                                         <span>
-                                            {{ $requerimento->status_aluno }}
+                                            {{ $requerimento->status }}
                                         </span>
                                     </td>
                                 @endif
@@ -115,7 +123,12 @@
                     </div>
 
                     <div class="req-card-objeto">
-                        {{ $requerimento['objetoDoRequerimento'] ?? $requerimento->objetoDoRequerimento }}
+                        <strong>{{ $requerimento['objetoDoRequerimento'] ?? $requerimento->objetoDoRequerimento }}</strong>
+                        @if($requerimento->empreendimento)
+                            <div style="font-size: 0.8rem; color: #059669; font-weight: 600; margin-top: 3px;">
+                                🏢 {{ $requerimento->empreendimento->nome }}
+                            </div>
+                        @endif
                     </div>
 
                     <div class="req-card-actions">

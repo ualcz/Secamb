@@ -25,6 +25,7 @@ class EnvioEmailController extends Controller
         $request->validate([
             'setor'                => 'nullable|string',
             'setor_id'             => 'nullable',
+            'empreendimento_id'    => 'nullable|exists:empreendimentos,id',
             'objeto'               => 'nullable|string|max:255',
             'objetoDoRequerimento' => 'nullable|string|max:255',
             'objeto_outro'         => 'nullable|string|max:255',
@@ -141,6 +142,7 @@ class EnvioEmailController extends Controller
 
             $requerimento = Requerimento::create([
                 'usuario_id'              => $cidadao->id,
+                'empreendimento_id'       => $request->input('empreendimento_id'),
                 'setor_id'                => $setor->id,
                 'assunto_requerimento_id' => $assunto?->id,
                 'objetoDoRequerimento'    => $objeto,

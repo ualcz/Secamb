@@ -75,7 +75,18 @@ class RequerimentoController extends Controller
             'email' => $modeloAtivo['email'] ?? 'protocolos.seabra@ifba.edu.br',
         ];
 
-        return view('requerimentos.form', compact('modelos', 'modeloChave', 'modeloAtivo', 'setorDestino'));
+        // Carrega os empreendimentos do usuário para vincular à solicitação
+        $empreendimentos = $request->user()->todosEmpreendimentos()->get();
+        $empreendimentoSelecionadoId = $request->query('empreendimento_id');
+
+        return view('requerimentos.form', compact(
+            'modelos',
+            'modeloChave',
+            'modeloAtivo',
+            'setorDestino',
+            'empreendimentos',
+            'empreendimentoSelecionadoId'
+        ));
     }
 
     //Método para mostrar requerimentos que já foram realizados pelo usuário;
@@ -83,7 +94,7 @@ class RequerimentoController extends Controller
     {
         //Implementação da lógica de que o usuário logado só pode ver os seus próprios requerimentos;
         //Uso de chave estrangeira na tabela requerimentos;
-        $query = auth()->user()->requerimentos();
+        $query = auth()->user()->requerimentos()->with('empreendimento');
 
         if ($request->filled('busca')) {
             $busca = $request->input('busca');
@@ -123,7 +134,7 @@ class RequerimentoController extends Controller
         if ((int) $donoId !== (int) auth()->id()) {
             abort(403, 'Acesso não autorizado.');
         }
-        $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.documentos']);
+        $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.documentos', 'empreendimento']);
         return view('requerimentos.show', compact('requerimento'));
     }
 
@@ -133,7 +144,8 @@ class RequerimentoController extends Controller
             'historicos.usuario',
             'historicos.documentos',
             'usuario.endereco',
-            'setor'
+            'setor',
+            'empreendimento'
         ])->findOrFail($id);
         $user = auth()->user();
         if ($user && $user->ehResponsavelDoSetor($requerimento->setor_id)) {

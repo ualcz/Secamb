@@ -1,38 +1,34 @@
-﻿<!-- Etapa 1: Dados do Requerimento (IdentificaÃ§Ã£o, Objeto e Justificativa) -->
+<!-- Etapa 1: Dados do Requerimento (IdentificaÃ§Ã£o, Objeto e Justificativa) -->
 <div class="form-step" data-step="1">
-    <!-- 1. IdentificaÃ§Ã£o do Aluno -->
+    <!-- 1. Identificação do Requerente -->
     <fieldset>
-        <legend>IdentificaÃ§Ã£o do Aluno</legend>
+        <legend>Identificação do Requerente</legend>
         <div class="form-linha">
             <div class="campo">
-                <label>Nome:</label>
+                <label>Nome Completo:</label>
                 <input type="text" value="{{ auth()->user()->nome }}" readonly>
             </div>
             <div class="campo">
-                <label>MatrÃ­cula:</label>
-                <input type="text" value="{{ auth()->user()->matricula ?? '' }}" readonly>
-            </div>
-            <div class="campo">
-                <label>Turma / Curso:</label>
-                <input type="text" value="{{ auth()->user()->tipo_processo_formatado ?? '' }}" readonly>
+                <label>{{ auth()->user()->isPessoaJuridica() ? 'CNPJ' : 'CPF' }}:</label>
+                <input type="text" value="{{ auth()->user()->documento_identificacao ?? '—' }}" readonly>
             </div>
         </div>
 
         <div class="info-aluno">
             <div class="form-linha">
                 <div class="campo">
-                    <label>E-mail Pessoal (editÃ¡vel):</label>
+                    <label>E-mail Pessoal (editavel):</label>
                     <input type="email" name="email" value="{{ old('email', auth()->user()->email ?? '') }}" placeholder="seu.email@exemplo.com">
                 </div>
                 <div class="campo">
-                    <label>Telefone / WhatsApp (editÃ¡vel):</label>
+                    <label>Telefone / WhatsApp (editavel):</label>
                     <input type="text" name="telefone" value="{{ old('telefone', auth()->user()->telefone ?? '') }}" placeholder="(XX) XXXXX-XXXX">
                 </div>
             </div>
 
             <div class="form-linha">
                 <div class="campo" style="flex: 2; min-width: 240px;">
-                    <label>Rua e NÃºmero (editÃ¡vel):</label>
+                    <label>Rua e Numero (editavel):</label>
                     <input type="text" name="rua" value="{{ old('rua', auth()->user()->endereco?->rua ?? '') }}" placeholder="Ex: Rua Antonio Francisco, 60">
                 </div>
                 <div class="campo" style="flex: 1.5; min-width: 150px;">
@@ -61,7 +57,47 @@
         </button>
     </fieldset>
 
-    <!-- 2. Objeto do Requerimento -->
+    <!-- 2. Empreendimento Vinculado ao Processo -->
+    <fieldset>
+        <legend>Empreendimento Vinculado</legend>
+        <div style="margin-bottom: 8px;">
+            <p style="font-size: 0.85rem; color: #64748b; margin: 0 0 10px 0;">
+                Selecione o empreendimento/empresa para o qual está solicitando este licenciamento ambiental, ou mantenha em nome próprio se for pessoa física.
+            </p>
+
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 260px;">
+                    <select name="empreendimento_id" id="empreendimento_id" class="form-control" onchange="atualizarPreviewEmpreendimento(this)" style="width: 100%; padding: 10px 14px; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #ffffff; color: #1e293b;">
+                        <option value="">Nenhum / Requerimento em nome próprio (Pessoa Física / Cidadão)</option>
+                        @foreach($empreendimentos ?? [] as $emp)
+                            <option value="{{ $emp->id }}"
+                                data-nome="{{ $emp->nome }}"
+                                data-cnpj="{{ $emp->cnpj ?? 'Não informado' }}"
+                                data-endereco="{{ $emp->endereco_completo ?: 'Não informado' }}"
+                                data-bacia="{{ $emp->bacia_hidrografica ?? 'Não informada' }}"
+                                data-fase="{{ $emp->fase_operacao ?? 'Não informada' }}"
+                                {{ (string) old('empreendimento_id', $empreendimentoSelecionadoId ?? '') === (string) $emp->id ? 'selected' : '' }}>
+                                {{ $emp->nome }} {{ $emp->cnpj ? '— CNPJ: ' . $emp->cnpj : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            {{-- Card Informativo do Empreendimento Selecionado --}}
+            <div id="card-preview-empreendimento" style="display: none; margin-top: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px 16px;">
+                <div style="font-weight: 700; color: #065f46; font-size: 0.95rem;" id="prev-emp-nome"></div>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; font-size: 0.825rem; color: #1e293b;">
+                    <div><strong>CNPJ:</strong> <span id="prev-emp-cnpj"></span></div>
+                    <div><strong>Localização:</strong> <span id="prev-emp-endereco"></span></div>
+                    <div><strong>Bacia:</strong> <span id="prev-emp-bacia"></span></div>
+                    <div><strong>Fase:</strong> <span id="prev-emp-fase"></span></div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- 3. Objeto do Requerimento -->
     <fieldset>
         <legend>Objeto do Requerimento</legend>
         <div class="opcoes-objeto">
@@ -139,6 +175,34 @@
         </div>
     </fieldset>
 
-    <button type="button" class="btn-enviar" onclick="mudarPasso(2)" style="margin-top: 10px;">PrÃ³ximo</button>
+    <button type="button" class="btn-enviar" onclick="mudarPasso(2)" style="margin-top: 10px;">Próximo</button>
 </div>
+
+<script>
+    function atualizarPreviewEmpreendimento(select) {
+        const card = document.getElementById('card-preview-empreendimento');
+        if (!card) return;
+
+        const selectedOption = select.options[select.selectedIndex];
+        if (!select.value || !selectedOption) {
+            card.style.display = 'none';
+            return;
+        }
+
+        document.getElementById('prev-emp-nome').textContent = selectedOption.getAttribute('data-nome') || '';
+        document.getElementById('prev-emp-cnpj').textContent = selectedOption.getAttribute('data-cnpj') || '';
+        document.getElementById('prev-emp-endereco').textContent = selectedOption.getAttribute('data-endereco') || '';
+        document.getElementById('prev-emp-bacia').textContent = selectedOption.getAttribute('data-bacia') || '';
+        document.getElementById('prev-emp-fase').textContent = selectedOption.getAttribute('data-fase') || '';
+
+        card.style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const sel = document.getElementById('empreendimento_id');
+        if (sel && sel.value) {
+            atualizarPreviewEmpreendimento(sel);
+        }
+    });
+</script>
 
