@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('requerimentos', function (Blueprint $table) {
+        Schema::create('enderecos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('cascade');
-            $table->string('objetoDoRequerimento');
-            $table->string('motivo');
-            //O campo 'situação' pode ser null, pois tem o valor padrão 'Em análise'.
-            $table->string('situação')->nullable();
+            $table->string('rua')->nullable();
+            $table->string('numero', 30)->nullable();
+            $table->string('complemento')->nullable();
+            $table->string('bairro')->nullable();
+            $table->string('cidade', 100)->default('Seabra');
+            $table->string('estado', 2)->default('BA');
+            $table->string('cep', 10)->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('requerimentos');
+        Schema::dropIfExists('enderecos');
     }
 };

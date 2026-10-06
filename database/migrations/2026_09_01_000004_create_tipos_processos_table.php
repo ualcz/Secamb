@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assuntos_requerimentos', function (Blueprint $table) {
+        Schema::create('tipos_processos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('setor_id')->constrained('setores')->cascadeOnDelete();
-            $table->string('codigo')->nullable();
-            $table->string('descricao');
-            $table->text('observacao')->nullable();
-            $table->integer('ordem')->default(0);
+            $table->string('nome');            // Ex: Licença Prévia
+            $table->string('sigla', 20)->nullable(); // Ex: LP
+            $table->text('descricao')->nullable();
+            $table->text('legislacao_base')->nullable();
             $table->boolean('ativo')->default(true);
             $table->timestamps();
         });
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assuntos_requerimentos');
+        Schema::dropIfExists('tipos_processos');
     }
 };

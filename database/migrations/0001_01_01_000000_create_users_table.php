@@ -13,17 +13,24 @@ return new class extends Migration
     {
         Schema::create('usuarios', function (Blueprint $table) {
             $table->id();
-            $table->string('matricula')->nullable()->unique();
-            $table->string('nome');
-            $table->string('cpf', 14)->nullable();
+
+            // Identificação (Cidadão / Empresa / Servidor)
+            $table->string('tipo_registro', 20)->default('fisica'); // 'fisica' ou 'juridica'
+            $table->string('nome');                                 // Nome Completo ou Nome Fantasia
+            $table->string('razao_social')->nullable();             // Razão Social (PJ)
+            $table->string('cpf', 14)->nullable()->index();         // CPF (PF)
+            $table->string('cnpj', 18)->nullable()->index();        // CNPJ (PJ)
+
+            // Contato
             $table->string('email')->unique();
-            $table->string('email_pessoal')->nullable();
-            $table->string('endereco')->nullable();
             $table->string('telefone', 30)->nullable();
+            $table->string('celular', 30)->nullable();
+
+            // Autenticação e Acesso
             $table->string('password');
-            $table->text('senha_suap')->nullable();
-            $table->string('turma_codigo')->nullable();
-            $table->string('role')->default('aluno');
+            $table->string('role', 30)->default('cidadao'); // 'cidadao', 'servidor', 'admin'
+            $table->boolean('ativo')->default(true);
+
             $table->rememberToken();
             $table->timestamps();
         });
@@ -49,8 +56,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('usuarios');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('usuarios');
     }
 };
