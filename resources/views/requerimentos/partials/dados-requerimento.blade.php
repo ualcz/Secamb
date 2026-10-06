@@ -1,38 +1,38 @@
-<!-- Etapa 1: Dados do Requerimento (Identificação, Objeto e Justificativa) -->
+﻿<!-- Etapa 1: Dados do Requerimento (IdentificaÃ§Ã£o, Objeto e Justificativa) -->
 <div class="form-step" data-step="1">
-    <!-- 1. Identificação do Aluno -->
+    <!-- 1. IdentificaÃ§Ã£o do Aluno -->
     <fieldset>
-        <legend>Identificação do Aluno</legend>
+        <legend>IdentificaÃ§Ã£o do Aluno</legend>
         <div class="form-linha">
             <div class="campo">
                 <label>Nome:</label>
                 <input type="text" value="{{ auth()->user()->nome }}" readonly>
             </div>
             <div class="campo">
-                <label>Matrícula:</label>
+                <label>MatrÃ­cula:</label>
                 <input type="text" value="{{ auth()->user()->matricula ?? '' }}" readonly>
             </div>
             <div class="campo">
                 <label>Turma / Curso:</label>
-                <input type="text" value="{{ auth()->user()->turma_codigo ?? '' }}" readonly>
+                <input type="text" value="{{ auth()->user()->tipo_processo_formatado ?? '' }}" readonly>
             </div>
         </div>
 
         <div class="info-aluno">
             <div class="form-linha">
                 <div class="campo">
-                    <label>E-mail Pessoal (editável):</label>
-                    <input type="email" name="email_pessoal" value="{{ old('email_pessoal', auth()->user()->email_pessoal ?? '') }}" placeholder="seu.email@exemplo.com">
+                    <label>E-mail Pessoal (editÃ¡vel):</label>
+                    <input type="email" name="email" value="{{ old('email', auth()->user()->email ?? '') }}" placeholder="seu.email@exemplo.com">
                 </div>
                 <div class="campo">
-                    <label>Telefone / WhatsApp (editável):</label>
+                    <label>Telefone / WhatsApp (editÃ¡vel):</label>
                     <input type="text" name="telefone" value="{{ old('telefone', auth()->user()->telefone ?? '') }}" placeholder="(XX) XXXXX-XXXX">
                 </div>
             </div>
 
             <div class="form-linha">
                 <div class="campo" style="flex: 2; min-width: 240px;">
-                    <label>Rua e Número (editável):</label>
+                    <label>Rua e NÃºmero (editÃ¡vel):</label>
                     <input type="text" name="rua" value="{{ old('rua', auth()->user()->endereco?->rua ?? '') }}" placeholder="Ex: Rua Antonio Francisco, 60">
                 </div>
                 <div class="campo" style="flex: 1.5; min-width: 150px;">
@@ -119,14 +119,14 @@
                     <rect x="3" y="11" width="18" height="11" rx="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-                Selecione “Outro” para liberar este campo.
+                Selecione â€œOutroâ€ para liberar este campo.
             </small>
             <input type="text" 
                    name="objeto_outro" 
                    value="{{ old('objeto_outro') }}"
                    @disabled(old('objetoDoRequerimento') !== 'outro')
                    style="background-color: {{ old('objetoDoRequerimento') === 'outro' ? '#fff' : '#f1f5f9' }}; border-color: {{ old('objetoDoRequerimento') === 'outro' ? '#ccc' : '#cbd5e1' }}; color: {{ old('objetoDoRequerimento') === 'outro' ? '#111827' : '#64748b' }}; cursor: {{ old('objetoDoRequerimento') === 'outro' ? 'text' : 'not-allowed' }};"
-                   placeholder="Especifique caso necessário"
+                   placeholder="Especifique caso necessÃ¡rio"
                    oninput="const el = document.getElementById('nome-assunto-outro-preview'); if(el) el.textContent = 'Outro: ' + this.value;">
         </div>
     </fieldset>
@@ -135,9 +135,10 @@
     <fieldset>
         <legend>Justificativa / Motivo</legend>
         <div class="campo">
-            <textarea name="motivo" rows="4" placeholder="Descreva os motivos da sua solicitação...">{{ old('motivo') }}</textarea>
+            <textarea name="motivo" rows="4" placeholder="Descreva os motivos da sua solicitaÃ§Ã£o...">{{ old('motivo') }}</textarea>
         </div>
     </fieldset>
 
-    <button type="button" class="btn-enviar" onclick="mudarPasso(2)" style="margin-top: 10px;">Próximo</button>
+    <button type="button" class="btn-enviar" onclick="mudarPasso(2)" style="margin-top: 10px;">PrÃ³ximo</button>
 </div>
+

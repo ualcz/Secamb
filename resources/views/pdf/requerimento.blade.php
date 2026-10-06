@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -24,7 +24,7 @@
             }
         }
         $modeloAtivo = $modeloAtivo ?: (reset($modelos) ?: []);
-        $setorNomeOficial = $modeloAtivo['setor_nome'] ?? $setorNome ?? 'Setor Responsável';
+        $setorNomeOficial = $modeloAtivo['setor_nome'] ?? $setorNome ?? 'Setor ResponsÃ¡vel';
         $listaObjetos = array_values($modeloAtivo['objetos'] ?? []);
         $colunasObjetos = array_chunk($listaObjetos, (int) ceil(count($listaObjetos) / 2));
         $objSelecionado = trim($objeto ?? '');
@@ -42,7 +42,7 @@
             <td class="cabecalho">
                 <img class="logo" src="{{ $logoIfba }}" alt="IFBA">
                 <div class="instituto">
-                    INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA BAHIA<br>
+                    INSTITUTO FEDERAL DE EDUCAÃ‡ÃƒO, CIÃŠNCIA E TECNOLOGIA DA BAHIA<br>
                     <span class="campus">CAMPUS SEABRA</span><br>
                     <span class="setor">{{ strtoupper($setorNomeOficial) }}</span>
                 </div>
@@ -50,10 +50,10 @@
         </tr>
     </table>
 
-    <div class="titulo">REQUERIMENTO Nº {{ $numeroProtocolo ?: '________________' }}</div>
+    <div class="titulo">REQUERIMENTO NÂº {{ $numeroProtocolo ?: '________________' }}</div>
 
     <div class="secao">
-        <div class="secao-titulo">IDENTIFICAÇÃO DO REQUERENTE</div>
+        <div class="secao-titulo">IDENTIFICAÃ‡ÃƒO DO REQUERENTE</div>
         <table class="campos">
             <colgroup>
                 <col style="width: 25%;">
@@ -63,23 +63,23 @@
             </colgroup>
             <tr>
                 <td colspan="3"><span class="rotulo">Nome do Requerente</span><span class="valor">{{ $aluno->nome }}</span></td>
-                <td><span class="rotulo">Nº do CPF</span><span class="valor">{{ $aluno->cpf ?? '' }}</span></td>
+                <td><span class="rotulo">NÂº do CPF</span><span class="valor">{{ $aluno->cpf ?? '' }}</span></td>
             </tr>
             <tr>
-                <td colspan="4"><span class="rotulo">Nº da TURMA</span><span class="valor">{{ $aluno->turma_codigo ?? '' }}</span></td>
+                <td colspan="4"><span class="rotulo">NÂº da TURMA</span><span class="valor">{{ $aluno->tipo_processo_formatado ?? '' }}</span></td>
             </tr>
             <tr>
-                <td colspan="2"><span class="rotulo">Endereço</span><span class="valor">{{ $endereco?->rua ?? '' }}</span></td>
+                <td colspan="2"><span class="rotulo">EndereÃ§o</span><span class="valor">{{ $endereco?->rua ?? '' }}</span></td>
                 <td colspan="2"><span class="rotulo">Cidade</span><span class="valor">{{ $cidadeUf }}</span></td>
             </tr>
             <tr>
                 <td><span class="rotulo">Bairro</span><span class="valor">{{ $endereco?->bairro ?? '' }}</span></td>
                 <td><span class="rotulo">Telefone</span><span class="valor">{{ $aluno->telefone ?? '' }}</span></td>
-                <td><span class="rotulo">E-mail</span><span class="valor">{{ $aluno->email_pessoal ?? $aluno->email }}</span></td>
+                <td><span class="rotulo">E-mail</span><span class="valor">{{ $aluno->email }}</span></td>
                 <td><span class="rotulo">CEP</span><span class="valor">{{ $endereco?->cep ?? '' }}</span></td>
             </tr>
             <tr>
-                <td colspan="2"><span class="rotulo">Curso/Turma</span><span class="valor">{{ $aluno->turma_codigo ?? '' }}</span></td>
+                <td colspan="2"><span class="rotulo">Tipo de Licença</span><span class="valor">{{ $aluno->tipo_processo_formatado ?? '' }}</span></td>
                 <td><span class="rotulo">Data</span><span class="valor">{{ date('d/m/Y') }}</span></td>
                 <td><span class="rotulo">Assinatura</span><span class="valor"></span></td>
             </tr>
@@ -108,7 +108,7 @@
     </div>
 
     <div class="secao">
-        <div class="secao-titulo">EXPOSIÇÃO DE MOTIVOS</div>
+        <div class="secao-titulo">EXPOSIÃ‡ÃƒO DE MOTIVOS</div>
         <div class="linhas">
             @if(!empty($mensagem))<div style="font-size: 7pt; margin-bottom: 1mm;">{!! nl2br(e($mensagem)) !!}</div>@endif
             <div class="linha"></div><div class="linha"></div><div class="linha"></div><div class="linha"></div>
@@ -117,10 +117,11 @@
 
     <table class="pareceres">
         <tr>
-            <td><div class="parecer-titulo">Parecer da Coordenação de Curso/COTEP/Dacad</div><div class="parecer-linhas"></div><div class="assinatura">ASS: ____________________ DATA: ____/____/____</div></td>
+            <td><div class="parecer-titulo">Parecer da CoordenaÃ§Ã£o de Curso/COTEP/Dacad</div><div class="parecer-linhas"></div><div class="assinatura">ASS: ____________________ DATA: ____/____/____</div></td>
             <td><div class="parecer-titulo">Parecer da Biblioteca</div><div class="parecer-linhas"></div><div class="assinatura">ASS: ____________________ DATA: ____/____/____</div></td>
         </tr>
     </table>
 
 </body>
 </html>
+

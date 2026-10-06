@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Painel do Aluno - SDP')
-@section('tag', 'Aluno')
+@section('title', 'Meu Painel - SECAMB Seabra')
+@section('tag', 'Cidadão')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
@@ -30,31 +30,27 @@
 <div class="card">
     <div class="card-header">
         <h3>Seus Dados Cadastrais</h3>
-        <small style="margin-bottom: 10px; display: block">Mantenha suas informações sempre atualizadas no suap.</small>
+        <small style="margin-bottom: 10px; display: block">Mantenha seus dados sempre atualizados para agilizar a análise dos seus processos.</small>
     </div>
 
     <div class="card-body">
 
         {{-- Seção 1: Identificação --}}
         <div class="section-title">
-            Identificação e Curso
+            Identificação
         </div>
         <div class="grid">
             <div class="item">
-                <div class="item-label">Nome Completo</div>
+                <div class="item-label">Nome Completo / Razão Social</div>
                 <div class="item-value">{{ auth()->user()->nome ?? 'N/A' }}</div>
             </div>
             <div class="item">
-                <div class="item-label">CPF</div>
-                <div class="item-value">{{ auth()->user()->cpf ?? 'Não identificado' }}</div>
+                <div class="item-label">CPF / CNPJ</div>
+                <div class="item-value">{{ auth()->user()->documento_identificacao ?? 'Não informado' }}</div>
             </div>
             <div class="item">
-                <div class="item-label">Matrícula (SUAP)</div>
-                <div class="item-value">{{ auth()->user()->matricula ?? 'N/A' }}</div>
-            </div>
-            <div class="item">
-                <div class="item-label">Turma / Curso</div>
-                <div class="item-value">{{ auth()->user()->turma_codigo ?? 'Não identificada' }}</div>
+                <div class="item-label">Tipo de Cadastro</div>
+                <div class="item-value">{{ auth()->user()->isPessoaJuridica() ? 'Pessoa Jurídica' : 'Pessoa Física' }}</div>
             </div>
         </div>
 
@@ -64,12 +60,16 @@
         </div>
         <div class="grid">
             <div class="item">
-                <div class="item-label">E-mail Institucional</div>
+                <div class="item-label">E-mail</div>
                 <div class="item-value">{{ auth()->user()->email }}</div>
             </div>
             <div class="item">
-                <div class="item-label">E-mail Pessoal</div>
-                <div class="item-value">{{ auth()->user()->email_pessoal ?? 'Não identificado' }}</div>
+                <div class="item-label">Telefone</div>
+                <div class="item-value">{{ auth()->user()->telefone ?? 'Não informado' }}</div>
+            </div>
+            <div class="item">
+                <div class="item-label">Celular</div>
+                <div class="item-value">{{ auth()->user()->celular ?? 'Não informado' }}</div>
             </div>
         </div>
 
@@ -79,10 +79,8 @@
         </div>
         <div class="grid">
             <div class="item item-wide">
-                {{-- <div class="item-label">Rua</div> --}}
-                <div class="item-value">{{ auth()->user()->endereco ?? 'N/A' }}</div>
+                <div class="item-value">{{ auth()->user()->endereco?->formatado ?? 'Endereço não cadastrado' }}</div>
             </div>
-
         </div>
 
     </div>
