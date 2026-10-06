@@ -94,8 +94,8 @@ class ResponsavelSetorController extends Controller
             abort(404);
         }
 
-        // Carrega o usuário, endereço, assunto e os históricos (linha do tempo com documentos)
-        $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.documentos', 'setorRetorno']);
+        // Carrega o usuário, endereço, assunto, empreendimento e os históricos (linha do tempo com documentos)
+        $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.documentos', 'setorRetorno', 'empreendimento']);
         $setoresDestino = Setor::query()
             ->where('ativo', true)
             ->where('id', '!=', $setor->id)

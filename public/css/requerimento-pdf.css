@@ -1,5 +1,5 @@
 @page {
-    margin: 7mm 8mm 6mm;
+    margin: 10mm 12mm 10mm;
 }
 
 * {
@@ -10,7 +10,8 @@ body {
     margin: 0;
     color: #111;
     font-family: DejaVu Sans, sans-serif;
-    font-size: 7.5pt;
+    font-size: 8pt;
+    line-height: 1.3;
 }
 
 table {
@@ -18,60 +19,95 @@ table {
     border-collapse: collapse;
 }
 
-.topo td {
-    vertical-align: middle; 
+/* ── Cabeçalho ── */
+.topo {
+    border-bottom: 1.5pt solid #222;
+    padding-bottom: 2mm;
+    margin-bottom: 2mm;
 }
 
-.cabecalho {
+.topo td {
+    vertical-align: middle;
+}
+
+.td-logo {
+    width: 20mm;
     text-align: center;
 }
 
 .logo {
     display: block;
-    width: 13mm;
-    height: 13mm;
-    margin: 0 auto 1mm;
+    width: 17mm;
+    height: 17mm;
+    margin: 0 auto;
 }
 
-.instituto {
+.td-titulo {
     text-align: center;
-    font-size: 8.5pt;
+    padding: 0 4mm;
+}
+
+.prefeitura-nome {
+    font-size: 9.5pt;
     font-weight: bold;
-    line-height: 1.25;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
-.instituto .campus {
-    font-size: 10pt;
-}
-
-.instituto .setor {
+.prefeitura-sub {
     font-size: 8pt;
+    margin-top: 1mm;
 }
 
-.titulo {
-    margin-top: 1.5mm;
-    border: 0.5pt solid #555;
-    padding: 1.3mm 2mm;
-    font-size: 12pt;
+.prefeitura-setor {
+    font-size: 9pt;
     font-weight: bold;
-}
-
-.secao {
-    margin-top: 2mm;
-    border-top: 0.5pt solid #555;
+    margin-top: 1.5mm;
+    text-transform: uppercase;
+    border-top: 0.4pt solid #555;
     padding-top: 1mm;
 }
 
-.secao-titulo {
+/* ── Título do Documento ── */
+.titulo-doc {
     text-align: center;
+    font-size: 11pt;
     font-weight: bold;
-    font-size: 8pt;
-    margin-bottom: 1mm;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1pt solid #222;
+    padding: 2mm 4mm;
+    margin: 3mm 0;
 }
 
+.protocolo-linha {
+    text-align: right;
+    font-size: 7pt;
+    color: #444;
+    margin-bottom: 2mm;
+}
+
+/* ── Seções ── */
+.secao {
+    margin-top: 3mm;
+}
+
+.secao-titulo {
+    background-color: #d9d9d9;
+    text-align: center;
+    font-weight: bold;
+    font-size: 7.5pt;
+    padding: 1.2mm 2mm;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 0.5pt solid #555;
+    border-bottom: none;
+}
+
+/* ── Tabela de campos ── */
 .campos td {
-    border: 0.5pt solid #777;
-    height: 7mm;
+    border: 0.5pt solid #555;
+    height: 8mm;
     padding: 1mm 1.5mm;
     vertical-align: top;
 }
@@ -80,16 +116,20 @@ table {
     display: block;
     font-size: 6pt;
     font-weight: bold;
+    text-transform: uppercase;
+    color: #333;
 }
 
 .campos .valor {
     display: block;
-    margin-top: 1mm;
-    min-height: 3mm;
+    margin-top: 0.8mm;
+    min-height: 3.5mm;
+    font-size: 8pt;
 }
 
+/* ── Objetos ── */
 .objeto {
-    border: 0.5pt solid #777;
+    border: 0.5pt solid #555;
     padding: 1.5mm 2mm;
 }
 
@@ -102,49 +142,65 @@ table {
 .check {
     font-family: DejaVu Sans, sans-serif;
     font-size: 7pt;
+    margin-bottom: 0.5mm;
 }
 
 .marcado {
     font-weight: bold;
 }
 
+/* ── Justificativa / Exposição de Motivos ── */
 .linhas {
-    border: 0.5pt solid #777;
+    border: 0.5pt solid #555;
     padding: 1.5mm 2mm 0;
-    height: 27mm;
+    min-height: 28mm;
 }
 
 .linha {
     height: 6mm;
-    border-bottom: 0.4pt solid #aaa;
+    border-bottom: 0.4pt solid #bbb;
 }
 
-.pareceres {
-    margin-top: 2mm;
+/* ── Declaração/Termos ── */
+.declaracao {
+    border: 0.5pt solid #555;
+    padding: 2mm 2.5mm;
+    font-size: 7pt;
+    text-align: justify;
+    line-height: 1.5;
 }
 
-.pareceres td {
+/* ── Assinaturas finais ── */
+.assinaturas {
+    margin-top: 5mm;
+}
+
+.assinaturas table td {
     width: 50%;
-    padding-right: 4mm;
-    vertical-align: top;
-}
-
-.parecer-titulo {
-    border-bottom: 0.4pt solid #777;
-    padding-bottom: 1mm;
-    font-weight: bold;
-}
-
-.parecer-linhas {
-    height: 15mm;
-    border-bottom: 0.4pt dotted #777;
-}
-
-.assinatura {
-    margin-top: 1mm;
-    border-top: 0.5pt solid #555;
-    padding-top: 1mm;
     text-align: center;
-    font-size: 6.5pt;
+    padding: 0 4mm;
+    vertical-align: bottom;
+}
+
+.assin-linha {
+    border-top: 0.5pt solid #333;
+    margin: 0 auto 1mm;
+    width: 70mm;
+}
+
+.assin-label {
+    font-size: 7pt;
+    text-align: center;
     font-weight: bold;
+    line-height: 1.5;
+}
+
+/* ── Rodapé ── */
+.rodape {
+    margin-top: 4mm;
+    border-top: 0.5pt solid #888;
+    padding-top: 1mm;
+    font-size: 6pt;
+    color: #555;
+    text-align: center;
 }
