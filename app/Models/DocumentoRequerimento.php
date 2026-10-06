@@ -26,6 +26,11 @@ class DocumentoRequerimento extends Model
         return $this->belongsTo(Requerimento::class, 'requerimento_id');
     }
 
+    public function processo(): BelongsTo
+    {
+        return $this->requerimento();
+    }
+
     public function historico(): BelongsTo
     {
         return $this->belongsTo(HistoricoRequerimento::class, 'historico_requerimento_id');

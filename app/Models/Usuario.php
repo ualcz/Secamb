@@ -5,12 +5,18 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\Requerimento;
-use App\Models\Setor;
-use App\Models\Endereco;
 
+/**
+ * Usuário do SECAMB - Prefeitura Municipal de Seabra
+ *
+ * Representa dois perfis distintos:
+ *  - Cidadão (Pessoa Física ou Jurídica) que solicita licenciamentos.
+ *  - Servidor/Técnico Municipal que analisa e tramita os processos.
+ *
+ * Endereço do cidadão é armazenado na tabela `enderecos` (relacionamento HasOne).
+ * Endereço do empreendimento é armazenado diretamente na tabela `empreendimentos`.
+ */
 class Usuario extends Authenticatable
 {
     use Notifiable;
@@ -18,26 +24,38 @@ class Usuario extends Authenticatable
     protected $table = 'usuarios';
 
     protected $fillable = [
-        'matricula',
-        'nome',
-        'cpf',
-        'email',
-        'email_pessoal',
+        // Identificação
+        'tipo_registro',   // 'fisica' | 'juridica'
+        'nome',            // Nome Completo (PF) ou Nome Fantasia (PJ)
+        'razao_social',    // Razão Social (PJ)
+        'cpf',             // CPF — somente Pessoa Física
+        'cnpj',            // CNPJ — somente Pessoa Jurídica
+
+        // Contato
+        'email',           // E-mail principal (login + notificações)
+        'telefone',        // Telefone fixo (opcional)
+        'celular',         // Celular (opcional)
+
+        // Autenticação
         'password',
-        'senha_suap',
-        'telefone',
-        'turma_codigo',
-        'role',
+
+        // Perfil de acesso
+        'role',            // 'cidadao' | 'servidor' | 'admin'
+        'ativo',
     ];
 
     protected $hidden = [
         'password',
-        'remember_token'
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'ativo' => 'boolean',
     ];
 
     /*
     |--------------------------------------------------------------------------
-    | MÉTODOS DE PAPEL
+    | PERFIS DE ACESSO
     |--------------------------------------------------------------------------
     */
 
@@ -46,30 +64,99 @@ class Usuario extends Authenticatable
         return $this->role === 'admin';
     }
 
-    public function isAluno(): bool
-    {
-        return $this->role === 'aluno';
-    }
-
-    public function isProfessor(): bool
-    {
-        return $this->role === 'professor';
-    }
-
+    /** Servidor ou admin da Prefeitura têm acesso aos painéis de gestão. */
     public function isServidor(): bool
     {
-        return in_array(strtolower(trim((string) $this->role)), ['professor', 'servidor'], true);
+        return in_array(strtolower(trim((string) $this->role)), ['servidor', 'tecnico', 'admin'], true);
+    }
+
+    /** Cidadão que abre processos de licenciamento. */
+    public function isCidadao(): bool
+    {
+        return $this->role === 'cidadao';
+    }
+
+    public function isPessoaFisica(): bool
+    {
+        return $this->tipo_registro === 'fisica';
+    }
+
+    public function isPessoaJuridica(): bool
+    {
+        return $this->tipo_registro === 'juridica';
+    }
+
+    /** Documento principal de identificação (CPF ou CNPJ). */
+    public function getDocumentoIdentificacaoAttribute(): ?string
+    {
+        return $this->isPessoaJuridica() ? $this->cnpj : $this->cpf;
     }
 
     /*
     |--------------------------------------------------------------------------
-    | RESPONSABILIDADE DE SETOR
+    | EMPREENDIMENTOS
     |--------------------------------------------------------------------------
     */
 
     /**
-     * Retorna os setores vinculados a este responsável.
+     * Empreendimentos em que o cidadão figura como representante legal
+     * (com aceite do Termo de Declaração do Representante Legal).
      */
+    public function empreendimentos(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Empreendimento::class,
+            'empreendimento_usuario',
+            'usuario_id',
+            'empreendimento_id'
+        )->withPivot(['termo_aceito', 'termo_aceito_em', 'status'])->withTimestamps();
+    }
+
+    /**
+     * Empreendimentos cujo cadastro inicial foi realizado por este usuário.
+     */
+    public function empreendimentosCadastrados(): HasMany
+    {
+        return $this->hasMany(Empreendimento::class, 'usuario_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROCESSOS DE LICENCIAMENTO
+    |--------------------------------------------------------------------------
+    */
+
+    /** Processos (requerimentos) abertos por este cidadão. */
+    public function processos(): HasMany
+    {
+        return $this->hasMany(Requerimento::class, 'usuario_id');
+    }
+
+    /** Requerimentos abertos pelo usuário (método utilizado pelos controllers). */
+    public function requerimentos(): HasMany
+    {
+        return $this->processos();
+    }
+
+    /** Processos em que este servidor é o técnico responsável pela análise. */
+    public function processosEmAnalise(): HasMany
+    {
+        return $this->hasMany(Requerimento::class, 'tecnico_responsavel_id');
+    }
+
+    /** Requerimentos em análise pelo servidor. */
+    public function requerimentosEmAnalise(): HasMany
+    {
+        return $this->processosEmAnalise();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RESPONSABILIDADE DE SETOR / SECRETARIA MUNICIPAL
+    |--------------------------------------------------------------------------
+    */
+
+    /** Setores/Secretarias municipais vinculados a este servidor como responsável. */
     public function setoresSobResponsabilidade(): BelongsToMany
     {
         return $this->belongsToMany(Setor::class, 'setor_responsavel', 'usuario_id', 'setor_id');
@@ -80,7 +167,7 @@ class Usuario extends Authenticatable
         return $this->setoresSobResponsabilidade()->exists();
     }
 
-    public function ehResponsavelDoSetor($setorId): bool
+    public function ehResponsavelDoSetor(int $setorId): bool
     {
         return $this->setoresSobResponsabilidade()->where('setores.id', $setorId)->exists();
     }
@@ -91,15 +178,13 @@ class Usuario extends Authenticatable
     |--------------------------------------------------------------------------
     */
 
-    public function requerimentos()
-    {
-        return $this->hasMany(Requerimento::class, 'usuario_id');
-    }
-    public function historicos()
+    /** Histórico de tramitações em que este usuário atuou (como autor de despacho). */
+    public function historicos(): HasMany
     {
         return $this->hasMany(HistoricoRequerimento::class, 'user_id');
     }
 
+    /** Endereço residencial / da sede do cidadão (tabela enderecos). */
     public function endereco()
     {
         return $this->hasOne(Endereco::class, 'usuario_id');
