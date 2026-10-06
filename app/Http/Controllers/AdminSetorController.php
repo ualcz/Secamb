@@ -16,7 +16,7 @@ class AdminSetorController extends Controller
         $usuario = request()->user();
 
         if ($usuario?->role !== 'admin' && !$usuario?->ehResponsavelDoSetor($setorId)) {
-            abort(403, 'Você não possui permissão para editar este setor.');
+            abort(403, 'VocÃª nÃ£o possui permissÃ£o para editar este setor.');
         }
     }
 
@@ -39,7 +39,7 @@ class AdminSetorController extends Controller
     public function create()
     {
 
-        $usuarios = Usuario::where('role', '!=', 'aluno')
+        $usuarios = Usuario::where('role', '!=', 'cidadao')
         ->orderBy('nome')
         ->get();
 
@@ -79,12 +79,12 @@ class AdminSetorController extends Controller
     {
         $this->autorizarSetor((int) $id);
 
-        // Carrega o setor junto com os assuntos, documentos e os responsáveis já vinculados
+        // Carrega o setor junto com os assuntos, documentos e os responsÃ¡veis jÃ¡ vinculados
         $setor = Setor::with(['assuntos.documentos', 'responsaveis'])->findOrFail($id);
         $modelo = $setor;
 
-        // Busca a lista de todos os usuários para o formulário de seleção
-        $usuarios = Usuario::where('role', '!=', 'aluno')
+        // Busca a lista de todos os usuÃ¡rios para o formulÃ¡rio de seleÃ§Ã£o
+        $usuarios = Usuario::where('role', '!=', 'cidadao')
         ->orderBy('nome')
         ->get();
 
@@ -140,7 +140,7 @@ class AdminSetorController extends Controller
 
         $setor->update($dadosAtualizados);
 
-        // Apenas administradores podem alterar os responsáveis do setor.
+        // Apenas administradores podem alterar os responsÃ¡veis do setor.
         if ($request->user()->role === 'admin') {
             $setor->responsaveis()->sync($request->input('responsaveis', []));
         }
@@ -176,17 +176,17 @@ class AdminSetorController extends Controller
             'documentos.*.link_modelo' => 'nullable|url:http,https|max:2048',
             'documentos.*.obrigatorio' => 'nullable',
         ], [
-            'required'      => 'O campo :attribute é obrigatório.',
-            'required_with' => 'O nome do documento é obrigatório ao preencher seus detalhes.',
+            'required'      => 'O campo :attribute Ã© obrigatÃ³rio.',
+            'required_with' => 'O nome do documento Ã© obrigatÃ³rio ao preencher seus detalhes.',
             'string'        => 'O campo :attribute deve ser um texto.',
-            'max'           => 'O campo :attribute não pode ter mais que :max caracteres.',
-            'integer'       => 'O campo :attribute deve ser um número inteiro.',
+            'max'           => 'O campo :attribute nÃ£o pode ter mais que :max caracteres.',
+            'integer'       => 'O campo :attribute deve ser um nÃºmero inteiro.',
         ], [
-            'descricao'                => 'Descrição do Assunto',
-            'observacao'               => 'Observação',
+            'descricao'                => 'DescriÃ§Ã£o do Assunto',
+            'observacao'               => 'ObservaÃ§Ã£o',
             'ordem'                    => 'Ordem',
             'documentos.*.nome'        => 'Nome do Documento',
-            'documentos.*.descricao'   => 'Descrição do Documento',
+            'documentos.*.descricao'   => 'DescriÃ§Ã£o do Documento',
         ]);
 
         $maxOrdem = $setor->assuntos()->max('ordem') ?? 0;
@@ -300,7 +300,7 @@ class AdminSetorController extends Controller
         });
 
         return redirect()->route('admin.setores.edit', $assunto->setor_id)
-            ->with('success', 'Requerimento e alterações salvas com sucesso!');
+            ->with('success', 'Requerimento e alteraÃ§Ãµes salvas com sucesso!');
     }
 
     public function destroyAssunto($assuntoId)
@@ -380,3 +380,4 @@ class AdminSetorController extends Controller
             ->with('success', 'Documento removido com sucesso!');
     }
 }
+

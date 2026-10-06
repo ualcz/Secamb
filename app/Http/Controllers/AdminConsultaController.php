@@ -22,13 +22,6 @@ class AdminConsultaController extends Controller
             });
         }
 
-        // 2. Filtro por Turma
-        if ($request->filled('turma')) {
-            $turma = trim($request->input('turma'));
-            $query->whereHas('usuario', function ($q) use ($turma) {
-                $q->where('turma_codigo', 'LIKE', "%{$turma}%");
-            });
-        }
 
         // 3. Filtro por Setor
         if ($request->filled('setor')) {

@@ -13,7 +13,8 @@ use Illuminate\Support\Str;
 class EnvioEmailController extends Controller
 {
     /**
-     * Envia o e-mail com as informações do aluno para seu e-mail pessoal e o setor selecionado.
+     * Protocola o processo de licenciamento ambiental:
+     * salva no banco, gera PDF, e envia e-mail ao setor e ao cidadão.
      */
     public function enviar(Request $request)
     {
@@ -25,7 +26,6 @@ class EnvioEmailController extends Controller
             'objeto_outro'         => 'nullable|string|max:255',
             'motivo'               => 'nullable|string|max:3000',
             'mensagem'             => 'nullable|string|max:3000',
-            'email_pessoal'        => 'nullable|email|max:255',
             'telefone'             => 'nullable|string|max:30',
             'rua'                  => 'nullable|string|max:255',
             'numero'               => 'nullable|string|max:20',
@@ -55,49 +55,38 @@ class EnvioEmailController extends Controller
             return back()->withErrors(['setor' => 'O setor selecionado é inválido.']);
         }
 
-        $aluno = auth()->user();
+        $cidadao = auth()->user();
+        $aluno   = $cidadao; // alias mantido para compatibilidade com chamadas internas
 
-        // 1. Atualiza campos cadastrais do usuário
+        // 1. Atualiza campos cadastrais do cidadão (telefone/celular se informados no form)
         $dadosUsuario = [];
-        if ($request->filled('email_pessoal')) {
-            $aluno->email_pessoal = $request->input('email_pessoal');
-            $dadosUsuario['email_pessoal'] = $aluno->email_pessoal;
-        }
         if ($request->filled('telefone')) {
-            $aluno->telefone = $request->input('telefone');
-            $dadosUsuario['telefone'] = $aluno->telefone;
+            $dadosUsuario['telefone'] = $request->input('telefone');
+        }
+        if ($request->filled('celular')) {
+            $dadosUsuario['celular'] = $request->input('celular');
         }
 
         if (!empty($dadosUsuario)) {
             try {
-                $aluno->update($dadosUsuario);
+                $cidadao->update($dadosUsuario);
             } catch (\Throwable $e) {
-                logger()->info('Não foi possível persistir dados cadastrais do usuário: ' . $e->getMessage());
+                logger()->info('Não foi possível persistir dados cadastrais do cidadão: ' . $e->getMessage());
             }
         }
 
         // 2. Atualiza dados de endereço na tabela 'enderecos'
         $dadosEndereco = [];
-        foreach (['rua', 'numero', 'bairro', 'cidade', 'estado', 'cep'] as $campo) {
+        foreach (['rua', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep'] as $campo) {
             if ($request->filled($campo)) {
                 $dadosEndereco[$campo] = $request->input($campo);
             }
         }
 
-        // Se veio string única 'endereco' no formulário legado e nenhum campo individual foi preenchido
-        if (empty($dadosEndereco) && $request->filled('endereco')) {
-            $parsed = \App\Services\Suap\EnderecoScraper::parse($request->input('endereco'));
-            if ($parsed) {
-                $dadosEndereco = $parsed;
-            } else {
-                $dadosEndereco['rua'] = $request->input('endereco');
-            }
-        }
-
         if (!empty($dadosEndereco)) {
             try {
-                $aluno->endereco()->updateOrCreate([], $dadosEndereco);
-                $aluno->load('endereco');
+                $cidadao->endereco()->updateOrCreate([], $dadosEndereco);
+                $cidadao->load('endereco');
             } catch (\Throwable $e) {
                 logger()->info('Não foi possível persistir dados de endereço: ' . $e->getMessage());
             }
@@ -114,7 +103,7 @@ class EnvioEmailController extends Controller
         $servicoEmail = app(RequerimentoEmailService::class);
         $destinatarios = $servicoEmail->resolverDestinatarios(
             $setor,
-            $aluno,
+            $cidadao,
             $request->input('email_adicional')
         );
 

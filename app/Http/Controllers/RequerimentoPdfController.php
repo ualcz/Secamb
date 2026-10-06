@@ -91,16 +91,12 @@ class RequerimentoPdfController extends Controller
         $requerimento = Requerimento::with('usuario','setor')
             ->where('id', $id)
             ->firstOrFail();
-        $dados = [
-            'nomeRequerente' => $requerimento->usuario->nome, 
-            'numeroTurma'    => $requerimento->usuario->turma_codigo, 
-            'objeto'         => $requerimento->objetoDoRequerimento, 
-        ];
+        $tipoProcesso = $requerimento->tipo_processo_formatado;
 
         $pdf = self::criarComprovante(
-            nomeRequerente: $requerimento->usuario, 
-            numeroTurma: $requerimento->usuario->turma_codigo,
-            objeto: $requerimento->objetoDoRequerimento,
+            nomeRequerente: $requerimento->usuario,
+            numeroTurma: null,
+            objeto: $tipoProcesso,
             setor: $requerimento->setor?->setor_sigla ?? $requerimento->setor_sigla,
             dataSolicitacao: $requerimento->created_at,
             numeroProtocolo: $requerimento->id

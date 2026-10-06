@@ -55,12 +55,6 @@ class ResponsavelSetorController extends Controller
             });
         }
 
-        if ($request->filled('turma')) {
-            $turma = trim($request->input('turma'));
-            $query->whereHas('usuario', function ($q) use ($turma) {
-                $q->where('turma_codigo', 'like', "%{$turma}%");
-            });
-        }
 
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));

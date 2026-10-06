@@ -8,7 +8,7 @@ use App\Models\Usuario;
 class UsersController extends Controller
 {
     public function index(){
-        $usuarios = Usuario::where('role', '!=', 'aluno')->get();
+        $usuarios = Usuario::where('role', '!=', 'cidadao')->get();
         return view('admin.users.index', compact('usuarios'));
     }
 
