@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 <link rel="stylesheet" href="{{ asset('css/show-requerimento.css') }}?v={{ filemtime(public_path('css/show-requerimento.css')) }}">
 
@@ -6,7 +6,7 @@
 <div class="detalhes-container">
     <x-btn-voltar style="grid-column: span 2;"/>
     <div class="historico">
-        <h3>Histórico da Tramitação</h3>
+        <h3>HistÃ³rico da TramitaÃ§Ã£o</h3>
 
         <ul class="timeline">
             @forelse($requerimento->historicos as $historico)
@@ -16,21 +16,21 @@
                         <div class="timeline-heading">
                             <span class="badge-status">{{ $historico->status }}</span>
                             <span class="timeline-date">
-                                {{ $historico->created_at->format('d/m/Y \à\s H:i') }}
+                                {{ $historico->created_at->format('d/m/Y \Ã \s H:i') }}
                             </span>
                         </div>
                         <div class="timeline-body">
-                            <p><strong>Responsável:</strong> {{ $historico->usuario->nome ?? 'Sistema' }}</p>
+                            <p><strong>ResponsÃ¡vel:</strong> {{ $historico->usuario->nome ?? 'Sistema' }}</p>
                             @if($historico->observacao)
                                 @php
-                                    $rotuloObservacao = 'Observação';
+                                    $rotuloObservacao = 'ObservaÃ§Ã£o';
                                     $textoObservacao = $historico->observacao;
 
-                                    if (preg_match('/^(Orientação para|Resposta para):\s*(.+?)\R(.*)$/s', $textoObservacao, $partes)) {
+                                    if (preg_match('/^(OrientaÃ§Ã£o para|Resposta para):\s*(.+?)\R(.*)$/s', $textoObservacao, $partes)) {
                                         $rotuloObservacao = $partes[1] . ': ' . $partes[2];
                                         $textoObservacao = $partes[3];
                                     } elseif (preg_match('/^Encaminhado de .+ para (.+?)\.\s*\R+\s*(.*)$/s', $textoObservacao, $partes)) {
-                                        $rotuloObservacao = 'Orientação para: ' . $partes[1];
+                                        $rotuloObservacao = 'OrientaÃ§Ã£o para: ' . $partes[1];
                                         $textoObservacao = $partes[2];
                                     } elseif (preg_match('/^Resposta de .+ para (.+?)\.\s*\R+\s*(.*)$/s', $textoObservacao, $partes)) {
                                         $rotuloObservacao = 'Resposta para: ' . $partes[1];
@@ -47,7 +47,7 @@
                                 </div>
                             @endif
 
-                            {{-- DOCUMENTOS ANEXADOS NESTA TRAMITAÇÃO --}}
+                            {{-- DOCUMENTOS ANEXADOS NESTA TRAMITAÃ‡ÃƒO --}}
                             @include('requerimentos.partials.historico-documentos', [
                                 'documentos' => $historico->documentos,
                                 'historico' => $historico,
@@ -57,7 +57,7 @@
                     </div>
                 </li>
             @empty
-                <p>Nenhum registro no histórico até o momento.</p>
+                <p>Nenhum registro no histÃ³rico atÃ© o momento.</p>
             @endforelse
         </ul>
     </div>
@@ -74,7 +74,7 @@
                 'Atualizando status...',
                 'Enviando email para o aluno...',
                 'Atualizando sistema...',
-                'Só mais um instante...'
+                'SÃ³ mais um instante...'
             ]"
         />
 
@@ -85,22 +85,22 @@
                         <svg width="20" height="20" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
-                        Informações do Aluno
+                        InformaÃ§Ãµes do Aluno
                     </h2>
 
-                    <!-- Resumo visível mesmo quando colapsado -->
+                    <!-- Resumo visÃ­vel mesmo quando colapsado -->
                     <div class="grid-3 preview-aluno">
                         <div class="info-grupo">
                             <span class="info-label">Nome Completo</span>
                             <span class="info-valor">{{ $requerimento->usuario->nome }}</span>
                         </div>
                         <div class="info-grupo">
-                            <span class="info-label">Matrícula</span>
+                            <span class="info-label">MatrÃ­cula</span>
                             <span class="info-valor">{{ $requerimento->usuario->matricula }}</span>
                         </div>
                         <div class="info-grupo">
                             <span class="info-label">Telefone / WhatsApp</span>
-                            <span class="info-valor">{{ $requerimento->usuario->telefone ?? 'Não informado' }}</span>
+                            <span class="info-valor">{{ $requerimento->usuario->telefone ?? 'NÃ£o informado' }}</span>
                         </div>
                     </div>
                 </div>
@@ -110,9 +110,9 @@
                 </svg>
             </summary>
 
-            <!-- Conteúdo expandido (Oculto até o clique) -->
+            <!-- ConteÃºdo expandido (Oculto atÃ© o clique) -->
             <div class="accordion-body">
-                <!-- Demais Informações do Aluno -->
+                <!-- Demais InformaÃ§Ãµes do Aluno -->
                 <div class="grid-3 grid-complementar">
                     <div class="info-grupo">
                         <span class="info-label">CPF</span>
@@ -120,7 +120,7 @@
                     </div>
                     <div class="info-grupo">
                         <span class="info-label">Turma</span>
-                        <span class="info-valor">{{ $requerimento->usuario->turma_codigo ?? 'Não informada' }}</span>
+                        <span class="info-valor">{{ $requerimento->usuario->tipo_processo_formatado ?? 'NÃ£o informada' }}</span>
                     </div>
                     <div class="info-grupo">
                         <span class="info-label">E-mail Institucional</span>
@@ -128,14 +128,14 @@
                     </div>
                     <div class="info-grupo">
                         <span class="info-label">E-mail Pessoal</span>
-                        <span class="info-valor">{{ $requerimento->usuario->email_pessoal ?? 'Não informado' }}</span>
+                        <span class="info-valor">{{ $requerimento->usuario->email ?? 'NÃ£o informado' }}</span>
                     </div>
                 </div>
 
                 <hr class="divisor-secao">
 
-                <!-- Seção de Endereço Residencial -->
-                <h3 class="subtitulo-secao">Endereço Residencial</h3>
+                <!-- SeÃ§Ã£o de EndereÃ§o Residencial -->
+                <h3 class="subtitulo-secao">EndereÃ§o Residencial</h3>
                 @if($requerimento->usuario->endereco)
                     <div class="grid-3">
                         <div class="info-grupo">
@@ -143,7 +143,7 @@
                             <span class="info-valor">{{ $requerimento->usuario->endereco->rua }}</span>
                         </div>
                         <div class="info-grupo">
-                            <span class="info-label">Número</span>
+                            <span class="info-label">NÃºmero</span>
                             <span class="info-valor">{{ $requerimento->usuario->endereco->numero }}</span>
                         </div>
                         <div class="info-grupo">
@@ -160,14 +160,14 @@
                         </div>
                     </div>
                 @else
-                    <p class="texto-vazio">Nenhum endereço cadastrado para este usuário.</p>
+                    <p class="texto-vazio">Nenhum endereÃ§o cadastrado para este usuÃ¡rio.</p>
                 @endif
             </div>
         </details>
         <div class="card-painel">
             <div class="card-header-flex">
                 <div>
-                    <span class="info-label">Nº Protocolo</span>
+                    <span class="info-label">NÂº Protocolo</span>
                     <h1 class="card-titulo" style="font-size: 1.5rem; color: #2563eb;">
                         {{ $requerimento->numero_protocolo }}
                     </h1>
@@ -176,8 +176,8 @@
                     @php
                         $statusClass = match($requerimento->status) {
                             'Aberto' => 'badge-Aberto',
-                            'Em Análise' => 'badge-analise',
-                            'Concluído' => 'badge-concluido',
+                            'Em AnÃ¡lise' => 'badge-analise',
+                            'ConcluÃ­do' => 'badge-concluido',
                             'Indeferido' => 'badge-indeferido',
                             'Despacho' => 'badge-despacho',
                             default => 'badge-analise'
@@ -199,12 +199,12 @@
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">Data e Hora de Envio</span>
-                    <span class="info-valor">{{ $requerimento->created_at->format('d/m/Y \à\s H:i') }}</span>
+                    <span class="info-valor">{{ $requerimento->created_at->format('d/m/Y \Ã \s H:i') }}</span>
                 </div>
             </div>
 
             <div class="info-grupo" style="margin-top: 0.75rem;">
-                <span class="info-label">Motivo / Solicitação</span>
+                <span class="info-label">Motivo / SolicitaÃ§Ã£o</span>
                 <div class="box-motivo">
                     <span class="info-valor">{{ $requerimento->motivo }}</span>
                 </div>
@@ -231,7 +231,7 @@
         </div>
 
         <section class="card-painel painel-acoes" aria-labelledby="titulo-acoes-requerimento">
-            <h2 id="titulo-acoes-requerimento" class="painel-acoes-titulo">Ações do requerimento</h2>
+            <h2 id="titulo-acoes-requerimento" class="painel-acoes-titulo">AÃ§Ãµes do requerimento</h2>
             @if($requerimento->setor_retorno_id)
                 <details class="acao-item" name="acao-requerimento" open>
                     <summary class="acao-resumo">
@@ -259,7 +259,7 @@
                     <summary class="acao-resumo">
                         <span class="acao-textos">
                             <span class="acao-titulo">Atualizar status</span>
-                            <span class="acao-descricao">Em análise, indeferido ou concluído</span>
+                            <span class="acao-descricao">Em anÃ¡lise, indeferido ou concluÃ­do</span>
                         </span>
                     </summary>
                     <div class="acao-conteudo">
@@ -271,9 +271,9 @@
                             <label for="status" class="info-label">Novo status</label>
                             <div class="form-status">
                                 <select name="status" id="status" class="select-status" required onchange="toggleMensagemIndeferido()">
-                                    <option value="Em Análise" {{ old('status', $requerimento->status) == 'Em Análise' ? 'selected' : '' }}>Em Análise</option>
+                                    <option value="Em AnÃ¡lise" {{ old('status', $requerimento->status) == 'Em AnÃ¡lise' ? 'selected' : '' }}>Em AnÃ¡lise</option>
                                     <option value="Indeferido" {{ old('status', $requerimento->status) == 'Indeferido' ? 'selected' : '' }}>Indeferido</option>
-                                    <option value="Concluído" {{ old('status', $requerimento->status) == 'Concluído' ? 'selected' : '' }}>Concluído</option>
+                                    <option value="ConcluÃ­do" {{ old('status', $requerimento->status) == 'ConcluÃ­do' ? 'selected' : '' }}>ConcluÃ­do</option>
                                 </select>
 
                                 <button type="submit" class="btn-atualizar">Salvar status</button>
@@ -297,7 +297,7 @@
                                 <div class="acao-campo-secundario">
                                     <label for="solicita_novo_documento" class="info-label">Solicitar documento ao aluno?</label>
                                     <select name="solicita_novo_documento" id="solicita_novo_documento" class="select-status" onchange="toggleCampoNomeDocumento()">
-                                        <option value="0" {{ old('solicita_novo_documento') == '0' ? 'selected' : '' }}>Não</option>
+                                        <option value="0" {{ old('solicita_novo_documento') == '0' ? 'selected' : '' }}>NÃ£o</option>
                                         <option value="1" {{ old('solicita_novo_documento') == '1' ? 'selected' : '' }}>Sim</option>
                                     </select>
                                 </div>
@@ -308,7 +308,7 @@
                                         name="nome_documento_solicitado"
                                         id="nome_documento_solicitado"
                                         class="select-status campo-documento-solicitado"
-                                        placeholder="Ex.: Atestado médico"
+                                        placeholder="Ex.: Atestado mÃ©dico"
                                         value="{{ old('nome_documento_solicitado') }}"
                                     >
                                 </div>
@@ -321,7 +321,7 @@
                     <summary class="acao-resumo">
                         <span class="acao-textos">
                             <span class="acao-titulo">Encaminhar para outro setor</span>
-                            <span class="acao-descricao">Selecionar destino e registrar orientação</span>
+                            <span class="acao-descricao">Selecionar destino e registrar orientaÃ§Ã£o</span>
                         </span>
                     </summary>
                     <div class="acao-conteudo">
@@ -335,7 +335,7 @@
                                     <option value="{{ $setorDestino->id }}" {{ old('setor_destino_id') == $setorDestino->id ? 'selected' : '' }}>{{ $setorDestino->setor_nome }} ({{ $setorDestino->setor_sigla }})</option>
                                 @endforeach
                             </select>
-                            <label for="observacao_encaminhamento" class="info-label acao-label-secundario">Orientação</label>
+                            <label for="observacao_encaminhamento" class="info-label acao-label-secundario">OrientaÃ§Ã£o</label>
                             <textarea name="observacao" id="observacao_encaminhamento" class="form-control" rows="4" required>{{ old('observacao') }}</textarea>
                             <div class="acao-arquivos">
                                 <label for="arquivos_encaminhamento" class="info-label">Anexar documentos (opcional)</label>
@@ -351,7 +351,7 @@
         {{-- DADOS DO ALUNO --}}
 
 
-        {{-- ENDEREÇO DO ALUNO --}}
+        {{-- ENDEREÃ‡O DO ALUNO --}}
 
 
     </div>
@@ -359,3 +359,4 @@
 
 <script src="{{ asset('js/show-requerimento.js') }}"></script>
 @endsection
+

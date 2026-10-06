@@ -66,14 +66,12 @@
                         <tr>
                             <td>{{ $user->nome }}</td>
                             <td>{{ $user->email }}</td>
-                            @if ($user->role == 'professor')
-                                <td>Professor</td>
-                            @endif
                             @if ($user->role == 'servidor')
-                                <td>Servidor</td>
-                            @endif
-                            @if ($user->role == 'admin')
+                                <td>Servidor Municipal</td>
+                            @elseif ($user->role == 'admin')
                                 <td>Administrador</td>
+                            @else
+                                <td>{{ ucfirst($user->role) }}</td>
                             @endif
                     @endforeach
                 </tbody>

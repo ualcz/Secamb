@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Novo Requerimento - SDP IFBA')
-@section('tag', 'Aluno')
+@section('title', 'SECAMB - Secretaria Municipal de Meio Ambiente de Seabra')
+@section('tag', 'Início')
 
 @section('content')
 
@@ -12,16 +12,16 @@
         <div class="hero-wrapper">
             <div class="hero-text">
                 <div class="title">
-                    <h1>Sistema de Requerimentos e Protocolos</h1>
-                    <h2>IFBA - Campus Seabra</h2>
+                    <h1>Sistema de Gestão Ambiental e Licenciamento</h1>
+                    <h2>Prefeitura Municipal de Seabra - SECAMB</h2>
                 </div>
                 <p>
-                    O Sistema de Requerimentos e Protocolos (SDP) foi desenvolvido para facilitar o envio, tramitação e acompanhamento de solicitações acadêmicas e administrativas, garantindo transparência e agilidade ao processo.
+                    O SECAMB Digital foi desenvolvido para facilitar a emissão de licenças, autorizações e o acompanhamento de processos ambientais municipais, garantindo transparência, sustentabilidade e agilidade ao cidadão e empreendedor.
                 </p>
                 <div class="hero-actions">
                     @auth
                         <a href="{{ route('requerimentos.aluno.novo') }}" class="btn-primary">
-                            Novo Requerimento →
+                            Novo Processo / Requerimento →
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="btn-primary">
@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="hero-image">
-                <img src="{{ asset('img/home.webp') }}" alt="Página Inicial SDP">
+                <img src="{{ asset('img/home.webp') }}" alt="Página Inicial SECAMB">
             </div>
         </div>
     </div>
@@ -39,21 +39,21 @@
 
 <section id="funcionalidades" class="fade-up">
     <div class="container">
-        <h2>Funcionalidades do SDP</h2>
+        <h2>Funcionalidades do SECAMB Digital</h2>
         <div class="cards-grid">
             <div class="card">
-                <h3>Abertura de Requerimento</h3>
-                <p>Abra chamados e requerimentos acadêmicos de forma simples e 100% digital.</p>
+                <h3>Abertura de Processos</h3>
+                <p>Solicite Licenças Ambientais (LP, LI, LO), Autorizações de Supressão e Dispensa de forma 100% digital.</p>
             </div>
 
             <div class="card">
-                <h3>Preenchimento Automático</h3>
-                <p>Faça login no SUAP para preencher automaticamente as informações do requerimento.</p>
+                <h3>Acompanhamento em Tempo Real</h3>
+                <p>Monitore o parecer técnico, parecer jurídico e despachos dos analistas ambientais do município.</p>
             </div>
 
             <div class="card">
                 <h3>Emissão de Documentos</h3>
-                <p>Gere comprovantes e requerimentos oficiais prontos para impressão em formato PDF.</p>
+                <p>Gere requerimentos oficiais e comprovantes de protocolo com autenticação e validação eletrônica.</p>
             </div>
         </div>
     </div>
@@ -67,19 +67,14 @@
                 <h2>Como funciona a tramitação</h2>
 
                 <p>
-                    O SDP conecta os estudantes diretamente aos setores responsáveis (como <strong>CORES</strong>, <strong>Coordenações de Curso</strong> e <strong>Direção</strong>). Cada solicitação segue um fluxo organizado e transparente, gerando um registro e número de protocolo único.
+                    O sistema conecta cidadãos e empreendedores aos setores responsáveis da Secretaria de Meio Ambiente de Seabra. Cada processo é protocolado com numeração única e passa por análise técnica, vistorias e deliberação com total segurança e conformidade legal.
                 </p>
 
-                <div class="suap-notice">
-                    <span class="notice-title">Integração com o SUAP</span>
-                    <p>
-                        Seus dados são preenchidos automaticamente via integração. Mantenha suas informações sempre atualizadas no SUAP para evitar divergências nos requerimentos.
-                    </p>
-                </div>
+                <div class="secamb-notice"><span class="notice-title">Sistema Municipal de Licenciamento</span><p>Seus dados são preenchidos automaticamente ao fazer login com seu e-mail e senha cadastrados. Mantenha seu cadastro sempre atualizado.</p></div>
             </div>
 
             <div class="sobre-image">
-                <img loading="lazy" src="{{ asset('img/home_sistema.webp') }}" alt="Ilustração do sistema SDP" class="fade-right">
+                <img loading="lazy" src="{{ asset('img/home_sistema.webp') }}" alt="Ilustração do sistema SECAMB" class="fade-right">
             </div>
         </div>
     </div>
@@ -95,15 +90,15 @@
                 </div>
                 <h3>Caio Souza dos Anjos</h3>
                 <p class="role">Discente IFBA</p>
-                <p class="desc">Discente da graduação em ADS, ingresso no 1º semestre de 2026.</p>
+                <p class="desc">Desenvolvedor do projeto em parceria com o IFBA Seabra.</p>
             </div>
             <div class="card-dev">
                 <div class="avatar">
-                    <img loading="lazy" src="{{ asset('img/perfil/Clau.jpg') }}" alt="Claudeilson Souza Assuncão">
+                    <img loading="lazy" src="{{ asset('img/perfil/Clau.jpg') }}" alt="Claudeilson Souza Assunção">
                 </div>
-                <h3>Claudeilson Souza Assuncão</h3>
+                <h3>Claudeilson Souza Assunção</h3>
                 <p class="role">Discente IFBA</p>
-                <p class="desc">Discente da graduação em ADS, ingresso no 1º semestre de 2026.</p>
+                <p class="desc">Desenvolvedor do projeto em parceria com o IFBA Seabra.</p>
             </div>
             <div class="card-dev">
                 <div class="avatar">
@@ -111,7 +106,7 @@
                 </div>
                 <h3>Graziele Brandão Silva</h3>
                 <p class="role">Discente IFBA</p>
-                <p class="desc">Discente da graduação em ADS, ingresso no 1º semestre de 2026.</p>
+                <p class="desc">Desenvolvedor do projeto em parceria com o IFBA Seabra.</p>
             </div>
             <div class="card-dev">
                 <div class="avatar">
@@ -119,7 +114,7 @@
                 </div>
                 <h3>Larissa Souza Rocha</h3>
                 <p class="role">Discente IFBA</p>
-                <p class="desc">Discente da graduação em ADS, ingresso no 1º semestre de 2026.</p>
+                <p class="desc">Desenvolvedor do projeto em parceria com o IFBA Seabra.</p>
             </div>
 
             <div class="card-dev">
@@ -128,7 +123,7 @@
                 </div>
                 <h3>Monck Charles Albuquerque</h3>
                 <p class="role">Docente / Orientador</p>
-                <p class="desc">Docente do Curso de Informática no IFBA - Campus Seabra e orientador do projeto.</p>
+                <p class="desc">Docente no IFBA - Campus Seabra e orientador do projeto.</p>
             </div>
         </div>
     </div>

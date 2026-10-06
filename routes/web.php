@@ -23,10 +23,9 @@ Route::get('/', function () {
 })->name('home');
 /*
 |--------------------------------------------------------------------------
-| LOGIN & AUTENTICAÇÃO
+| LOGIN & AUTENTICAÇÃO — SECAMB (Prefeitura Municipal de Seabra)
 |--------------------------------------------------------------------------
-| Admin: email + senha local
-| Aluno / Servidor: matrícula + senha SUAP
+| Todos os perfis (cidadão, servidor, admin) fazem login com e-mail e senha.
 */
 Route::get('/login', function () {
     return view('auth.login');
@@ -60,7 +59,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 });
 
-Route::middleware(['auth', 'role:admin,professor,servidor'])->group(function () {
+Route::middleware(['auth', 'role:admin,servidor'])->group(function () {
     Route::get('/admin/consultar-requerimentos', [AdminConsultaController::class, 'index'])
         ->name('admin.consultar-requerimentos');
     Route::get('/admin/historico/{id}', [RequerimentoController::class, 'showHistorico'])
@@ -86,7 +85,7 @@ Route::middleware(['auth', 'setor.config'])->group(function () {
     Route::post('/admin/modelos/{id}/assuntos', [AdminSetorController::class, 'storeAssunto'])->name('admin.modelos.assuntos.store');
 });
 
-Route::middleware(['auth', 'role:professor,servidor'])->group(function () {
+Route::middleware(['auth', 'role:servidor'])->group(function () {
     Route::get('/servidor/dashboard', [AdminDashboardController::class, 'index'])
         ->name('servidor.dashboard');
 });
@@ -112,10 +111,10 @@ Route::middleware(['auth', 'responsavel'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| PAINEL / REQUERIMENTOS - ALUNO
+| PAINEL / PROCESSOS - CIDADÃO
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:aluno'])->group(function () {
+Route::middleware(['auth', 'role:cidadao'])->group(function () {
     Route::get('/requerimentos/aluno', function () {
         $setores = \App\Models\Setor::where('ativo', true)->get();
         return view('requerimentos.aluno', compact('setores'));
@@ -131,10 +130,10 @@ Route::middleware(['auth', 'role:aluno'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| PAINEL / REQUERIMENTOS - SERVIDOR
+| PAINEL / PROCESSOS - SERVIDOR (TÉCNICO MUNICIPAL)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:professor'])->group(function () {
+Route::middleware(['auth', 'role:servidor'])->group(function () {
     Route::get('/requerimentos/servidor', function () {
         return view('requerimentos.servidor');
     })->name('requerimentos.servidor');

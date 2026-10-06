@@ -1,12 +1,12 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Dashboard - SDP')
-@section('tag', 'Administração')
+@section('tag', 'AdministraÃ§Ã£o')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/consultaRequerimento.css') }}?v={{ filemtime(public_path('css/consultaRequerimento.css')) }}">
 
-{{-- Filtro Avançado de Pesquisa --}}
+{{-- Filtro AvanÃ§ado de Pesquisa --}}
 <div class="dash-filter-card">
     <form method="GET" action="" class="dash-filter-form">
         <div class="filter-grid">
@@ -18,7 +18,7 @@
 
             <div class="filter-group">
                 <label class="filter-label">Turma</label>
-                <input type="text" name="turma" value="{{ request('turma') }}" placeholder="Código da turma..." class="input-filtro">
+                <input type="text" name="turma" value="{{ request('turma') }}" placeholder="CÃ³digo da turma..." class="input-filtro">
             </div>
 
             <div class="filter-group">
@@ -38,7 +38,7 @@
                 <select name="status" class="input-filtro">
                     <option value="">Todos</option>
                     <option value="Aberto" {{ request('status') == 'Aberto' ? 'selected' : '' }}>Aberto</option>
-                    <option value="Em Análise" {{ request('status') == 'Em Análise' ? 'selected' : '' }}>Em Análise</option>
+                    <option value="Em AnÃ¡lise" {{ request('status') == 'Em AnÃ¡lise' ? 'selected' : '' }}>Em AnÃ¡lise</option>
                     <option value="Indeferido" {{ request('status') == 'Indeferido' ? 'selected' : '' }}>Indeferido</option>
                     <option value="Concluido" {{ request('status') == 'Concluido' ? 'selected' : '' }}>Concluido</option>
                 </select>
@@ -97,18 +97,18 @@
                         <th>Requerimento</th>
                         <th style="width: 120px; text-align: center;">Setor</th>
                         <th style="text-align: center;">Status</th>
-                        <th style="text-align: center;">Ações</th>
+                        <th style="text-align: center;">AÃ§Ãµes</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($requerimentos as $requerimento)
                         <tr>
-                            <td>{{ $requerimento->id ?? 'Usuário removido' }}</td>
+                            <td>{{ $requerimento->id ?? 'UsuÃ¡rio removido' }}</td>
                             <td style="color: #64748b; font-size: 0.8125rem;">
                                 {{ $requerimento->created_at?->format('d/m/Y H:i') }}
                             </td>
-                            <td>{{ $requerimento->usuario?->nome ?? 'Usuário removido' }}</td>
-                            <td>{{ $requerimento->usuario?->turma_codigo ?? 'Usuário removido' }}</td>
+                            <td>{{ $requerimento->usuario?->nome ?? 'UsuÃ¡rio removido' }}</td>
+                            <td>{{ $requerimento->usuario?->tipo_processo_formatado ?? 'UsuÃ¡rio removido' }}</td>
                             <td>{{ $requerimento->objetoDoRequerimento }}</td>
                             <td style="text-align: center;">
                                 <span class="badge badge-setor" title="{{ $requerimento->setor_nome }}">
@@ -133,3 +133,4 @@
     @endif
 </section>
 @endsection
+

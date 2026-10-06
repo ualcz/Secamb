@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 <link rel="stylesheet" href="{{ asset('css/show-requerimento.css') }}?v={{ filemtime(public_path('css/show-requerimento.css')) }}">
 
@@ -7,7 +7,7 @@
     <x-btn-voltar style="grid-column: span 2;" />
 
     <div class="historico">
-        <h3>Histórico da Tramitação</h3>
+        <h3>HistÃ³rico da TramitaÃ§Ã£o</h3>
 
         <ul class="timeline">
             @forelse($historicos as $historico)
@@ -17,14 +17,14 @@
                         <div class="timeline-heading">
                             <span class="badge-status">{{ $historico->status }}</span>
                             <span class="timeline-date">
-                                {{ $historico->created_at->format('d/m/Y \\à\\s H:i') }}
+                                {{ $historico->created_at->format('d/m/Y \\Ã \\s H:i') }}
                             </span>
                         </div>
                         <div class="timeline-body">
-                            <p><strong>Responsável:</strong> {{ $historico->usuario?->nome ?? 'Sistema' }}</p>
+                            <p><strong>ResponsÃ¡vel:</strong> {{ $historico->usuario?->nome ?? 'Sistema' }}</p>
                             @if($historico->observacao)
                                 <div class="timeline-observacao">
-                                    <strong>Observação:</strong> {{ $historico->observacao }}
+                                    <strong>ObservaÃ§Ã£o:</strong> {{ $historico->observacao }}
                                 </div>
                             @endif
                             @if($historico->solicita_novo_documento)
@@ -33,7 +33,7 @@
                                 </div>
                             @endif
 
-                            {{-- DOCUMENTOS ANEXADOS NESTA TRAMITAÇÃO --}}
+                            {{-- DOCUMENTOS ANEXADOS NESTA TRAMITAÃ‡ÃƒO --}}
                             @include('requerimentos.partials.historico-documentos', [
                                 'documentos' => $historico->documentos,
                                 'historico' => $historico,
@@ -43,7 +43,7 @@
                     </div>
                 </li>
             @empty
-                <p>Nenhum registro no histórico até o momento.</p>
+                <p>Nenhum registro no histÃ³rico atÃ© o momento.</p>
             @endforelse
         </ul>
     </div>
@@ -52,7 +52,7 @@
         <div class="card-painel">
             <div class="card-header-flex">
                 <div>
-                    <span class="info-label">Nº Protocolo</span>
+                    <span class="info-label">NÂº Protocolo</span>
                     <h1 class="card-titulo" style="font-size: 1.5rem; color: #2563eb;">
                         {{ $requerimento->id }}
                     </h1>
@@ -60,8 +60,8 @@
                 @php
                     $statusClass = match($requerimento->status) {
                         'Aberto' => 'badge-Aberto',
-                        'Em Análise' => 'badge-analise',
-                        'Concluído' => 'badge-concluido',
+                        'Em AnÃ¡lise' => 'badge-analise',
+                        'ConcluÃ­do' => 'badge-concluido',
                         'Indeferido' => 'badge-indeferido',
                         'Despacho' => 'badge-despacho',
                         default => 'badge-analise'
@@ -79,20 +79,20 @@
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">Data e Hora de Envio</span>
-                    <span class="info-valor">{{ $requerimento->created_at->format('d/m/Y \\à\\s H:i') }}</span>
+                    <span class="info-valor">{{ $requerimento->created_at->format('d/m/Y \\Ã \\s H:i') }}</span>
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">Aluno</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->nome ?? 'Não informado' }}</span>
+                    <span class="info-valor">{{ $requerimento->usuario?->nome ?? 'NÃ£o informado' }}</span>
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">Setor</span>
-                    <span class="info-valor">{{ $requerimento->setor?->setor_sigla ?? 'Não informado' }}</span>
+                    <span class="info-valor">{{ $requerimento->setor?->setor_sigla ?? 'NÃ£o informado' }}</span>
                 </div>
             </div>
 
             <div class="info-grupo" style="margin-top: 0.75rem;">
-                <span class="info-label">Motivo / Solicitação</span>
+                <span class="info-label">Motivo / SolicitaÃ§Ã£o</span>
                 <div class="box-motivo">
                     <span class="info-valor">{{ $requerimento->motivo }}</span>
                 </div>
@@ -101,40 +101,40 @@
     @if(auth()->user()->isAdmin() || auth()->user()->isServidor())
         <div class="card-painel info-aluno">
             <h2 class="card-titulo" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 1rem;">
-                Informações do Aluno
+                InformaÃ§Ãµes do Aluno
             </h2>
             <div class="grid-2">
                 <div class="info-grupo">
                     <span class="info-label">Nome Completo</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->nome ?? 'Não informado' }}</span>
+                    <span class="info-valor">{{ $requerimento->usuario?->nome ?? 'NÃ£o informado' }}</span>
                 </div>
                 <div class="info-grupo">
-                    <span class="info-label">Matrícula</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->matricula ?? 'Não informada' }}</span>
+                    <span class="info-label">MatrÃ­cula</span>
+                    <span class="info-valor">{{ $requerimento->usuario?->matricula ?? 'NÃ£o informada' }}</span>
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">CPF</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->cpf ?? 'Não informado' }}</span>
+                    <span class="info-valor">{{ $requerimento->usuario?->cpf ?? 'NÃ£o informado' }}</span>
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">Turma</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->turma_codigo ?? 'Não informada' }}</span>
+                    <span class="info-valor">{{ $requerimento->usuario?->tipo_processo_formatado ?? 'NÃ£o informada' }}</span>
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">E-mail Institucional</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->email ?? 'Não informado' }}</span>
+                    <span class="info-valor">{{ $requerimento->usuario?->email ?? 'NÃ£o informado' }}</span>
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">E-mail Pessoal</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->email_pessoal ?? 'Não informado' }}</span>
+                    <span class="info-valor">{{ $requerimento->usuario?->email ?? 'NÃ£o informado' }}</span>
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">Telefone / WhatsApp</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->telefone ?? 'Não informado' }}</span>
+                    <span class="info-valor">{{ $requerimento->usuario?->telefone ?? 'NÃ£o informado' }}</span>
                 </div>
             </div>
 
-            <h3 style="margin-top: 1.25rem;">Endereço Residencial</h3>
+            <h3 style="margin-top: 1.25rem;">EndereÃ§o Residencial</h3>
             @if($requerimento->usuario?->endereco)
                 <div class="grid-2">
                     <div class="info-grupo">
@@ -142,7 +142,7 @@
                         <span class="info-valor">{{ $requerimento->usuario->endereco->rua }}</span>
                     </div>
                     <div class="info-grupo">
-                        <span class="info-label">Número</span>
+                        <span class="info-label">NÃºmero</span>
                         <span class="info-valor">{{ $requerimento->usuario->endereco->numero }}</span>
                     </div>
                     <div class="info-grupo">
@@ -159,7 +159,7 @@
                     </div>
                 </div>
             @else
-                <p style="color: #6b7280; font-size: 0.875rem;">Nenhum endereço cadastrado.</p>
+                <p style="color: #6b7280; font-size: 0.875rem;">Nenhum endereÃ§o cadastrado.</p>
             @endif
         </div>
     @endif
@@ -168,3 +168,4 @@
 
 <script src="{{ asset('js/show-requerimento.js') }}?v={{ filemtime(public_path('js/show-requerimento.js')) }}"></script>
 @endsection
+

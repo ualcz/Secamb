@@ -1,7 +1,7 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', $setor->setor_sigla.' - SDP')
-@section('tag', 'Administração')
+@section('tag', 'AdministraÃ§Ã£o')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/consultaRequerimento.css') }}?v={{ filemtime(public_path('css/consultaRequerimento.css')) }}">
@@ -18,7 +18,7 @@
 
             <div class="filter-group">
                 <label class="filter-label">Turma</label>
-                <input type="text" name="turma" value="{{ request('turma') }}" placeholder="Código da turma..." class="input-filtro">
+                <input type="text" name="turma" value="{{ request('turma') }}" placeholder="CÃ³digo da turma..." class="input-filtro">
             </div>
 
             <div class="filter-group">
@@ -26,10 +26,10 @@
                 <select name="status" class="input-filtro">
                     <option value="">Todos</option>
                     <option value="Aberto" {{ request('status') == 'Aberto' ? 'selected' : '' }}>Aberto</option>
-                    <option value="Em Análise" {{ request('status') == 'Em Análise' ? 'selected' : '' }}>Em Análise</option>
+                    <option value="Em AnÃ¡lise" {{ request('status') == 'Em AnÃ¡lise' ? 'selected' : '' }}>Em AnÃ¡lise</option>
                     <option value="Despacho" {{ request('status') == 'Despacho' ? 'selected' : '' }}>Despacho</option>
                     <option value="Indeferido" {{ request('status') == 'Indeferido' ? 'selected' : '' }}>Indeferido</option>
-                    <option value="Concluído" {{ request('status') == 'Concluído' ? 'selected' : '' }}>Concluído</option>
+                    <option value="ConcluÃ­do" {{ request('status') == 'ConcluÃ­do' ? 'selected' : '' }}>ConcluÃ­do</option>
                 </select>
             </div>
 
@@ -76,18 +76,18 @@
                         <th>Turma</th>
                         <th>Requerimento</th>
                         <th style="text-align: center;">Status</th>
-                        <th style="text-align: center;">Ações</th>
+                        <th style="text-align: center;">AÃ§Ãµes</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($requerimentos as $requerimento)
                         <tr>
-                            <td>{{ $requerimento->id ?? 'Usuário removido' }}</td>
+                            <td>{{ $requerimento->id ?? 'UsuÃ¡rio removido' }}</td>
                             <td style="color: #64748b; font-size: 0.8125rem;">
                                 {{ $requerimento->created_at?->format('d/m/Y H:i') }}
                             </td>
-                            <td>{{ $requerimento->usuario?->nome ?? 'Usuário removido' }}</td>
-                            <td>{{ $requerimento->usuario?->turma_codigo ?? 'Usuário removido' }}</td>
+                            <td>{{ $requerimento->usuario?->nome ?? 'UsuÃ¡rio removido' }}</td>
+                            <td>{{ $requerimento->usuario?->tipo_processo_formatado ?? 'UsuÃ¡rio removido' }}</td>
                             <td>{{ $requerimento->objetoDoRequerimento }}</td>
                             <td class="{{ $requerimento->status ?? 'Aberto' }}" style="text-align: center;">
                                 <span>{{ $requerimento->status ?? 'Aberto' }}</span>
@@ -109,3 +109,4 @@
     @endif
 </section>
 @endsection
+
