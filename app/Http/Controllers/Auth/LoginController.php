@@ -6,191 +6,51 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Crypt;
 use App\Models\Usuario;
-use App\Services\SuapService;
-use App\Services\Suap\SuapSyncService;
 
 class LoginController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | Login único
+    | Login - SECAMB (Prefeitura Municipal de Seabra)
     |--------------------------------------------------------------------------
-    | Admin: email + senha local
-    | Aluno/Professor: matrícula + senha SUAP
+    | Todos os usuários (cidadãos, servidores e administradores) fazem login
+    | com e-mail e senha cadastrados localmente no sistema.
+    |
+    | Perfis de redirecionamento após login:
+    |   admin    → painel administrativo
+    |   servidor → painel de gestão de processos
+    |   cidadao  → painel do cidadão (processos)
     */
-    public function login(Request $request, SuapService $suap, SuapSyncService $syncService)
+
+    public function login(Request $request)
     {
         $request->validate([
-            'login' => 'required',
+            'email'    => 'required|email',
             'password' => 'required',
+        ], [
+            'email.required'    => 'O e-mail é obrigatório.',
+            'email.email'       => 'Informe um e-mail válido.',
+            'password.required' => 'A senha é obrigatória.',
         ]);
 
-        $login = $request->login;
-        $password = $request->password;
+        $usuario = Usuario::where('email', $request->email)->first();
 
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN LOCAL
-        |--------------------------------------------------------------------------
-        */
-        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
-            $usuario = Usuario::where('email', $login)->first();
-
-            if (!$usuario || !Hash::check($password, $usuario->password)) {
-
-                return back()->withErrors([
-                    'login' => 'Email ou senha inválidos.',
-                ]);
-            }
-
-            Auth::login($usuario);
-
-            if ($usuario->isAdmin()) {
-                return redirect()->route('admin.dashboard');
-            }
-
-            if ($usuario->isProfessor()) {
-                return redirect()->route('servidor.dashboard');
-            }
-
-            return redirect()->route('requerimentos.aluno');
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | SUAP
-        |--------------------------------------------------------------------------
-        */
-        $jwt = $suap->autenticar($login, $password);
-
-/*
-|--------------------------------------------------------------------------
-| FALLBACK LOCAL
-|--------------------------------------------------------------------------
-*/
-if (!$jwt) {
-
-    $usuario = Usuario::where('matricula', $login)->first();
-
-    if (
-        !$usuario ||
-        !Hash::check($password, $usuario->password)
-    ) {
-
-        return back()->withErrors([
-            'login' => 'Matrícula ou senha inválidos.',
-        ]);
-    }
-
-    Auth::login($usuario);
-
-    if ($usuario->ehResponsavel()) {
-                return redirect()->route('setor.responsavel.dashboard');
-            }
-
-    if ($usuario->isProfessor()) {
-        return redirect()->route('servidor.dashboard');
-    }
-
-    return redirect('/requerimentos/aluno');
-}
-
-        $dados = $suap->meusDados($jwt);
-
-        if (!$dados) {
-
+        if (!$usuario || !Hash::check($request->password, $usuario->password)) {
             return back()->withErrors([
-                'login' => 'Não foi possível obter dados do SUAP.',
-            ]);
+                'email' => 'E-mail ou senha inválidos.',
+            ])->withInput($request->only('email'));
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | PAPEL DO USUÁRIO
-        |--------------------------------------------------------------------------
-        */
-        $role = 'aluno';
-
-        if (($dados['tipo_vinculo'] ?? '') === 'Servidor') {
-            $role = 'professor';
+        if (isset($usuario->ativo) && !$usuario->ativo) {
+            return back()->withErrors([
+                'email' => 'Sua conta está desativada. Entre em contato com a Prefeitura.',
+            ])->withInput($request->only('email'));
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | EMAIL
-        |--------------------------------------------------------------------------
-        | Alguns usuários do SUAP vêm com email vazio.
-        | Nesse caso, usamos um email técnico baseado na matrícula.
-        */
-        $email = !empty($dados['email'])
-            ? $dados['email']
-            : $dados['matricula'] . '@ifba.edu.br';
+        Auth::login($usuario, $request->boolean('lembrar'));
 
-        /*
-        |--------------------------------------------------------------------------
-        | USUÁRIO LOCAL
-        |--------------------------------------------------------------------------
-        */
-        $usuario = Usuario::updateOrCreate(
-
-            [
-                'matricula' => $dados['matricula'],
-            ],
-
-            [
-                'nome' => $dados['nome_usual']
-                    ?? $dados['vinculo']['nome']
-                    ?? 'Usuário SUAP',
-
-                'email' => $email,
-
-                'password' => Hash::make($password),
-
-                'senha_suap' => Crypt::encryptString($password),
-
-                'role' => $role,
-            ]
-        );
-
-        /*
-        |--------------------------------------------------------------------------
-        | LOGIN NO LARAVEL
-        |--------------------------------------------------------------------------
-        */
-        Auth::login($usuario);
-
-        /*
-        |--------------------------------------------------------------------------
-        | WEB SCRAPING: E-MAIL PESSOAL & TURMA
-        |--------------------------------------------------------------------------
-        | Busca dados complementares não disponíveis na API REST
-        */
-        $syncService->sincronizar($usuario, $password);
-
-        /*
-        |--------------------------------------------------------------------------
-        | SALVA JWT NA SESSÃO
-        |--------------------------------------------------------------------------
-        | Permitirá futuras integrações com o SUAP
-        | sem pedir a senha novamente.
-        */
-        session([
-            'suap_jwt' => $jwt,
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | REDIRECIONAMENTO
-        |--------------------------------------------------------------------------
-        */
-        if ($usuario->isProfessor()) {
-
-            return redirect()->route('servidor.dashboard');
-        }
-
-        return redirect('/requerimentos/aluno');
+        return $this->redirecionarPorPerfil($usuario);
     }
 
     /*
@@ -198,12 +58,40 @@ if (!$jwt) {
     | Logout
     |--------------------------------------------------------------------------
     */
+
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home');
+        return redirect()->route('login')->with('success', 'Você saiu do sistema.');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Redirecionamento por perfil
+    |--------------------------------------------------------------------------
+    */
+
+    private function redirecionarPorPerfil(Usuario $usuario)
+    {
+        if ($usuario->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($usuario->isServidor()) {
+            // Se o servidor é também responsável de setor, vai direto ao dashboard do setor
+            if ($usuario->ehResponsavel()) {
+                $primeiroSetor = $usuario->setoresSobResponsabilidade()->first();
+                if ($primeiroSetor) {
+                    return redirect()->route('setor.responsavel.dashboard', $primeiroSetor->id);
+                }
+            }
+            return redirect()->route('servidor.dashboard');
+        }
+
+        // Cidadão → painel de processos
+        return redirect()->route('requerimentos.aluno');
     }
 }
