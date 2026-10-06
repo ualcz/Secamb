@@ -167,13 +167,16 @@
                     </nav>
 
 
-                    <div class="header-user">
-                        <a class=" nav-link active" href="{{ route('login') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <div class="header-user" style="display:flex; gap:8px; align-items:center;">
+                        <a class="nav-link active" href="{{ route('login') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                                 <polyline points="10 17 15 12 10 7"></polyline>
                                 <line x1="15" y1="12" x2="3" y2="12"></line>
-                        </svg>Entrar
+                            </svg>Entrar
+                        </a>
+                        <a class="nav-link" href="{{ route('register') }}" style="background:#0284c7; color:#fff; border-radius:8px; padding:6px 12px; font-weight:600;">
+                            Cadastre-se
                         </a>
                     </div>
                 </div>

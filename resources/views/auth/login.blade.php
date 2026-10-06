@@ -98,7 +98,7 @@
             </form>
 
             <div class="login-footer-links">
-                <p>Ainda não tem cadastro? <a href="{{ route('home') }}">Saiba como solicitar acesso</a></p>
+                <p>Não possui conta? <a href="{{ route('register') }}">Cadastre-se</a></p>
             </div>
         </div>
 

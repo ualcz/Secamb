@@ -24,9 +24,14 @@
                             Novo Processo / Requerimento →
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="btn-primary">
-                            Acessar Sistema →
-                        </a>
+                        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                            <a href="{{ route('login') }}" class="btn-primary">
+                                Acessar Sistema →
+                            </a>
+                            <a href="{{ route('register') }}" class="btn-primary" style="background:#0284c7; border-color:#0284c7;">
+                                Cadastre-se
+                            </a>
+                        </div>
                     @endauth
                 </div>
             </div>
