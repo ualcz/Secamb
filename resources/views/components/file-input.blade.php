@@ -9,7 +9,7 @@
 
 @php
     $id = 'file_input_' . Str::random(8);
-    $defaultHelpText =$required ? 'Campo obrigatório.' : 'Opcional. Adicione outros arquivos se desejar.';
+    $defaultHelpText = $required ? 'Campo obrigatório.' : 'Opcional. Adicione outros arquivos se desejar.';
 @endphp
 
 <style>
@@ -21,6 +21,7 @@
         border-radius: 8px;
         text-align: center;
         cursor: pointer;
+        position: relative;
         transition: border-color 0.2s, background-color 0.2s;
     }
     .custom-file-upload:hover {
@@ -28,7 +29,15 @@
         border-color: #9ca3af;
     }
     .custom-file-upload input[type="file"] {
-        display: none;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+        opacity: 0;
     }
     .file-upload-text {
         font-size: 13px;
@@ -65,13 +74,12 @@
         {{ $helpText ?? $defaultHelpText }}
     </small>
 
-
     <label @class(['custom-file-upload', 'obrigatorio' => $required])>
         <input
             type="file"
             name="{{ $name }}"
             @if($multiple) multiple @endif
-            @if($required) required @endif
+            data-obrigatorio="{{ $required ? 'true' : 'false' }}"
             accept="{{ $accept }}"
             onchange="atualizarFeedbackInline_{{ $id }}(this)"
             {{ $attributes }}

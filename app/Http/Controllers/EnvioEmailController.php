@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\InformacoesAlunoMail;
+use App\Mail\ConfirmacaoRequerimentoUsuarioMail;
+use App\Mail\NotificacaoSetorMail;
+use App\Models\AssuntoRequerimento;
 use App\Models\Requerimento;
 use App\Models\Setor;
 use App\Services\DocumentoRequerimentoService;
-use App\Services\RequerimentoEmailService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class EnvioEmailController extends Controller
 {
     /**
-     * Protocola o processo de licenciamento ambiental:
-     * salva no banco, gera PDF, e envia e-mail ao setor e ao cidadão.
+     * Protocola o requerimento:
+     * salva no banco de dados, registra o histórico e salva os arquivos no disco.
+     * Nenhum e-mail é enviado — apenas uma notificação de sucesso na tela.
      */
     public function enviar(Request $request)
     {
@@ -27,18 +31,20 @@ class EnvioEmailController extends Controller
             'motivo'               => 'nullable|string|max:3000',
             'mensagem'             => 'nullable|string|max:3000',
             'telefone'             => 'nullable|string|max:30',
+            'celular'              => 'nullable|string|max:30',
             'rua'                  => 'nullable|string|max:255',
             'numero'               => 'nullable|string|max:20',
+            'complemento'          => 'nullable|string|max:255',
             'bairro'               => 'nullable|string|max:255',
             'cidade'               => 'nullable|string|max:255',
             'estado'               => 'nullable|string|max:2',
             'cep'                  => 'nullable|string|max:10',
             'endereco'             => 'nullable|string|max:255',
-            'email_adicional'      => 'nullable|email',
-            'arquivos.*'           => 'nullable|file|max:51200', // 50MB por arquivo complementar
-            'documentos.*'         => 'nullable|file|max:51200', // 50MB por documento obrigatório
+            'arquivos.*'           => 'nullable|file|max:51200',
+            'documentos.*'         => 'nullable|file|max:51200',
         ]);
 
+        // 1. Identifica o setor de destino
         $setorParam = $request->input('setor_id') ?? $request->input('setor');
         $setor = null;
         if (is_numeric($setorParam)) {
@@ -52,13 +58,12 @@ class EnvioEmailController extends Controller
         }
 
         if (!$setor) {
-            return back()->withErrors(['setor' => 'O setor selecionado é inválido.']);
+            return back()->withErrors(['setor' => 'O setor selecionado é inválido.'])->withInput();
         }
 
         $cidadao = auth()->user();
-        $aluno   = $cidadao; // alias mantido para compatibilidade com chamadas internas
 
-        // 1. Atualiza campos cadastrais do cidadão (telefone/celular se informados no form)
+        // 2. Atualiza dados de contato do cidadão se preenchidos
         $dadosUsuario = [];
         if ($request->filled('telefone')) {
             $dadosUsuario['telefone'] = $request->input('telefone');
@@ -66,56 +71,44 @@ class EnvioEmailController extends Controller
         if ($request->filled('celular')) {
             $dadosUsuario['celular'] = $request->input('celular');
         }
-
         if (!empty($dadosUsuario)) {
             try {
                 $cidadao->update($dadosUsuario);
             } catch (\Throwable $e) {
-                logger()->info('Não foi possível persistir dados cadastrais do cidadão: ' . $e->getMessage());
+                Log::info('Erro ao atualizar contato do cidadão: ' . $e->getMessage());
             }
         }
 
-        // 2. Atualiza dados de endereço na tabela 'enderecos'
+        // 3. Atualiza endereço do cidadão se preenchido
         $dadosEndereco = [];
         foreach (['rua', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep'] as $campo) {
             if ($request->filled($campo)) {
                 $dadosEndereco[$campo] = $request->input($campo);
             }
         }
-
         if (!empty($dadosEndereco)) {
             try {
                 $cidadao->endereco()->updateOrCreate([], $dadosEndereco);
                 $cidadao->load('endereco');
             } catch (\Throwable $e) {
-                logger()->info('Não foi possível persistir dados de endereço: ' . $e->getMessage());
+                Log::info('Erro ao atualizar endereço do cidadão: ' . $e->getMessage());
             }
         }
 
+        // 4. Determina o objeto e motivo do requerimento
         $objeto = !empty($request->input('objeto_outro'))
             ? 'Outros: ' . $request->input('objeto_outro')
-            : ($request->input('objetoDoRequerimento') ?? $request->input('objeto', 'Requerimento Geral'));
+            : ($request->input('objetoDoRequerimento') ?? $request->input('objeto', 'Licenciamento Ambiental Geral'));
 
         $motivo = !empty($request->input('motivo'))
             ? $request->input('motivo')
             : (!empty($request->input('mensagem')) ? $request->input('mensagem') : 'Solicitação de ' . $objeto);
 
-        $servicoEmail = app(RequerimentoEmailService::class);
-        $destinatarios = $servicoEmail->resolverDestinatarios(
-            $setor,
-            $cidadao,
-            $request->input('email_adicional')
-        );
-
-        if ($destinatarios === null) {
-            return back()->withErrors(['geral' => 'Nenhum e-mail de destino válido foi encontrado.']);
-        }
-
-        // 2. Validação de documentos obrigatórios e coleta de arquivos
+        // 5. Valida documentos obrigatórios vinculados ao assunto
         $assunto = null;
         if (empty($request->input('objeto_outro'))) {
             $objetoTexto = $request->input('objetoDoRequerimento') ?? $request->input('objeto');
-            $assunto = \App\Models\AssuntoRequerimento::where('descricao', $objetoTexto)->first();
+            $assunto = AssuntoRequerimento::where('descricao', $objetoTexto)->first();
 
             if ($assunto) {
                 $docsObrigatorios = $assunto->documentosObrigatorios()->get();
@@ -124,7 +117,6 @@ class EnvioEmailController extends Controller
                 $errosAnexos = [];
                 foreach ($docsObrigatorios as $doc) {
                     $arquivoDoc = $documentosEnviados[$doc->id] ?? null;
-
                     if (!$arquivoDoc || !($arquivoDoc instanceof \Illuminate\Http\UploadedFile) || !$arquivoDoc->isValid()) {
                         $errosAnexos[] = "O documento '{$doc->nome}' é obrigatório para a solicitação de '{$assunto->descricao}'.";
                     }
@@ -136,90 +128,110 @@ class EnvioEmailController extends Controller
             }
         }
 
-        // Coleta todos os arquivos enviados (específicos de documentos + complementares)
-        $todosArquivosInput = [
-            $request->file('documentos', []),
-            $request->file('arquivos', [])
-        ];
-
-        $arquivos = [];
-        array_walk_recursive($todosArquivosInput, function ($item) use (&$arquivos) {
-            if ($item instanceof \Illuminate\Http\UploadedFile && $item->isValid()) {
-                $arquivos[] = $item;
-            }
-        });
-
-        logger()->info('Requerimento: arquivos coletados', [
-            'total'     => count($arquivos),
-            'nomes'     => array_map(fn($f) => $f->getClientOriginalName(), $arquivos),
-            'documentos_raw' => array_keys($request->file('documentos', [])),
-        ]);
-
-        // 3. Salva o registro no banco de dados
+        // 6. Persiste Requerimento, Histórico e Documentos em transação
         $requerimento = null;
+        $historico    = null;
+
         try {
-            // Tenta encontrar o assunto pelo texto selecionado
-            $assunto = \App\Models\AssuntoRequerimento::where('descricao', $objeto)->first();
+            DB::beginTransaction();
+
+            if (!$assunto) {
+                $assunto = AssuntoRequerimento::where('descricao', $objeto)->first();
+            }
 
             $requerimento = Requerimento::create([
-                'usuario_id'             => $aluno->id,
-                'assunto_requerimento_id' => $assunto?->id,
-                'objetoDoRequerimento'   => $objeto,
-                'motivo'                 => $motivo,
-                'status'                 => 'Aberto',
+                'usuario_id'              => $cidadao->id,
                 'setor_id'                => $setor->id,
+                'assunto_requerimento_id' => $assunto?->id,
+                'objetoDoRequerimento'    => $objeto,
+                'tipo_processo'           => $objeto,
+                'descricao'               => $motivo,
+                'motivo'                  => $motivo,
+                'status'                  => 'Aberto',
             ]);
-            // Chama método para gerar número de protocolo;
+
+            // Gera o número de protocolo: ANO/ID
             $this->gerarNumeroProtocolo($requerimento);
 
-            $dominioEmail = substr(strrchr((string) config('mail.from.address'), '@') ?: '', 1);
-            $dominioEmail = $dominioEmail ?: (parse_url((string) config('app.url'), PHP_URL_HOST) ?: 'localhost');
-            $requerimento->forceFill([
-                'email_message_id' => Str::uuid() . '@' . $dominioEmail,
-            ])->save();
+            // O Observer já cria o histórico inicial — apenas o recuperamos
+            $historico = $requerimento->historicos()->latest()->first();
 
-            // Salva no banco e no storage os documentos enviados vinculados ao histórico inicial
-            $historicoInicial = $requerimento->historicos()->first();
+            // Salva arquivos no storage
             app(DocumentoRequerimentoService::class)->salvarDocumentosIniciais(
                 requerimento: $requerimento,
-                historico: $historicoInicial,
+                historico: $historico,
                 documentosInput: $request->file('documentos', []),
                 arquivosComplementares: $request->file('arquivos', []),
-                usuario: $aluno
+                usuario: $cidadao
             );
-        } catch (\Exception $e) {
-            logger()->warning('Não foi possível salvar requerimento no BD: ' . $e->getMessage());
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Erro ao protocolar requerimento: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withErrors(['geral' => 'Ocorreu um erro ao protocolar seu requerimento: ' . $e->getMessage()])
+                ->withInput();
         }
 
-        $resultadoPdf = app(DocumentoRequerimentoService::class)->gerarESalvarPdfRequerimento(
-            requerimento: $requerimento,
-            aluno: $aluno,
-            setorNome: $setor->setor_nome,
-            arquivos: $arquivos,
-            historico: $requerimento?->historicos()->first(),
-            usuario: $aluno,
-            setorChave: (string) $setor->id,
-            objeto: $objeto,
-            mensagem: $motivo
-        );
+        // Envia notificações por e-mail de forma resiliente (falha não bloqueia o usuário)
+        $this->enviarNotificacoes($requerimento, $cidadao, $setor, $objeto);
 
-        $mailable = new InformacoesAlunoMail(
-            aluno: $aluno,
-            setorNome: $setor->setor_nome,
-            mensagem: $motivo,
-            arquivos: $resultadoPdf['arquivos_nao_mesclados'],
-            objeto: $objeto,
-            setorChave: (string) $setor->id,
-            requerimento: $requerimento,
-            pdfRequerimento: $resultadoPdf['pdf']
-        );
-
-        $servicoEmail->enviar($mailable, $destinatarios);
-
-        return back()->with('sucesso', 'Requerimento enviado com sucesso!');
+        return redirect()
+            ->route('requerimentos.aluno.meusRequerimentos')
+            ->with('sucesso', "Requerimento nº {$requerimento->numero_protocolo} enviado com sucesso!");
     }
 
-    public function gerarNumeroProtocolo(Requerimento $requerimento){
+    /**
+     * Envia notificação simples (sem anexos) ao cidadão e ao setor.
+     */
+    private function enviarNotificacoes(
+        Requerimento $requerimento,
+        $cidadao,
+        Setor $setor,
+        string $objeto
+    ): void {
+        // 1. Notificação ao cidadão
+        try {
+            $emailCidadao = trim((string) $cidadao->email);
+            if (!empty($emailCidadao)) {
+                Mail::to($emailCidadao)->send(new ConfirmacaoRequerimentoUsuarioMail(
+                    aluno: $cidadao,
+                    setorNome: $setor->setor_nome,
+                    objeto: $objeto,
+                    requerimento: $requerimento,
+                ));
+                Log::info("Notificação enviada ao cidadão [{$emailCidadao}] — protocolo {$requerimento->numero_protocolo}");
+            }
+        } catch (\Throwable $e) {
+            Log::warning("Falha ao notificar cidadão: " . $e->getMessage());
+        }
+
+        // 2. Notificação ao setor
+        try {
+            $emailSetor = trim((string) $setor->email);
+            if (!empty($emailSetor)) {
+                Mail::to($emailSetor)->send(new NotificacaoSetorMail(
+                    cidadao: $cidadao,
+                    setor: $setor,
+                    objeto: $objeto,
+                    requerimento: $requerimento,
+                ));
+                Log::info("Notificação enviada ao setor [{$emailSetor}] — protocolo {$requerimento->numero_protocolo}");
+            }
+        } catch (\Throwable $e) {
+            Log::warning("Falha ao notificar setor: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Gera o número de protocolo no formato ANO/ID.
+     */
+    public function gerarNumeroProtocolo(Requerimento $requerimento): void
+    {
         $ano = $requerimento->created_at?->format('Y') ?? date('Y');
         $requerimento->numero_protocolo = $ano . '/' . $requerimento->id;
         $requerimento->save();

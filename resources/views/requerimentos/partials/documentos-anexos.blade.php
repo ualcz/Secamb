@@ -88,8 +88,7 @@
 
     <div class="step-nav">
         <button type="button" class="btn-voltar" onclick="mudarPasso(1)">Anterior</button>
-        <button type="submit" class="btn-enviar" id="btn-enviar-requerimento" disabled
-                title="Anexe todos os documentos obrigatórios para enviar">
+        <button type="submit" class="btn-enviar" id="btn-enviar-requerimento">
             Enviar Requerimento
         </button>
     </div>
