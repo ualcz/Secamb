@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('objetoDoRequerimento')->nullable();
             $table->string('tipo_processo')->nullable();
             $table->text('descricao')->nullable();
+            $table->text('motivo')->nullable();
 
             // Controle de status e tramitação
             $table->string('status', 40)->default('Novo'); // Novo, Em Atendimento, Devolvido, Finalizado, Indeferido, Expirado

@@ -52,6 +52,7 @@ class Requerimento extends Model
         'assunto_requerimento_id',// Tipo de licença/assunto cadastrado no painel admin
         'tipo_processo',          // Descrição textual do tipo (LP, LI, LO, etc.)
         'descricao',              // Detalhamento livre do processo
+        'motivo',                 // Justificativa / mensagem do requerimento
 
         // ─── Controle de tramitação ──────────────────────────────────────────
         'status',                 // Ver constantes STATUS_* acima

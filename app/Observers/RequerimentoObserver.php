@@ -10,12 +10,14 @@ class RequerimentoObserver
 {
     public function created(Requerimento $requerimento): void
     {
-        HistoricoRequerimento::create([
-            'requerimento_id' => $requerimento->id,
-            'user_id'         => Auth::id() ?? $requerimento->usuario_id,
-            'status'          => $requerimento->status ?? 'Aberto',
-            'observacao'      => 'Requerimento cadastrado no sistema.',
-        ]);
+        HistoricoRequerimento::firstOrCreate(
+            ['requerimento_id' => $requerimento->id],
+            [
+                'user_id'    => Auth::id() ?? $requerimento->usuario_id,
+                'status'     => $requerimento->status ?? 'Aberto',
+                'observacao' => 'Requerimento cadastrado no sistema.',
+            ]
+        );
     }
 
 }
