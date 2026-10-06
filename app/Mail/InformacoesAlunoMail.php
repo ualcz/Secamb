@@ -13,40 +13,44 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Headers;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * E-mail enviado ao cidadão ao protocolar um processo de licenciamento.
+ * Também usado pela tramitação interna (SECAMB).
+ */
 class InformacoesAlunoMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
-     * @param Usuario $aluno
-     * @param string $setorNome
-     * @param string|null $mensagem
-     * @param array $arquivos Array de UploadedFile ou caminhos de arquivos
+     * @param Usuario         $aluno           Cidadão requerente
+     * @param string          $setorNome        Nome da secretaria/setor da prefeitura
+     * @param string|null     $mensagem         Mensagem do cidadão ou observação do técnico
+     * @param array           $arquivos         Arquivos UploadedFile ou paths a anexar
+     * @param string|null     $objeto           Tipo/objeto do processo (ex: Licença de Operação)
+     * @param string|null     $setorChave       ID ou sigla do setor (uso interno)
+     * @param Requerimento|null $requerimento   Processo vinculado (para thread de e-mail)
+     * @param array|null      $pdfRequerimento  ['nome' => ..., 'conteudo' => ...] do PDF gerado
      */
     public function __construct(
-        public Usuario $aluno,
-        public string $setorNome,
-        public ?string $mensagem = null,
-        public array $arquivos = [],
-        public ?string $objeto = null,
-        public ?string $setorChave = null,
-        public ?Requerimento $requerimento = null,
-        public ?array $pdfRequerimento = null
+        public Usuario      $aluno,
+        public string       $setorNome,
+        public ?string      $mensagem        = null,
+        public array        $arquivos        = [],
+        public ?string      $objeto          = null,
+        public ?string      $setorChave      = null,
+        public ?Requerimento $requerimento   = null,
+        public ?array       $pdfRequerimento = null
     ) {}
 
-    /**
-     * Define o assunto e cabeçalhos do e-mail.
-     */
     public function envelope(): Envelope
     {
-        $assunto = $this->objeto
-            ? ($this->requerimento?->emailThreadSubject() ?? 'Requerimento [' . $this->objeto . '] - ' . $this->aluno->nome)
-            : 'Informações Cadastrais do Aluno: ' . $this->aluno->nome;
+        $assunto = $this->requerimento
+            ? $this->requerimento->emailThreadSubject()
+            : ('Protocolo SECAMB - ' . ($this->objeto ?? 'Licenciamento Ambiental') . ' - ' . $this->aluno->nome);
 
-        // Respostas do setor devem ir somente para o e-mail pessoal do aluno.
-        $replyToEmail = $this->aluno->email_pessoal;
-        $replyTo = $replyToEmail
-            ? [new Address($replyToEmail, $this->aluno->nome)]
+        // Reply-To aponta para o e-mail do cidadão para que o setor possa responder diretamente
+        $replyTo = $this->aluno->email
+            ? [new Address($this->aluno->email, $this->aluno->nome)]
             : [];
 
         return new Envelope(
@@ -60,9 +64,6 @@ class InformacoesAlunoMail extends Mailable
         return new Headers(messageId: $this->requerimento?->email_message_id);
     }
 
-    /**
-     * Define o template Blade usado.
-     */
     public function content(): Content
     {
         return new Content(
@@ -75,8 +76,10 @@ class InformacoesAlunoMail extends Mailable
         $anexos = [];
 
         if ($this->pdfRequerimento !== null) {
-            $anexos[] = Attachment::fromData(fn () => $this->pdfRequerimento['conteudo'], $this->pdfRequerimento['nome'])
-                ->withMime('application/pdf');
+            $anexos[] = Attachment::fromData(
+                fn () => $this->pdfRequerimento['conteudo'],
+                $this->pdfRequerimento['nome']
+            )->withMime('application/pdf');
         }
 
         foreach ($this->arquivos as $arquivo) {
@@ -92,4 +95,3 @@ class InformacoesAlunoMail extends Mailable
         return $anexos;
     }
 }
-
