@@ -86,6 +86,22 @@ class Usuario extends Authenticatable
         return $this->tipo_registro === 'juridica';
     }
 
+    /** Formatação do tipo de pessoa (Pessoa Física ou Pessoa Jurídica). */
+    public function getTipoPessoaFormatadoAttribute(): string
+    {
+        return match ($this->tipo_registro) {
+            'fisica' => 'Pessoa Física',
+            'juridica' => 'Pessoa Jurídica',
+            default => '—',
+        };
+    }
+
+    /** Compatibilidade para chamadas legadas de tipo_processo_formatado no usuário. */
+    public function getTipoProcessoFormatadoAttribute(): string
+    {
+        return $this->tipo_pessoa_formatado;
+    }
+
     /** Documento principal de identificação (CPF ou CNPJ). */
     public function getDocumentoIdentificacaoAttribute(): ?string
     {

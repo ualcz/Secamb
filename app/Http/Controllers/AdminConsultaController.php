@@ -22,6 +22,13 @@ class AdminConsultaController extends Controller
             });
         }
 
+        // 2. Filtro por Tipo de Pessoa (Pessoa Física ou Pessoa Jurídica)
+        $tipoPessoa = $request->input('turma') ?: $request->input('tipo_pessoa');
+        if (!empty($tipoPessoa)) {
+            $query->whereHas('usuario', function ($q) use ($tipoPessoa) {
+                $q->where('tipo_registro', $tipoPessoa);
+            });
+        }
 
         // 3. Filtro por Setor
         if ($request->filled('setor')) {

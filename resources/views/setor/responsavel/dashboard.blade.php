@@ -1,7 +1,7 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
-@section('title', $setor->setor_sigla.' - SDP')
-@section('tag', 'AdministraÃ§Ã£o')
+@section('title', $setor->setor_sigla.' - SECAMB')
+@section('tag', 'Administração')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/consultaRequerimento.css') }}?v={{ filemtime(public_path('css/consultaRequerimento.css')) }}">
@@ -12,13 +12,17 @@
     <form method="GET" action="{{ route('setor.responsavel.dashboard', $setor->id) }}" class="dash-filter-form">
         <div class="filter-grid" style="display:grid; grid-template-columns: 1.5fr 1.2fr 1.2fr 1.2fr 1fr 1fr auto; gap:1rem; align-items:end;">
             <div class="filter-group">
-                <label class="filter-label">Aluno</label>
-                <input type="text" name="aluno" value="{{ request('aluno') }}" placeholder="Nome do aluno..." class="input-filtro">
+                <label class="filter-label">Solicitante</label>
+                <input type="text" name="aluno" value="{{ request('aluno') }}" placeholder="Nome do solicitante..." class="input-filtro">
             </div>
 
             <div class="filter-group">
-                <label class="filter-label">Turma</label>
-                <input type="text" name="turma" value="{{ request('turma') }}" placeholder="CÃ³digo da turma..." class="input-filtro">
+                <label class="filter-label">Tipo de Pessoa</label>
+                <select name="turma" class="input-filtro">
+                    <option value="">Todos</option>
+                    <option value="fisica" {{ request('turma') == 'fisica' ? 'selected' : '' }}>Pessoa Física</option>
+                    <option value="juridica" {{ request('turma') == 'juridica' ? 'selected' : '' }}>Pessoa Jurídica</option>
+                </select>
             </div>
 
             <div class="filter-group">
@@ -26,10 +30,10 @@
                 <select name="status" class="input-filtro">
                     <option value="">Todos</option>
                     <option value="Aberto" {{ request('status') == 'Aberto' ? 'selected' : '' }}>Aberto</option>
-                    <option value="Em AnÃ¡lise" {{ request('status') == 'Em AnÃ¡lise' ? 'selected' : '' }}>Em AnÃ¡lise</option>
+                    <option value="Em Análise" {{ request('status') == 'Em Análise' ? 'selected' : '' }}>Em Análise</option>
                     <option value="Despacho" {{ request('status') == 'Despacho' ? 'selected' : '' }}>Despacho</option>
                     <option value="Indeferido" {{ request('status') == 'Indeferido' ? 'selected' : '' }}>Indeferido</option>
-                    <option value="ConcluÃ­do" {{ request('status') == 'ConcluÃ­do' ? 'selected' : '' }}>ConcluÃ­do</option>
+                    <option value="Concluído" {{ request('status') == 'Concluído' ? 'selected' : '' }}>Concluído</option>
                 </select>
             </div>
 
@@ -73,21 +77,21 @@
                         <th>ID</th>
                         <th style="width: 140px;">Data e Hora</th>
                         <th>Solicitante</th>
-                        <th>Turma</th>
+                        <th>Tipo de Pessoa</th>
                         <th>Requerimento</th>
                         <th style="text-align: center;">Status</th>
-                        <th style="text-align: center;">AÃ§Ãµes</th>
+                        <th style="text-align: center;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($requerimentos as $requerimento)
                         <tr>
-                            <td>{{ $requerimento->id ?? 'UsuÃ¡rio removido' }}</td>
+                            <td>{{ $requerimento->id }}</td>
                             <td style="color: #64748b; font-size: 0.8125rem;">
                                 {{ $requerimento->created_at?->format('d/m/Y H:i') }}
                             </td>
-                            <td>{{ $requerimento->usuario?->nome ?? 'UsuÃ¡rio removido' }}</td>
-                            <td>{{ $requerimento->usuario?->tipo_processo_formatado ?? 'UsuÃ¡rio removido' }}</td>
+                            <td>{{ $requerimento->usuario?->nome ?? 'Usuário removido' }}</td>
+                            <td>{{ $requerimento->usuario?->tipo_pessoa_formatado ?? '—' }}</td>
                             <td>{{ $requerimento->objetoDoRequerimento }}</td>
                             <td class="{{ $requerimento->status ?? 'Aberto' }}" style="text-align: center;">
                                 <span>{{ $requerimento->status ?? 'Aberto' }}</span>
@@ -109,4 +113,3 @@
     @endif
 </section>
 @endsection
-

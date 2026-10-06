@@ -55,6 +55,12 @@ class ResponsavelSetorController extends Controller
             });
         }
 
+        $tipoPessoa = $request->input('turma') ?: $request->input('tipo_pessoa');
+        if (!empty($tipoPessoa)) {
+            $query->whereHas('usuario', function ($q) use ($tipoPessoa) {
+                $q->where('tipo_registro', $tipoPessoa);
+            });
+        }
 
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
