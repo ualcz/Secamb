@@ -1,14 +1,22 @@
 @php
-    $respostaDoAluno = isset($historico, $requerimento)
-        && $historico->status === 'Em Análise'
+    $historicoDoProprioUsuario = isset($historico, $requerimento)
         && (int) $historico->user_id === (int) $requerimento->usuario_id;
 
+    $respostaDoAluno = $historicoDoProprioUsuario
+        && $historico->status === 'Em Análise';
+
+    // Exibe todos os documentos quando:
+    // - status é Concluído, Indeferido, Despacho, ou o requerimento foi concluído
+    // - histórico de análise com solicitação de novo documento
+    // - histórico inicial do próprio cidadão (Aberto)
     $deveExibirTodosDocumentos = $documentos->isNotEmpty() && (
         ($historico?->status ?? null) === 'Concluído'
         || ($historico?->status ?? null) === 'Indeferido'
         || ($historico?->status ?? null) === 'Despacho'
         || ($requerimento?->status ?? null) === 'Concluído'
         || (($historico?->status ?? null) === 'Em Análise' && !empty($historico?->solicita_novo_documento))
+        || (($historico?->status ?? null) === 'Aberto' && $historicoDoProprioUsuario)
+        || $respostaDoAluno
     );
 
     $documentosExibidos = $documentos->filter(function ($doc) use ($respostaDoAluno, $deveExibirTodosDocumentos) {
