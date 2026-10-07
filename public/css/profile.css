@@ -1,10 +1,14 @@
 .banner {
-    background-color: #f8fafc;
+    background: linear-gradient(90deg, #1C419A 2%, #B5BBB1 80%);
     padding: 32px 40px;
     border-radius: 8px;
     max-width: 1200px;
     margin: 0 auto 24px auto;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.banner h2{
+    color: #EFEFEF;
 }
 
 h2 {
@@ -60,7 +64,7 @@ h2 {
 .section-title {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #096b2d;
+    color: #0F954E;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin: 28px 0 12px 0;

@@ -120,7 +120,7 @@ Route::middleware(['auth', 'responsavel'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:cidadao'])->group(function () {
-    Route::get('/requerimentos/aluno', function () {
+    Route::get('/requerimentos/cidadao', function () {
         $setores = \App\Models\Setor::where('ativo', true)->get();
         return view('requerimentos.aluno', compact('setores'));
     })->name('requerimentos.aluno');
