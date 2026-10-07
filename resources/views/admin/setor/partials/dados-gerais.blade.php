@@ -75,7 +75,18 @@
                         <input type="checkbox" name="ativo" value="1" {{ old('ativo', $modelo->ativo) ? 'checked' : '' }} style="width: 18px; height: 18px; cursor: pointer; accent-color: #2563eb;">
                         <div>
                             <strong style="display: block; font-size: 0.875rem; color: #1e293b;">Setor Ativo</strong>
-                            <span style="font-size: 0.75rem; color: #64748b;">Quando desmarcado, este formulário não aparecerá para os alunos.</span>
+                            <span style="font-size: 0.75rem; color: #64748b;">Define se o setor está em funcionamento no sistema.</span>
+                        </div>
+                    </label>
+                </div>
+
+                {{-- Setor Interno --}}
+                <div class="form-group col-span-12" style="margin-top: 4px;">
+                    <label class="card-toggle-ativo">
+                        <input type="checkbox" name="is_interno" value="1" {{ old('is_interno', $modelo->is_interno) ? 'checked' : '' }} style="width: 18px; height: 18px; cursor: pointer; accent-color: #7c3aed;">
+                        <div>
+                            <strong style="display: block; font-size: 0.875rem; color: #1e293b;">Setor Interno</strong>
+                            <span style="font-size: 0.75rem; color: #64748b;">Setores internos <strong>não aparecem para o usuário comum/cidadão</strong> na tela de abertura de processos (utilizado para despachos técnicos e tramitações internas).</span>
                         </div>
                     </label>
                 </div>
