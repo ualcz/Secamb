@@ -217,6 +217,61 @@
 
 /* ── Formulários (Manual Figuras 8 e 9) ──────────────────────────────────── */
 
+.floating-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.floating-select {
+    width: 100%;
+    padding: 1.25rem 0.75rem 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    outline: none;
+    background-color: transparent;
+    appearance: none;
+    transition: border-color 0.2s ease;
+}
+
+.floating-select:focus {
+    border-color: #2563eb;
+}
+
+.floating-label {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 1rem;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    background-color: white;
+    padding: 0 0.25rem;
+}
+
+.floating-select:invalid {
+    color: transparent;
+}
+
+.floating-select:focus,
+.floating-select:valid {
+    color: #111827;
+}
+
+.floating-select:focus + .floating-label,
+.floating-select:valid + .floating-label {
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
+    color: #2563eb;
+    font-weight: 500;
+}
+
+.floating-select:not(:focus):valid + .floating-label {
+    color: #6b7280;
+}
+
 .emp-form-card {
     max-width: 1250px;
     margin: 0 auto;
@@ -267,7 +322,7 @@
 .emp-form-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: 20px;
+    gap: 10px;
 }
 
 .emp-col-12 { grid-column: span 12; }
@@ -300,11 +355,11 @@
     font-size: 0.875rem;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
-    background: #fafafa;
+    background: #fff;
     color: #1e293b;
     box-sizing: border-box;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    /* height: 60px; */
+    height: 53px;
 }
 
 .emp-input:focus,
@@ -478,5 +533,9 @@
 
     .emp-btn-submit span{
         display: none;
+    }
+
+    .emp-container {
+        padding: 0px;
     }
 }
