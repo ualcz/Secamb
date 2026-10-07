@@ -39,6 +39,10 @@ class Usuario extends Authenticatable
         // Autenticação
         'password',
 
+        // Login Social (Google OAuth)
+        'google_id',       // ID retornado pelo Google
+        'avatar',          // URL da foto do perfil Google
+
         // Perfil de acesso
         'role',            // 'cidadao' | 'servidor' | 'admin'
         'ativo',
@@ -52,6 +56,12 @@ class Usuario extends Authenticatable
     protected $casts = [
         'ativo' => 'boolean',
     ];
+
+    /** Verifica se o usuário foi criado via login social (sem senha local). */
+    public function hasLoginSocial(): bool
+    {
+        return ! is_null($this->google_id);
+    }
 
     /*
     |--------------------------------------------------------------------------
