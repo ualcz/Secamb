@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\EnvioEmailController;
 use App\Http\Controllers\RequerimentoController;
 use App\Http\Controllers\RequerimentoPdfController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\ResponsavelSetorController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\DocumentoRequerimentoController;
 use App\Http\Controllers\EmpreendimentoController;
+use App\Http\Controllers\PerfilController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +41,24 @@ Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->na
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| LOGIN SOCIAL — GOOGLE (somente cidadãos)
+|--------------------------------------------------------------------------
+*/
+Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+/*
+|--------------------------------------------------------------------------
+| COMPLETAR PERFIL — cidadãos com login social
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:cidadao'])->group(function () {
+    Route::get('/perfil/completar', [PerfilController::class, 'completar'])->name('perfil.completar');
+    Route::post('/perfil/completar', [PerfilController::class, 'salvar'])->name('perfil.completar.salvar');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -119,7 +139,7 @@ Route::middleware(['auth', 'responsavel'])->group(function () {
 | PAINEL / PROCESSOS - CIDADÃO
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:cidadao'])->group(function () {
+Route::middleware(['auth', 'role:cidadao', 'perfil.completo'])->group(function () {
     Route::get('/requerimentos/cidadao', function () {
         $setores = \App\Models\Setor::publicos()->get();
         return view('requerimentos.aluno', compact('setores'));

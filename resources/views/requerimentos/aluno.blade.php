@@ -64,11 +64,7 @@
                 <div class="item-value">{{ auth()->user()->email }}</div>
             </div>
             <div class="item">
-                <div class="item-label">Telefone</div>
-                <div class="item-value">{{ auth()->user()->telefone ?? 'Não informado' }}</div>
-            </div>
-            <div class="item">
-                <div class="item-label">Celular</div>
+                <div class="item-label">Telefone / WhatsApp</div>
                 <div class="item-value">{{ auth()->user()->celular ?? 'Não informado' }}</div>
             </div>
         </div>

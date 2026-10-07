@@ -31,7 +31,6 @@ class EnvioEmailController extends Controller
             'objeto_outro'         => 'nullable|string|max:255',
             'motivo'               => 'nullable|string|max:3000',
             'mensagem'             => 'nullable|string|max:3000',
-            'telefone'             => 'nullable|string|max:30',
             'celular'              => 'nullable|string|max:30',
             'rua'                  => 'nullable|string|max:255',
             'numero'               => 'nullable|string|max:20',
@@ -70,9 +69,6 @@ class EnvioEmailController extends Controller
 
         // 2. Atualiza dados de contato do cidadão se preenchidos
         $dadosUsuario = [];
-        if ($request->filled('telefone')) {
-            $dadosUsuario['telefone'] = $request->input('telefone');
-        }
         if ($request->filled('celular')) {
             $dadosUsuario['celular'] = $request->input('celular');
         }
