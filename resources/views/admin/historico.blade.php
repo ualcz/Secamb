@@ -7,7 +7,7 @@
     <x-btn-voltar style="grid-column: span 2;" />
 
     <div class="historico">
-        <h3>HistÃ³rico da TramitaÃ§Ã£o</h3>
+        <h3>Histórico de Tramitação</h3>
 
         <ul class="timeline">
             @forelse($historicos as $historico)
@@ -21,10 +21,24 @@
                             </span>
                         </div>
                         <div class="timeline-body">
-                            <p><strong>ResponsÃ¡vel:</strong> {{ $historico->usuario?->nome ?? 'Sistema' }}</p>
+                            <p><strong>Responsável:</strong> {{ $historico->usuario?->nome ?? 'Sistema' }}</p>
                             @if($historico->observacao)
+                                @php
+                                    $textoObservacao = $historico->observacao;
+                                    $servicoSolicitado = null;
+                                    if (preg_match('/\[Serviço Solicitado:\s*(.+?)\]\R?/i', $textoObservacao, $matchServico)) {
+                                        $servicoSolicitado = $matchServico[1];
+                                        $textoObservacao = str_replace($matchServico[0], '', $textoObservacao);
+                                    }
+                                @endphp
                                 <div class="timeline-observacao">
-                                    <strong>ObservaÃ§Ã£o:</strong> {{ $historico->observacao }}
+                                    <strong>Observação:</strong>
+                                    @if($servicoSolicitado)
+                                        <div style="margin: 6px 0; padding: 4px 10px; background: #ede9fe; color: #5b21b6; border-left: 3px solid #7c3aed; border-radius: 4px; font-size: 0.8125rem; font-weight: 600;">
+                                            📋 Serviço / Demanda: {{ $servicoSolicitado }}
+                                        </div>
+                                    @endif
+                                    <div>{!! nl2br(e(trim($textoObservacao))) !!}</div>
                                 </div>
                             @endif
                             @if($historico->solicita_novo_documento)
@@ -43,7 +57,7 @@
                     </div>
                 </li>
             @empty
-                <p>Nenhum registro no histÃ³rico atÃ© o momento.</p>
+                <p>Nenhum registro no histórico até o momento.</p>
             @endforelse
         </ul>
     </div>
@@ -52,7 +66,7 @@
         <div class="card-painel">
             <div class="card-header-flex">
                 <div>
-                    <span class="info-label">NÂº Protocolo</span>
+                    <span class="info-label">Nº Protocolo</span>
                     <h1 class="card-titulo" style="font-size: 1.5rem; color: #2563eb;">
                         {{ $requerimento->id }}
                     </h1>
@@ -127,71 +141,6 @@
                 </div>
             @endif
         </div>
-    @if(auth()->user()->isAdmin() || auth()->user()->isServidor())
-        <div class="card-painel info-aluno">
-            <h2 class="card-titulo" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 1rem;">
-                InformaÃ§Ãµes do Aluno
-            </h2>
-            <div class="grid-2">
-                <div class="info-grupo">
-                    <span class="info-label">Nome Completo</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->nome ?? 'NÃ£o informado' }}</span>
-                </div>
-                <div class="info-grupo">
-                    <span class="info-label">MatrÃ­cula</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->matricula ?? 'NÃ£o informada' }}</span>
-                </div>
-                <div class="info-grupo">
-                    <span class="info-label">CPF</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->cpf ?? 'NÃ£o informado' }}</span>
-                </div>
-                <div class="info-grupo">
-                    <span class="info-label">Turma</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->tipo_processo_formatado ?? 'NÃ£o informada' }}</span>
-                </div>
-                <div class="info-grupo">
-                    <span class="info-label">E-mail Institucional</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->email ?? 'NÃ£o informado' }}</span>
-                </div>
-                <div class="info-grupo">
-                    <span class="info-label">E-mail Pessoal</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->email ?? 'NÃ£o informado' }}</span>
-                </div>
-                <div class="info-grupo">
-                    <span class="info-label">Telefone / WhatsApp</span>
-                    <span class="info-valor">{{ $requerimento->usuario?->telefone ?? 'NÃ£o informado' }}</span>
-                </div>
-            </div>
-
-            <h3 style="margin-top: 1.25rem;">EndereÃ§o Residencial</h3>
-            @if($requerimento->usuario?->endereco)
-                <div class="grid-2">
-                    <div class="info-grupo">
-                        <span class="info-label">Rua / Logradouro</span>
-                        <span class="info-valor">{{ $requerimento->usuario->endereco->rua }}</span>
-                    </div>
-                    <div class="info-grupo">
-                        <span class="info-label">NÃºmero</span>
-                        <span class="info-valor">{{ $requerimento->usuario->endereco->numero }}</span>
-                    </div>
-                    <div class="info-grupo">
-                        <span class="info-label">Bairro</span>
-                        <span class="info-valor">{{ $requerimento->usuario->endereco->bairro }}</span>
-                    </div>
-                    <div class="info-grupo">
-                        <span class="info-label">Cidade / UF</span>
-                        <span class="info-valor">{{ $requerimento->usuario->endereco->cidade }} / {{ $requerimento->usuario->endereco->estado }}</span>
-                    </div>
-                    <div class="info-grupo">
-                        <span class="info-label">CEP</span>
-                        <span class="info-valor">{{ $requerimento->usuario->endereco->cep }}</span>
-                    </div>
-                </div>
-            @else
-                <p style="color: #6b7280; font-size: 0.875rem;">Nenhum endereÃ§o cadastrado.</p>
-            @endif
-        </div>
-    @endif
     </div>
 </div>
 
