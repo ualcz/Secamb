@@ -218,16 +218,16 @@
 /* ── Formulários (Manual Figuras 8 e 9) ──────────────────────────────────── */
 
 .emp-form-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 28px;
     max-width: 1250px;
     margin: 0 auto;
 }
 
 .emp-form-header {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 28px;
     margin-bottom: 24px;
     padding-bottom: 16px;
     border-bottom: 1px solid #f1f5f9;
@@ -248,10 +248,10 @@
 
 .emp-section {
     margin-bottom: 28px;
-    background: #f8fafc;
+    background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
-    padding: 20px;
+    padding: 40px;
 }
 
 .emp-section-title {
@@ -267,7 +267,7 @@
 .emp-form-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: 16px;
+    gap: 20px;
 }
 
 .emp-col-12 { grid-column: span 12; }
@@ -285,7 +285,7 @@
 .emp-form-group label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #334155;
+    color: #334155cc;
 }
 
 .emp-form-group label .required {
@@ -300,10 +300,11 @@
     font-size: 0.875rem;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
-    background: #ffffff;
+    background: #fafafa;
     color: #1e293b;
     box-sizing: border-box;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    /* height: 60px; */
 }
 
 .emp-input:focus,
@@ -464,5 +465,18 @@
         justify-content: center;
         width: 100%;
         box-sizing: border-box;
+    }
+
+    .emp-section {
+        padding: 20px;
+    }
+
+    .emp-btn-submit {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .emp-btn-submit span{
+        display: none;
     }
 }
