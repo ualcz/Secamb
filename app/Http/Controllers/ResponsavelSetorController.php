@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setor;
+use App\Models\AssuntoRequerimento;
 use App\Models\Requerimento;
 use App\Models\HistoricoRequerimento;
 use App\Services\DocumentoRequerimentoService;
@@ -97,13 +98,28 @@ class ResponsavelSetorController extends Controller
         // Carrega o usuário, endereço, assunto, empreendimento e os históricos (linha do tempo com documentos)
         $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.documentos', 'setorRetorno', 'empreendimento']);
         $setoresDestino = Setor::query()
+            ->with(['assuntosAtivos' => function ($q) {
+                $q->orderBy('ordem');
+            }])
             ->where('ativo', true)
             ->where('id', '!=', $setor->id)
             ->whereHas('responsaveis')
             ->orderBy('setor_nome')
             ->get();
 
-        return view('setor.requerimentos.show', compact('setor', 'requerimento', 'setoresDestino'));
+        $catalogoSetoresDestino = $setoresDestino->mapWithKeys(function ($s) {
+            return [
+                $s->id => $s->assuntosAtivos->map(function ($a) {
+                    return [
+                        'id'         => $a->id,
+                        'descricao'  => $a->descricao,
+                        'observacao' => $a->observacao,
+                    ];
+                })->values()->all(),
+            ];
+        })->all();
+
+        return view('setor.requerimentos.show', compact('setor', 'requerimento', 'setoresDestino', 'catalogoSetoresDestino'));
     }
 
     public function atualizarStatus(Request $request, Setor $setor, Requerimento $requerimento)
@@ -188,10 +204,11 @@ class ResponsavelSetorController extends Controller
         }
 
         $validated = $request->validate([
-            'setor_destino_id' => ['required', 'integer', Rule::exists('setores', 'id')->where('ativo', true)],
-            'observacao' => 'required|string|max:10000',
-            'arquivos' => 'nullable|array',
-            'arquivos.*' => 'nullable|file|max:51200',
+            'setor_destino_id'   => ['required', 'integer', Rule::exists('setores', 'id')->where('ativo', true)],
+            'assunto_destino_id' => ['nullable', 'integer', Rule::exists('assuntos_requerimentos', 'id')->where('ativo', true)],
+            'observacao'         => 'required|string|max:10000',
+            'arquivos'           => 'nullable|array',
+            'arquivos.*'         => 'nullable|file|max:51200',
         ]);
 
         $destino = Setor::query()
@@ -203,7 +220,11 @@ class ResponsavelSetorController extends Controller
             return back()->withErrors(['setor_destino_id' => 'Selecione outro setor ativo com responsáveis.']);
         }
 
-        $historico = DB::transaction(function () use ($setor, $destino, $requerimento, $validated) {
+        $assuntoDestino = !empty($validated['assunto_destino_id'])
+            ? AssuntoRequerimento::where('setor_id', $destino->id)->where('ativo', true)->find($validated['assunto_destino_id'])
+            : null;
+
+        $historico = DB::transaction(function () use ($setor, $destino, $requerimento, $validated, $assuntoDestino) {
             $atual = Requerimento::query()->lockForUpdate()->findOrFail($requerimento->id);
             if ((int) $atual->setor_id !== (int) $setor->id || $atual->setor_retorno_id) {
                 abort(409, 'Este requerimento já foi encaminhado ou mudou de setor.');
@@ -215,11 +236,17 @@ class ResponsavelSetorController extends Controller
                 'status' => 'Despacho',
             ]);
 
+            $orientacaoTexto = "Orientação para: {$destino->setor_sigla}";
+            if ($assuntoDestino) {
+                $orientacaoTexto .= "\n[Serviço Solicitado: {$assuntoDestino->descricao}]";
+            }
+            $orientacaoTexto .= "\n{$validated['observacao']}";
+
             return HistoricoRequerimento::create([
                 'requerimento_id' => $atual->id,
                 'user_id' => Auth::id(),
                 'status' => $atual->status,
-                'observacao' => "Orientação para: {$destino->setor_sigla}\n{$validated['observacao']}",
+                'observacao' => $orientacaoTexto,
             ]);
         });
 
