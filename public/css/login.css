@@ -221,3 +221,12 @@ body {
         font-size: 1.25rem;
     }
 }
+
+.login-footer-links{
+    margin-top: 10px;
+    font-size: 0.8125rem;
+}
+
+.login-footer-links a{
+    color: #059669;
+}
