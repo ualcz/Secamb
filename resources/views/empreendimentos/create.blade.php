@@ -190,16 +190,8 @@
 
                     <div class="emp-form-group emp-col-6">
                         <x-floating-input
-                            name="contato_telefone"
-                            label="Telefone Fixo (opcional)"
-                            value="{{ old('contato_telefone', auth()->user()->telefone) }}"
-                            placeholder="(75) 3331-0000"/>
-                    </div>
-
-                    <div class="emp-form-group emp-col-6">
-                        <x-floating-input
                             name="contato_celular"
-                            label="Celular / WhatsApp (opcional)"
+                            label="Celular / WhatsApp"
                             value="{{ old('contato_celular', auth()->user()->celular) }}"
                             placeholder="(75) 99999-9999"/>
                     </div>

@@ -22,7 +22,7 @@
                 </div>
                 <div class="campo">
                     <label>Telefone / WhatsApp (editavel):</label>
-                    <input type="text" name="telefone" value="{{ old('telefone', auth()->user()->telefone ?? '') }}" placeholder="(XX) XXXXX-XXXX">
+                    <input type="text" name="celular" value="{{ old('celular', auth()->user()->celular ?? '') }}" placeholder="(XX) XXXXX-XXXX">
                 </div>
             </div>
 

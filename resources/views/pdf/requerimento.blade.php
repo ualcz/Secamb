@@ -123,7 +123,7 @@
                 </td>
                 <td>
                     <span class="rotulo">Telefone / WhatsApp</span>
-                    <span class="valor">{{ $aluno->telefone ?? '—' }}</span>
+                    <span class="valor">{{ $aluno->celular ?? '—' }}</span>
                 </td>
                 <td colspan="2">
                     <span class="rotulo">E-mail</span>

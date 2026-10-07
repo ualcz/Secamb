@@ -20,7 +20,7 @@
                 </div>
                 <div class="info-grupo">
                     <span class="info-label">Telefone / WhatsApp</span>
-                    <span class="info-valor">{{ $requerimento->usuario->telefone ?? $requerimento->usuario->celular ?? 'Não informado' }}</span>
+                    <span class="info-valor">{{ $requerimento->usuario->celular ?? 'Não informado' }}</span>
                 </div>
             </div>
         </div>

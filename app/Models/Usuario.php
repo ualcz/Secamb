@@ -33,8 +33,7 @@ class Usuario extends Authenticatable
 
         // Contato
         'email',           // E-mail principal (login + notificações)
-        'telefone',        // Telefone fixo (opcional)
-        'celular',         // Celular (opcional)
+        'celular',         // Celular / WhatsApp
 
         // Autenticação
         'password',
