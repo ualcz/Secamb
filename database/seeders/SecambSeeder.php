@@ -44,6 +44,7 @@ class SecambSeeder extends Seeder
                 'email'      => 'meioambiente@seabra.ba.gov.br',
                 'titulo'     => 'Requerimento de Licenciamento Ambiental',
                 'ativo'      => true,
+                'is_interno' => false,
             ]
         );
 
@@ -54,6 +55,7 @@ class SecambSeeder extends Seeder
                 'email'      => 'fiscalizacao.secamb@seabra.ba.gov.br',
                 'titulo'     => 'Vistorias e Pareceres Técnicos',
                 'ativo'      => true,
+                'is_interno' => true,
             ]
         );
 
@@ -131,6 +133,75 @@ class SecambSeeder extends Seeder
             $assunto = AssuntoRequerimento::updateOrCreate(
                 [
                     'setor_id'  => $secamb->id,
+                    'descricao' => $item['descricao'],
+                ],
+                [
+                    'observacao' => $item['observacao'],
+                    'link_norma' => $item['link_norma'],
+                    'ordem'      => $item['ordem'],
+                    'ativo'      => true,
+                ]
+            );
+
+            foreach ($item['documentos'] as $doc) {
+                DocumentoAssunto::updateOrCreate(
+                    [
+                        'assunto_requerimento_id' => $assunto->id,
+                        'nome'                    => $doc['nome'],
+                    ],
+                    [
+                        'obrigatorio'   => $doc['obrigatorio'],
+                        'tipos_aceitos' => 'pdf,png,jpg,jpeg',
+                    ]
+                );
+            }
+        }
+
+        // ─── 4. Assuntos / Demandas Internas da Fiscalização ──────────────────
+        $assuntosFiscalizacao = [
+            [
+                'descricao'  => 'Vistoria Técnica de Campo / In Loco',
+                'observacao' => 'Realização de inspeção técnica presencial para verificação de impacto, limites do imóvel e conformidade ambiental.',
+                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'ordem'      => 1,
+                'documentos' => [
+                    ['nome' => 'Relatório / Laudo Fotográfico de Vistoria', 'obrigatorio' => true],
+                    ['nome' => 'Croqui / Coordenadas de Vistoria', 'obrigatorio' => false],
+                ],
+            ],
+            [
+                'descricao'  => 'Parecer Técnico de Fiscalização',
+                'observacao' => 'Emissão de parecer técnico fundamentado para subsidiar a decisão da equipe de licenciamento.',
+                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'ordem'      => 2,
+                'documentos' => [
+                    ['nome' => 'Parecer Técnico de Fiscalização Assinado', 'obrigatorio' => true],
+                ],
+            ],
+            [
+                'descricao'  => 'Verificação de Cumprimento de Condicionantes',
+                'observacao' => 'Inspeção e checagem de cumprimento das medidas mitigadoras e condicionantes de licenças anteriores.',
+                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'ordem'      => 3,
+                'documentos' => [
+                    ['nome' => 'Checklist de Verificação de Condicionantes', 'obrigatorio' => true],
+                ],
+            ],
+            [
+                'descricao'  => 'Auto de Constatação / Notificação Ambiental',
+                'observacao' => 'Registro de não conformidades ou necessidade de adequação técnica pelo empreendedor.',
+                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'ordem'      => 4,
+                'documentos' => [
+                    ['nome' => 'Auto de Constatação / Notificação', 'obrigatorio' => true],
+                ],
+            ],
+        ];
+
+        foreach ($assuntosFiscalizacao as $item) {
+            $assunto = AssuntoRequerimento::updateOrCreate(
+                [
+                    'setor_id'  => $fiscal->id,
                     'descricao' => $item['descricao'],
                 ],
                 [

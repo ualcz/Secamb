@@ -31,8 +31,22 @@
                         <div class="timeline-body">
                             <p><strong>Responsável:</strong> {{ $historico->usuario->nome ?? 'Sistema' }}</p>
                             @if($historico->observacao)
+                                @php
+                                    $textoObservacao = $historico->observacao;
+                                    $servicoSolicitado = null;
+                                    if (preg_match('/\[Serviço Solicitado:\s*(.+?)\]\R?/i', $textoObservacao, $matchServico)) {
+                                        $servicoSolicitado = $matchServico[1];
+                                        $textoObservacao = str_replace($matchServico[0], '', $textoObservacao);
+                                    }
+                                @endphp
                                 <div class="timeline-observacao">
-                                    <strong>Observação:</strong> {{ $historico->observacao }}
+                                    <strong>Observação:</strong>
+                                    @if($servicoSolicitado)
+                                        <div style="margin: 6px 0; padding: 4px 10px; background: #ede9fe; color: #5b21b6; border-left: 3px solid #7c3aed; border-radius: 4px; font-size: 0.8125rem; font-weight: 600;">
+                                            📋 Serviço / Demanda: {{ $servicoSolicitado }}
+                                        </div>
+                                    @endif
+                                    <div>{!! nl2br(e(trim($textoObservacao))) !!}</div>
                                 </div>
                             @endif
                             @if($historico->nome_documento_solicitado)

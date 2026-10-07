@@ -51,6 +51,26 @@
         color: #991b1b;
         border: 1px solid #fecaca;
     }
+    .badge-interno {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: #f3e8ff;
+        color: #6b21a8;
+        border: 1px solid #d8b4fe;
+    }
+    .badge-publico {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+    }
     .btn-acao {
         display: inline-flex;
         align-items: center;
@@ -114,9 +134,10 @@
                 <th>Setor</th>
                 <th>Título Formulário</th>
                 <th>E-mail Setor</th>
-                <th style="width: 170px; text-align: center;">Requerimentos</th>
+                <th style="width: 110px; text-align: center;">Tipo</th>
+                <th style="width: 150px; text-align: center;">Requerimentos</th>
                 <th style="width: 100px; text-align: center;">Status</th>
-                <th style="width: 180px; text-align: center;">Ações</th>
+                <th style="width: 140px; text-align: center;">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -126,6 +147,13 @@
                     <td>{{ $modelo->setor_nome }}</td>
                     <td>{{ $modelo->titulo }}</td>
                     <td>{{ $modelo->email ?: '—' }}</td>
+                    <td style="text-align: center;">
+                        @if($modelo->is_interno)
+                            <span class="badge-interno" title="Setor interno para despachos e tramitação (não visível ao cidadão)">Interno</span>
+                        @else
+                            <span class="badge-publico" title="Visível para o cidadão no portal">Público</span>
+                        @endif
+                    </td>
                     <td style="text-align: center;">
                         <span style="font-weight: 600; color: #2563eb;">{{ $modelo->assuntos_ativos_count }}</span>
                         <span style="color: #9ca3af;">/</span>
@@ -146,7 +174,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 24px; color: #6b7280;">Nenhum setor cadastrado.</td>
+                    <td colspan="8" style="text-align: center; padding: 24px; color: #6b7280;">Nenhum setor cadastrado.</td>
                 </tr>
             @endforelse
         </tbody>

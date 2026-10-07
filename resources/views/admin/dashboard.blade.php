@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard - SDP')
+@section('title', 'Dashboard - Secamb')
 @section('tag', 'Administração')
 
 @section('content')

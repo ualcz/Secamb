@@ -54,6 +54,7 @@ class AdminSetorController extends Controller
             'setor_nome'     => 'required|string|max:255',
             'email'          => 'nullable|email|max:255',
             'ativo'          => 'nullable|boolean',
+            'is_interno'     => 'nullable|boolean',
             'responsaveis'   => 'nullable|array',
             'responsaveis.*' => 'exists:usuarios,id',
         ]);
@@ -64,6 +65,7 @@ class AdminSetorController extends Controller
             'setor_nome'  => $dados['setor_nome'],
             'email'       => $dados['email'] ?? null,
             'ativo'       => $request->has('ativo'),
+            'is_interno'  => $request->has('is_interno'),
         ]);
 
 
@@ -123,6 +125,7 @@ class AdminSetorController extends Controller
             'setor_nome'     => 'required|string|max:255',
             'email'          => 'nullable|email|max:255',
             'ativo'          => 'nullable|boolean',
+            'is_interno'     => 'nullable|boolean',
             'responsaveis'   => 'nullable|array',
             'responsaveis.*' => 'exists:usuarios,id',
         ]);
@@ -136,6 +139,7 @@ class AdminSetorController extends Controller
 
         if ($request->user()->role === 'admin') {
             $dadosAtualizados['ativo'] = $request->has('ativo');
+            $dadosAtualizados['is_interno'] = $request->has('is_interno');
         }
 
         $setor->update($dadosAtualizados);

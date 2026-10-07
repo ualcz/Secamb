@@ -132,30 +132,13 @@
     text-align: center;
     border-radius: 5px;
     padding: 5%;
-    background-color: white;
+    background: linear-gradient(90deg, #1C419A 2%, #B5BBB1 95%);
 }
 
-.total{
-    border-left: 4px solid #047857;
-}
-.icone_total{
-    background-color: rgba(4, 120, 87, 0.5);
-}
-.icone_analise{
-    background-color: rgba(143, 69, 79, 0.5);
-}
-.icone_recebidos{
-  background-color: rgba(29, 78, 216, 0.5);
-}
 .icone_total, .icone_analise, .icone_recebidos{
     padding: 15% 15% 15% 15%;
     border-radius: 5px;
-}
-.analise{
-    border-left: 4px solid #8F454F;
-}
-.recebidos{
-    border-left: 4px solid #1d4ed8;
+    background-color: #1A419C;
 }
 
 .linha1 {
@@ -163,13 +146,13 @@
     text-align: start;
     font-size: 16px;
     font-weight: 700;
-    color: #374151;
+    color: #f0f2f5;
     }
 .linha2 {
     grid-area: linha2;
     font-size: 25px;
     font-weight: 700;
-    color: #374151;
+    color: #f0f2f5;
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -179,7 +162,7 @@
     grid-area: linha3;
     font-size: 13px;
     font-weight: 500;
-    color: #374151;
+    color: #f0f2f5;
     text-align: start;
 }
 .coluna_mesclada {
@@ -199,8 +182,10 @@
 
 .menu-icon {
     cursor: pointer;
-    font-size: 20px;
+    font-size: 23px;
     padding: 4px;
+    color: #1C419A;
+    font-weight: bold;
 }
 
 .menu-options {

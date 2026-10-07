@@ -207,7 +207,22 @@
                            style="width: 16px; height: 16px; cursor: pointer; accent-color: #059669;">
                     <div>
                         <strong style="display: block; font-size: 0.8125rem; color: #1e293b;">Setor Ativo</strong>
-                        <span style="font-size: 0.75rem; color: #64748b;">Disponível para requerimentos de alunos</span>
+                        <span style="font-size: 0.75rem; color: #64748b;">Define se o setor está em funcionamento no sistema.</span>
+                    </div>
+                </label>
+            </div>
+
+            {{-- Setor Interno --}}
+            <div class="form-group col-span-12" style="margin-top: 4px;">
+                <label class="card-toggle-ativo">
+                    <input type="checkbox"
+                           name="is_interno"
+                           value="1"
+                           {{ old('is_interno') ? 'checked' : '' }}
+                           style="width: 16px; height: 16px; cursor: pointer; accent-color: #7c3aed;">
+                    <div>
+                        <strong style="display: block; font-size: 0.8125rem; color: #1e293b;">Setor Interno</strong>
+                        <span style="font-size: 0.75rem; color: #64748b;">Setores internos <strong>não aparecem para o usuário comum/cidadão</strong> ao abrir novos requerimentos. São usados para despachos, análises técnicas e tramitações internas.</span>
                     </div>
                 </label>
             </div>
