@@ -16,11 +16,33 @@ class Setor extends Model
         'email',
         'titulo',
         'ativo',
+        'is_interno',
     ];
 
     protected $casts = [
-        'ativo' => 'boolean',
+        'ativo'      => 'boolean',
+        'is_interno' => 'boolean',
     ];
+
+    public function isInterno(): bool
+    {
+        return (bool) $this->is_interno;
+    }
+
+    public function isPublico(): bool
+    {
+        return !$this->isInterno();
+    }
+
+    public function scopePublicos($query)
+    {
+        return $query->where('is_interno', false)->where('ativo', true);
+    }
+
+    public function scopeInternos($query)
+    {
+        return $query->where('is_interno', true);
+    }
 
     public function assuntos()
     {
@@ -46,14 +68,20 @@ class Setor extends Model
 
     /**
      * Retorna os setores formatados para uso nos controllers e views.
+     * Por padrão retorna apenas setores públicos para criação de requerimentos.
      */
-    public static function obterSetoresFormatados(): array
+    public static function obterSetoresFormatados(bool $apenasPublicos = true): array
     {
         try {
             // Incluído 'responsaveis' no Eager Loading para evitar queries N+1
-            $setoresBanco = static::with(['responsaveis', 'assuntosAtivos.documentos'])
-                ->where('ativo', true)
-                ->get();
+            $query = static::with(['responsaveis', 'assuntosAtivos.documentos'])
+                ->where('ativo', true);
+
+            if ($apenasPublicos) {
+                $query->where('is_interno', false);
+            }
+
+            $setoresBanco = $query->get();
 
             if ($setoresBanco->isEmpty()) {
                 return [];
@@ -91,14 +119,15 @@ class Setor extends Model
                     'setor_nome'    => $mod->setor_nome,
                     'email'         => $mod->email,
                     'titulo'        => $mod->titulo,
+                    'is_interno'    => (bool) $mod->is_interno,
                     'responsaveis'  => $mod->responsaveis->map(fn($r) => [
                         'id'    => $r->id,
                         'nome'  => $r->nome ?? $r->name,
                         'email' => $r->email,
                     ])->toArray(),
-                        'objetos'           => $objetos,
-                        'assuntos_detalhes' => $assuntosDetalhes,
-                    ];
+                    'objetos'           => $objetos,
+                    'assuntos_detalhes' => $assuntosDetalhes,
+                ];
             }
 
             return $resultado;
@@ -110,8 +139,8 @@ class Setor extends Model
     /**
      * Alias para compatibilidade com chamadas legadas
      */
-    public static function obterModelosFormatados(): array
+    public static function obterModelosFormatados(bool $apenasPublicos = true): array
     {
-        return static::obterSetoresFormatados();
+        return static::obterSetoresFormatados($apenasPublicos);
     }
 }
