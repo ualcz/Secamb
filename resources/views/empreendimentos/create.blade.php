@@ -61,65 +61,103 @@
                 </h3>
 
                 <div class="emp-form-grid">
+
                     <div class="emp-form-group emp-col-8">
-                        <label for="nome">Nome do Empreendimento / Razão Social <span class="required">*</span></label>
-                        <input type="text" name="nome" id="nome" class="emp-input" value="{{ old('nome') }}" placeholder="Ex: Pousada Chapada Diamantina LTDA" required>
+                        <x-floating-input
+                            name="nome"
+                            label="Nome Fantasia / Razão Social"
+                            value="{{ old('nome_fantasia') }}"
+                            placeholder="Ex: Empresa LTDA"/>
                     </div>
+
+
 
                     <div class="emp-form-group emp-col-4">
-                        <label for="cnpj">CNPJ</label>
-                        <input type="text" name="cnpj" id="cnpj" class="emp-input" value="{{ old('cnpj') }}" placeholder="00.000.000/0000-00">
+                        <x-floating-input
+                            id="cnpj"
+                            name="cnpj"
+                            label="CNPJ"
+                            value="{{ old('cnpj') }}"
+                            placeholder="00.000.000/0000-00"
+                        />
                     </div>
 
                     <div class="emp-form-group emp-col-6">
-                        <label for="tipo_atividade">Atividade Econômica Principal</label>
-                        <input type="text" name="tipo_atividade" id="tipo_atividade" class="emp-input" value="{{ old('tipo_atividade') }}" placeholder="Ex: Hotelaria, Mineração, Agropecuária, Comércio">
+                        <x-floating-input
+                            name="tipo_atividade"
+                            label="Atividade Econômica Principal"
+                            value="{{ old('tipo_atividade') }}"
+                            placeholder="Ex: Hotelaria, Mineração, Agropecuária, Comércio"/>
                     </div>
 
-                    <div class="emp-form-group emp-col-6">
-                        <label for="fase_operacao">Fase de Operação</label>
-                        <select name="fase_operacao" id="fase_operacao" class="emp-select">
-                            <option value="">Selecione uma opção...</option>
+                    <div class="floating-group emp-form-group emp-col-6">
+                        <select name="fase_operacao" id="fase_operacao" class="floating-select emp-select" required>
+                            <option value="" disabled {{ old('fase_operacao') ? '' : 'selected' }} hidden>Selecione uma opção...</option>
                             <option value="Localização" {{ old('fase_operacao') === 'Localização' ? 'selected' : '' }}>Localização</option>
                             <option value="Instalação" {{ old('fase_operacao') === 'Instalação' ? 'selected' : '' }}>Instalação</option>
                             <option value="Operação" {{ old('fase_operacao') === 'Operação' ? 'selected' : '' }}>Operação</option>
                             <option value="Não se Aplica" {{ old('fase_operacao') === 'Não se Aplica' ? 'selected' : '' }}>Não se Aplica</option>
                         </select>
+                        <label for="fase_operacao" class="floating-label">Fase de Operação</label>
                     </div>
 
                     <div class="emp-form-group emp-col-8">
-                        <label for="endereco">Endereço / Logradouro</label>
-                        <input type="text" name="endereco" id="endereco" class="emp-input" value="{{ old('endereco') }}" placeholder="Rua, Avenida, Rodovia ou Estrada, Nº">
+                        <x-floating-input
+                            name="ebdereco"
+                            label="Endereço / Logradouro"
+                            value="{{ old('endereco') }}"
+                            placeholder="Rua, Avenida, Rodovia ou Estrada, Nº"/>
                     </div>
 
                     <div class="emp-form-group emp-col-4">
-                        <label for="bairro">Bairro / Povoado</label>
-                        <input type="text" name="bairro" id="bairro" class="emp-input" value="{{ old('bairro') }}" placeholder="Ex: Centro, Povoado Velame">
+                        <x-floating-input
+                        name="bairro"
+                        label="Bairro / Povoado"
+                        value="{{ old('bairro') }}"
+                        placeholder="Ex: Centro, Povoado Velame"/>
+                    </div>
+
+
+                    <div class="emp-form-group emp-col-4">
+                        <x-floating-input
+                            name="cep"
+                            label="CEP"
+                            value="{{ old('cep') }}"
+                            placeholder="46900-000"/>
                     </div>
 
                     <div class="emp-form-group emp-col-4">
-                        <label for="cep">CEP</label>
-                        <input type="text" name="cep" id="cep" class="emp-input" value="{{ old('cep') }}" placeholder="46900-000">
+                        <x-floating-input
+                            name="cidade"
+                            label="Município"
+                            value="{{ old('cidade', 'Seabra') }}"
+                            placeholder="Seabra"/>
                     </div>
 
                     <div class="emp-form-group emp-col-4">
-                        <label for="cidade">Município</label>
-                        <input type="text" name="cidade" id="cidade" class="emp-input" value="{{ old('cidade', 'Seabra') }}" placeholder="Seabra">
-                    </div>
-
-                    <div class="emp-form-group emp-col-4">
-                        <label for="estado">UF</label>
-                        <input type="text" name="estado" id="estado" class="emp-input" value="{{ old('estado', 'BA') }}" maxlength="2" placeholder="BA" style="text-transform: uppercase;">
+                        <x-floating-input
+                            name="estado"
+                            label="UF"
+                            value="{{ old('estado', 'BA') }}"
+                            placeholder="BA"
+                            maxlength="2"
+                            style="text-transform: uppercase;"/>
                     </div>
 
                     <div class="emp-form-group emp-col-6">
-                        <label for="bacia_hidrografica">Bacia Hidrográfica</label>
-                        <input type="text" name="bacia_hidrografica" id="bacia_hidrografica" class="emp-input" value="{{ old('bacia_hidrografica') }}" placeholder="Ex: Bacia do Rio Paraguaçu">
+                        <x-floating-input
+                            name="bacia_hidrografica"
+                            label="Bacia Hidrográfica"
+                            value="{{ old('bacia_hidrografica') }}"
+                            placeholder="Ex: Bacia do Rio Paraguaçu"/>
                     </div>
 
                     <div class="emp-form-group emp-col-6">
-                        <label for="recurso_hidrico">Recurso Hídrico Utilizado / Impactado</label>
-                        <input type="text" name="recurso_hidrico" id="recurso_hidrico" class="emp-input" value="{{ old('recurso_hidrico') }}" placeholder="Ex: Rio Campestre, Poço Artesiano">
+                        <x-floating-input
+                            name="recurso_hidrico"
+                            label="Recurso Hídrico Utilizado / Impactado"
+                            value="{{ old('recurso_hidrico') }}"
+                            placeholder="Ex: Rio Campestre, Poço Artesiano"/>
                     </div>
                 </div>
             </div>
@@ -135,23 +173,35 @@
 
                 <div class="emp-form-grid">
                     <div class="emp-form-group emp-col-6">
-                        <label for="contato_nome">Nome do Contato / Representante</label>
-                        <input type="text" name="contato_nome" id="contato_nome" class="emp-input" value="{{ old('contato_nome', auth()->user()->nome) }}" placeholder="Nome do responsável">
+                        <x-floating-input
+                            name="contato_nome"
+                            label="Nome do Contato / Representante"
+                            value="{{ old('contato_nome', auth()->user()->nome) }}"
+                            placeholder="Nome do responsável"/>
                     </div>
 
                     <div class="emp-form-group emp-col-6">
-                        <label for="contato_email">E-mail de Contato</label>
-                        <input type="email" name="contato_email" id="contato_email" class="emp-input" value="{{ old('contato_email', auth()->user()->email) }}" placeholder="contato@empresa.com">
+                        <x-floating-input
+                            name="contato_email"
+                            label="E-mail de Contato"
+                            value="{{ old('contato_email', auth()->user()->email) }}"
+                            placeholder="contato@empresa.com"/>
                     </div>
 
                     <div class="emp-form-group emp-col-6">
-                        <label for="contato_telefone">Telefone Fixo (opcional)</label>
-                        <input type="text" name="contato_telefone" id="contato_telefone" class="emp-input" value="{{ old('contato_telefone', auth()->user()->telefone) }}" placeholder="(75) 3331-0000">
+                        <x-floating-input
+                            name="contato_telefone"
+                            label="Telefone Fixo (opcional)"
+                            value="{{ old('contato_telefone', auth()->user()->telefone) }}"
+                            placeholder="(75) 3331-0000"/>
                     </div>
 
                     <div class="emp-form-group emp-col-6">
-                        <label for="contato_celular">Celular / WhatsApp (opcional)</label>
-                        <input type="text" name="contato_celular" id="contato_celular" class="emp-input" value="{{ old('contato_celular', auth()->user()->celular) }}" placeholder="(75) 99999-9999">
+                        <x-floating-input
+                            name="contato_celular"
+                            label="Celular / WhatsApp (opcional)"
+                            value="{{ old('contato_celular', auth()->user()->celular) }}"
+                            placeholder="(75) 99999-9999"/>
                     </div>
                 </div>
             </div>
@@ -167,6 +217,8 @@
                     <span>Confirmo a veracidade das informações e assumo a responsabilidade técnica e legal.</span>
                 </label>
             </div>
+
+
 
             {{-- Ações --}}
             <div class="emp-form-actions">
