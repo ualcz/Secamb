@@ -88,7 +88,9 @@
                 <a href="{{ route('empreendimentos.create') }}" class="emp-btn-req" style="padding: 9px 20px; font-size: 0.9rem;">
                     + Cadastrar Empreendimento
                 </a>
-                <a href="{{ route('empreendimentos.buscar') }}" class="emp-btn-edit" style="padding: 9px 20px; font-size: 0.9rem;">
+                <a href="
+                {{-- {{ route('empreendimentos.buscar') }} --}}
+                 " class="emp-btn-edit" style="padding: 9px 20px; font-size: 0.9rem;">
                     Buscar por CNPJ
                 </a>
             </div>

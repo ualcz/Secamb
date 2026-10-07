@@ -23,7 +23,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 64px;
+    height: 5rem;
 }
 
 /* ── Logotipo ─────────────────────────────────────────────────────────────── */
@@ -38,7 +38,7 @@ a {
 }
 
 .header-brand img {
-    width: 36px;
+    width: 3rem;
     height: auto;
 }
 
@@ -49,14 +49,14 @@ a {
 }
 
 .header-brand-title {
-    font-size: 14px;
+    font-size: 1.25rem;
     font-weight: 700;
     color: #059669;
     letter-spacing: -0.01em;
 }
 
 .header-brand-subtitle {
-    font-size: 11px;
+    font-size: 0.75rem;
     color: #6b7280;
     font-weight: 400;
 }
@@ -148,6 +148,30 @@ a {
 
 /* ── Responsividade ───────────────────────────────────────────────────────── */
 
+@media (max-width: 1100px) {
+    .header-inner {
+        padding: 0 20px;
+    }
+
+    .header-brand-subtitle {
+        display: none;
+    }
+
+    .header-brand-title {
+        font-size: 1rem;
+    }
+
+    .header-brand img {
+        width: 2.5rem;
+    }
+
+    .nav-link {
+        font-size: 0.825rem;
+
+    }
+}
+
+
 @media (max-width: 640px) {
     .header-inner {
         padding: 8px 14px;
@@ -205,6 +229,15 @@ a {
     .container {
         margin-bottom: 40px;
     }
+
+    .header-brand img {
+        width: 1.5rem;
+    }
+
+    .header-brand-title {
+        font-size: 1rem;
+    }
+
 }
 
 

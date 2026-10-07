@@ -20,7 +20,7 @@
             <a href="{{ auth()->check() ? (auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->user()->isServidor() ? route('servidor.dashboard') : route('requerimentos.aluno'))) : url('/') }}" class="header-brand">
                     <img src="{{ asset('img/logo_prefeitura_seabra.png') }}" alt="Logo Prefeitura de Seabra">
                     <div class="header-brand-text">
-                        <span class="header-brand-title">Secamb</span>
+                        <span class="header-brand-title">SECAMB</span>
                         <span class="header-brand-subtitle">Sistema de Requisição de Licenciamento Ambiental</span>
                     </div>
                 </a>
@@ -36,12 +36,12 @@
                         class="nav-link {{ request()->routeIs('admin.dashboard', 'servidor.dashboard') ? 'active' : '' }}">
                             <span>Dashboard</span>
                         </a>
-                        
+
                             <a href="{{ route('admin.consultar-requerimentos') }}"
                             class="nav-link {{ request()->routeIs('admin.consultar-requerimentos') ? 'active' : '' }}">
                                 <span>Consultar requerimentos</span>
                             </a>
-                       
+
                         @else
                             {{-- vou adicionar uma página home que terá informações do sistema e devs --}}
 
