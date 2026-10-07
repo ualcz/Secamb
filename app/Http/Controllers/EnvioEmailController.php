@@ -55,11 +55,15 @@ class EnvioEmailController extends Controller
             $setor = Setor::where('setor_sigla', $setorParam)->first();
         }
         if (!$setor) {
-            $setor = Setor::where('ativo', true)->first();
+            $setor = Setor::where('ativo', true)->where('is_interno', false)->first();
         }
 
         if (!$setor) {
             return back()->withErrors(['setor' => 'O setor selecionado é inválido.'])->withInput();
+        }
+
+        if ($setor->is_interno && auth()->user()?->role === 'cidadao') {
+            return back()->withErrors(['setor' => 'Não é permitido submeter requerimentos diretamente para um setor interno.'])->withInput();
         }
 
         $cidadao = auth()->user();
