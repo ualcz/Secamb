@@ -20,9 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'role' => \App\Http\Middleware\CheckRole::class,
-            'responsavel' => \App\Http\Middleware\CheckResponsavel::class,
-            'setor.config' => \App\Http\Middleware\AuthorizeSetorConfiguracao::class,
+            'role'           => \App\Http\Middleware\CheckRole::class,
+            'responsavel'    => \App\Http\Middleware\CheckResponsavel::class,
+            'setor.config'   => \App\Http\Middleware\AuthorizeSetorConfiguracao::class,
+            'perfil.completo'=> \App\Http\Middleware\PerfilCompleto::class,
         ]);
 
     })
