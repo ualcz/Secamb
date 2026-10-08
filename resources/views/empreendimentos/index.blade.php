@@ -8,20 +8,10 @@
 
 <div class="emp-container">
 
-    {{-- Cabeçalho & Barra de Ações --}}
+    {{-- Cabeçalho --}}
     <div class="emp-header">
         <div class="emp-title-area">
             <h1>Empreendimentos</h1>
-            <p>Gerencie seus empreendimentos cadastrados e representações legais no município de Seabra</p>
-        </div>
-
-        <div class="emp-nav-buttons">
-            <a href="{{ route('empreendimentos.create') }}" class="emp-nav-btn emp-nav-btn-new">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                </svg>
-                <span>Novo Empreendimento</span>
-            </a>
         </div>
     </div>
 
@@ -48,55 +38,55 @@
         </div>
     @endif
 
-    {{-- Filtro de Pesquisa Rápida --}}
-    @if(!$empreendimentos->isEmpty() || request()->filled('busca'))
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;">
-            <form method="GET" action="{{ route('empreendimentos.index') }}" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                <input
-                    type="text"
-                    name="busca"
-                    value="{{ request('busca') }}"
-                    placeholder="Filtrar por nome do empreendimento, CNPJ ou bairro..."
-                    class="emp-input"
-                    style="flex: 1; min-width: 250px;"
-                />
-                <button type="submit" class="emp-btn-submit" style="padding: 10px 20px;">
-                    Filtrar
-                </button>
-                @if(request()->filled('busca'))
-                    <a href="{{ route('empreendimentos.index') }}" class="emp-btn-cancel">
-                        Limpar
-                    </a>
+    {{-- Busca e ação principal --}}
+    <div class="emp-toolbar">
+        <form method="GET" action="{{ route('empreendimentos.index') }}" class="emp-toolbar-form {{ !$empreendimentos->isEmpty() || request()->filled('busca') ? 'has-search' : '' }}">
+            @if(!$empreendimentos->isEmpty() || request()->filled('busca'))
+                <div class="emp-search-field">
+                    <label for="emp-search">Buscar empreendimentos</label>
+                    <input
+                        type="text"
+                        id="emp-search"
+                        name="busca"
+                        value="{{ request('busca') }}"
+                        placeholder="Buscar empreendimento, CNPJ ou bairro..."
+                        class="emp-input"
+                        aria-label="Buscar empreendimentos"
+                    />
+                </div>
+            @endif
+            <div class="emp-toolbar-actions">
+                @if(!$empreendimentos->isEmpty() || request()->filled('busca'))
+                    <button type="submit" class="emp-btn-submit">Buscar</button>
                 @endif
-            </form>
-        </div>
-    @endif
+                <a href="{{ route('empreendimentos.create') }}" class="emp-btn-create">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span>Novo Empreendimento</span>
+                </a>
+                @if(request()->filled('busca'))
+                    <a href="{{ route('empreendimentos.index') }}" class="emp-btn-cancel">Limpar</a>
+                @endif
+            </div>
+        </form>
+    </div>
 
     {{-- Lista de Empreendimentos --}}
     @if($empreendimentos->isEmpty())
-        <div class="emp-table-card" style="padding: 40px 20px; text-align: center;">
-            <svg width="48" height="48" fill="none" stroke="#94a3b8" stroke-width="1.5" viewBox="0 0 24 24" style="margin: 0 auto 12px auto; display: block;">
+        <div class="emp-table-card emp-empty-state">
+            <svg width="40" height="40" fill="none" stroke="#94a3b8" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
             </svg>
-            <h3 style="font-size: 1.15rem; color: #1e293b; margin: 0 0 6px 0;">
-                {{ request()->filled('busca') ? 'Nenhum empreendimento localizado para esta busca' : 'Nenhum empreendimento vinculado à sua conta' }}
-            </h3>
-            <p style="color: #64748b; font-size: 0.9rem; max-width: 500px; margin: 0 auto 20px auto;">
-                {{ request()->filled('busca') ? 'Tente buscar por outro termo ou limpe o filtro.' : 'Cadastre um novo empreendimento ou busque por CNPJ para solicitar sua representação legal e abrir processos de licenciamento.' }}
+            <h2>
+                {{ request()->filled('busca') ? 'Nenhum resultado encontrado' : 'Nenhum empreendimento cadastrado' }}
+            </h2>
+            <p>
+                {{ request()->filled('busca') ? 'Tente outro termo ou limpe a busca.' : 'Use “Novo empreendimento” para começar.' }}
             </p>
-            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                <a href="{{ route('empreendimentos.create') }}" class="emp-btn-req" style="padding: 9px 20px; font-size: 0.9rem;">
-                    + Cadastrar Empreendimento
-                </a>
-                <a href="
-                {{-- {{ route('empreendimentos.buscar') }} --}}
-                 " class="emp-btn-edit" style="padding: 9px 20px; font-size: 0.9rem;">
-                    Buscar por CNPJ
-                </a>
-            </div>
         </div>
     @else
-        <div class="emp-table-card">
+        <div class="emp-table-card emp-table-list">
             <table class="emp-table">
                 <thead>
                     <tr>
@@ -110,31 +100,31 @@
                 <tbody>
                     @foreach($empreendimentos as $emp)
                         <tr>
-                            <td>
-                                <strong style="color: #0f172a; font-size: 0.95rem;">{{ $emp->nome }}</strong>
+                            <td data-label="Empresa">
+                                <strong class="emp-name">{{ $emp->nome }}</strong>
                                 @if($emp->tipo_atividade)
-                                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">{{ $emp->tipo_atividade }}</div>
+                                    <div class="emp-activity">{{ $emp->tipo_atividade }}</div>
                                 @endif
                             </td>
-                            <td>
+                            <td data-label="CNPJ">
                                 @if($emp->cnpj)
                                     <span class="emp-badge-cnpj">{{ $emp->cnpj }}</span>
                                 @else
                                     <span style="color: #94a3b8; font-size: 0.85rem;">Não informado</span>
                                 @endif
                             </td>
-                            <td>
-                                <div>{{ $emp->endereco ? $emp->endereco . ', ' : '' }}{{ $emp->bairro ?? 'Seabra-BA' }}</div>
+                            <td data-label="Localização / Bairro">
+                                <div class="emp-location">{{ $emp->endereco ? $emp->endereco . ', ' : '' }}{{ $emp->bairro ?? 'Seabra-BA' }}</div>
                                 @if($emp->bacia_hidrografica)
-                                    <small style="color: #64748b;">Bacia: {{ $emp->bacia_hidrografica }}</small>
+                                    <small class="emp-basin">Bacia: {{ $emp->bacia_hidrografica }}</small>
                                 @endif
                             </td>
-                            <td>
+                            <td data-label="Fase de Operação">
                                 <span class="emp-badge-fase">
                                     {{ $emp->fase_operacao ?? 'Não especificada' }}
                                 </span>
                             </td>
-                            <td>
+                            <td data-label="Ações">
                                 <div class="emp-actions">
                                     {{-- Botão Nova Licença / Requisição --}}
                                     <a href="{{ route('requerimentos.aluno.novo', ['empreendimento_id' => $emp->id]) }}"

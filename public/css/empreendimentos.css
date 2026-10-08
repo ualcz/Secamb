@@ -6,12 +6,12 @@
 .emp-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 24px 16px 48px 16px;
+    padding: 24px 16px 48px;
     box-sizing: border-box;
     font-family: inherit;
 }
 
-/* ── Cabeçalho do Módulo & Abas Fixas (Manual Figura 3 e 4) ─────────────── */
+/* ── Listagem ───────────────────────────────────────────────────────────── */
 
 .emp-header {
     display: flex;
@@ -23,64 +23,102 @@
 }
 
 .emp-title-area h1 {
-    font-size: 1.6rem;
+    font-size: clamp(1.4rem, 2vw, 1.75rem);
     font-weight: 700;
     color: #0f172a;
-    margin: 0 0 4px 0;
-}
-
-.emp-title-area p {
-    font-size: 0.9rem;
-    color: #64748b;
     margin: 0;
 }
 
-.emp-nav-buttons {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #ffffff;
-    padding: 6px;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+.emp-toolbar {
+    margin-bottom: 20px;
 }
 
-.emp-nav-btn {
+.emp-toolbar-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.emp-search-field {
+    flex: 1 1 280px;
+    min-width: 0;
+}
+
+.emp-search-field label {
+    display: block;
+    margin-bottom: 5px;
+    color: #475569;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.emp-search-field .emp-input {
+    height: 44px;
+}
+
+.emp-toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.emp-btn-create {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    border-radius: 6px;
-    text-decoration: none;
-    color: #475569;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.emp-nav-btn:hover {
-    color: #059669;
-    background: #f0fdf4;
-}
-
-.emp-nav-btn.active {
-    background: #0284c7;
-    color: #ffffff;
-    box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
-}
-
-.emp-nav-btn-new {
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 16px;
     background: #059669;
     color: #ffffff;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
 }
 
-.emp-nav-btn-new:hover {
+.emp-btn-create:hover {
     background: #047857;
     color: #ffffff;
+}
+
+.emp-toolbar .emp-btn-submit,
+.emp-toolbar .emp-btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 16px;
+    white-space: nowrap;
+}
+
+.emp-empty-state {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.emp-empty-state svg {
+    display: block;
+    margin: 0 auto 12px;
+}
+
+.emp-empty-state h2 {
+    margin: 0 0 6px;
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.emp-empty-state p {
+    max-width: 440px;
+    margin: 0 auto;
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
 
 /* ── Alertas ────────────────────────────────────────────────────────────── */
@@ -121,9 +159,16 @@
 .emp-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
     text-align: left;
     font-size: 0.875rem;
 }
+
+.emp-table th:nth-child(1) { width: 24%; }
+.emp-table th:nth-child(2) { width: 15%; }
+.emp-table th:nth-child(3) { width: 25%; }
+.emp-table th:nth-child(4) { width: 17%; }
+.emp-table th:nth-child(5) { width: 19%; }
 
 .emp-table thead {
     background-color: #f8fafc;
@@ -144,10 +189,31 @@
     border-bottom: 1px solid #f1f5f9;
     color: #334155;
     vertical-align: middle;
+    overflow-wrap: anywhere;
 }
 
 .emp-table tbody tr:hover {
     background-color: #f8fafc;
+}
+
+.emp-name {
+    display: block;
+    color: #0f172a;
+    font-size: 0.95rem;
+    line-height: 1.35;
+}
+
+.emp-activity,
+.emp-basin {
+    display: block;
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+.emp-location {
+    line-height: 1.45;
 }
 
 .emp-badge-cnpj {
@@ -175,6 +241,7 @@
     align-items: center;
     gap: 8px;
     justify-content: flex-end;
+    flex-wrap: wrap;
 }
 
 .emp-btn-req {
@@ -498,28 +565,92 @@
     .emp-header {
         flex-direction: column;
         align-items: stretch;
+        gap: 8px;
+        margin-bottom: 16px;
     }
 
-    .emp-nav-buttons {
-        justify-content: stretch;
-        width: 100%;
-    }
-
-    .emp-nav-btn {
-        flex: 1;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .emp-actions {
-        flex-direction: column;
+    .emp-toolbar-form {
         align-items: stretch;
+        flex-direction: column;
     }
 
-    .emp-btn-req, .emp-btn-edit {
-        justify-content: center;
+    .emp-search-field {
+        flex-basis: auto;
+    }
+
+    .emp-toolbar-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .emp-toolbar-actions > :only-child {
+        grid-column: 1 / -1;
+    }
+
+    .emp-table-card.emp-table-list {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .emp-table-list .emp-table,
+    .emp-table-list .emp-table tbody {
+        display: block;
         width: 100%;
-        box-sizing: border-box;
+    }
+
+    .emp-table-list .emp-table thead {
+        display: none;
+    }
+
+    .emp-table-list .emp-table tbody tr {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 16px;
+        margin-bottom: 12px;
+        padding: 4px 16px;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
+    .emp-table-list .emp-table td {
+        display: block;
+        min-width: 0;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .emp-table-list .emp-table td::before {
+        display: block;
+        margin-bottom: 5px;
+        color: #64748b;
+        content: attr(data-label);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+    }
+
+    .emp-table-list .emp-table td:first-child,
+    .emp-table-list .emp-table td:nth-child(3),
+    .emp-table-list .emp-table td:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .emp-table-list .emp-table td:first-child {
+        padding-top: 12px;
+    }
+
+    .emp-table-list .emp-table td:first-child::before {
+        display: none;
+    }
+
+    .emp-table-list .emp-table td:last-child {
+        border-bottom: 0;
     }
 
     .emp-section {
@@ -531,11 +662,38 @@
         justify-content: center;
     }
 
-    .emp-btn-submit span{
-        display: none;
+    .emp-container {
+        padding: 20px 12px 100px;
+    }
+}
+
+@media (max-width: 420px) {
+    .emp-toolbar-actions {
+        grid-template-columns: 1fr;
     }
 
-    .emp-container {
-        padding: 0px;
+    .emp-toolbar-actions > * {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .emp-table-list .emp-table tbody tr {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .emp-table-list .emp-table td {
+        grid-column: 1 / -1;
+    }
+
+    .emp-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .emp-btn-req,
+    .emp-btn-edit {
+        justify-content: center;
+        width: 100%;
+        box-sizing: border-box;
     }
 }
