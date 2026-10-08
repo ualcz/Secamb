@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Usuario;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * Seeder principal - SECAMB (Prefeitura Municipal de Seabra)
@@ -18,19 +16,9 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // ─── Administrador Geral da SECAMB ────────────────────────────────────
-        Usuario::updateOrCreate(
-            ['email' => env('ADMIN_EMAIL', 'admin@secamb.local')],
-            [
-                'nome'     => env('ADMIN_NAME', 'Administrador SECAMB'),
-                'password' => Hash::make(env('ADMIN_PASSWORD', 'admin123')),
-                'role'     => 'admin',
-                'ativo'    => true,
-            ]
-        );
-
         // ─── Seeders do SECAMB ────────────────────────────────────────────────
         $this->call([
+            AdminSeeder::class,
             CidadaosTesteSeeder::class,
             SecambSeeder::class,
         ]);

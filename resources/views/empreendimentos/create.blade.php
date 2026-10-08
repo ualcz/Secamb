@@ -101,9 +101,19 @@
                         <label for="fase_operacao" class="floating-label">Fase de Operação</label>
                     </div>
 
+                    <div class="emp-form-group emp-col-4">
+                        <x-floating-input
+                            name="cep"
+                            id="cep"
+                            label="CEP"
+                            value="{{ old('cep') }}"
+                            placeholder="46900-000"/>
+                    </div>
+
                     <div class="emp-form-group emp-col-8">
                         <x-floating-input
-                            name="ebdereco"
+                            name="endereco"
+                            id="logradouro"
                             label="Endereço / Logradouro"
                             value="{{ old('endereco') }}"
                             placeholder="Rua, Avenida, Rodovia ou Estrada, Nº"/>
@@ -112,23 +122,19 @@
                     <div class="emp-form-group emp-col-4">
                         <x-floating-input
                         name="bairro"
+                        id="bairro"
                         label="Bairro / Povoado"
                         value="{{ old('bairro') }}"
                         placeholder="Ex: Centro, Povoado Velame"/>
                     </div>
 
 
-                    <div class="emp-form-group emp-col-4">
-                        <x-floating-input
-                            name="cep"
-                            label="CEP"
-                            value="{{ old('cep') }}"
-                            placeholder="46900-000"/>
-                    </div>
+
 
                     <div class="emp-form-group emp-col-4">
                         <x-floating-input
                             name="cidade"
+                            id="cidade"
                             label="Município"
                             value="{{ old('cidade', 'Seabra') }}"
                             placeholder="Seabra"/>
@@ -137,6 +143,7 @@
                     <div class="emp-form-group emp-col-4">
                         <x-floating-input
                             name="estado"
+                            id="uf"
                             label="UF"
                             value="{{ old('estado', 'BA') }}"
                             placeholder="BA"
@@ -256,4 +263,5 @@
         }
     });
 </script>
+<script src="{{ asset('js/endereco.js') }}"></script>
 @endsection
