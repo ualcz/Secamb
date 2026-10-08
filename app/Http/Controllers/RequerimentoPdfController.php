@@ -25,6 +25,7 @@ class RequerimentoPdfController extends Controller
     ): DomPDF {
         return Pdf::loadView('pdf.requerimento', [
             'aluno' => $aluno,
+            'requerimento' => null,
             'setorNome' => $setorNome,
             'setorChave' => $setorChave,
             'objeto' => $objeto,
@@ -144,6 +145,7 @@ class RequerimentoPdfController extends Controller
 
         return [
             'aluno' => $aluno,
+            'requerimento' => null,
             'setorNome' => $setorNome,
             'setorChave' => (string) ($modeloAtivo['id'] ?? $setorParam),
             'objeto' => $objeto,
@@ -151,4 +153,5 @@ class RequerimentoPdfController extends Controller
             'numeroProtocolo' => $request->query('numero_protocolo'),
         ];
     }
+
 }

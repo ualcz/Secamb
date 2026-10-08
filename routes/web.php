@@ -195,8 +195,12 @@ Route::middleware(['auth', 'role:servidor'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
-    Route::get('/requerimentos/visualizar-blade', [RequerimentoPdfController::class, 'visualizarBlade'])->name('requerimentos.visualizar-blade');
-    Route::get('/requerimentos/gerar-pdf', [RequerimentoPdfController::class, 'gerarPdf'])->name('requerimentos.gerar-pdf');
+    Route::get('/requerimentos/visualizar-blade', [RequerimentoPdfController::class, 'visualizarBlade'])
+        ->middleware('perfil.completo')
+        ->name('requerimentos.visualizar-blade');
+    Route::get('/requerimentos/gerar-pdf', [RequerimentoPdfController::class, 'gerarPdf'])
+        ->middleware('perfil.completo')
+        ->name('requerimentos.gerar-pdf');
     Route::get('/requerimentos/{id}/gerar-comprovante', [RequerimentoPdfController::class, 'gerarComprovante'])->name('requerimentos.gerar-comprovante');
 
     /*
@@ -209,4 +213,3 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/documentos/{documento}/baixar', [DocumentoRequerimentoController::class, 'baixar'])
         ->name('documentos.download');
 });
-
