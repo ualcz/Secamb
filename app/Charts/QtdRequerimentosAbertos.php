@@ -5,21 +5,22 @@ namespace App\Charts;
 use ArielMejiaDev\LarapexCharts\LarapexChart;
 use App\Models\Requerimento;
 
-class QtdRequerimentoMeses
+class QtdRequerimentosAbertos
 {
    public function build(): \ArielMejiaDev\LarapexCharts\LineChart
     {
         $dados = Requerimento::selectRaw('objetoDoRequerimento, MONTH(created_at) as mes, COUNT(*) as total')
             ->groupBy('objetoDoRequerimento', 'mes')
+            ->where('status', 'aberto')
             ->orderBy('mes')
             ->get();
 
         $objetos = $dados->groupBy('objetoDoRequerimento');
 
         $meses = [
-        'Janeiro', 'Fevereiro', 'Março', 'Abril',
-        'Maio', 'Junho', 'Julho', 'Agosto',
-        'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+        'Jan.', 'Fev.', 'Mar.', 'Abr.',
+        'Mai.', 'Jun.', 'Jul.', 'Ago.',
+        'Set.', 'Out.', 'Nov.', 'Dez.'
         ];
 
         $series = [];
@@ -43,11 +44,10 @@ class QtdRequerimentoMeses
         }
 
         $chart = (new LarapexChart)->lineChart()
-        ->setTitle('Requerimentos por mês')
-        ->setSubtitle('Cada linha representa um objeto')
+        ->setTitle('Requerimentos abertos (por mês)')
         ->setDataset($series)
         ->setXAxis($meses)
-        ->setHeight(350);
+        ->setHeight(130);
 
         return $chart;
     }

@@ -116,7 +116,7 @@
                 </div>
                 <h3>Graziele Brandão Silva</h3>
                 <p class="role">Discente IFBA</p>
-                <p class="desc">Desenvolvedor do projeto em parceria com o IFBA Seabra.</p>
+                <p class="desc">Desenvolvedora do projeto em parceria com o IFBA Seabra.</p>
             </div>
             <div class="card-dev">
                 <div class="avatar">
@@ -124,7 +124,7 @@
                 </div>
                 <h3>Larissa Souza Rocha</h3>
                 <p class="role">Discente IFBA</p>
-                <p class="desc">Desenvolvedor do projeto em parceria com o IFBA Seabra.</p>
+                <p class="desc">Desenvolvedora do projeto em parceria com o IFBA Seabra.</p>
             </div>
 
             <div class="card-dev">
