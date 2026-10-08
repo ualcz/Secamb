@@ -145,7 +145,7 @@
                                 <span>{{ explode(' ', auth()->user()->nome)[0] }}</span>
                             </summary>
                             <div class="user-menu-panel">
-                                <a href="{{ $perfilRoute }}">Perfil</a>
+                                <a href="{{ route('admin.adminProfile') }}">Perfil</a>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit">Sair da conta</button>

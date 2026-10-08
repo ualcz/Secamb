@@ -38,4 +38,8 @@ class AdminDashboardController extends Controller
             'notFound' => 'Nenhum registro encontrado.'
         ]);
     }
+
+    public function adminProfile(){
+        return view('admin.adminProfile');
+    }
 }
