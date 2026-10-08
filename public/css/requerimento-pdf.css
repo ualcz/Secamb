@@ -145,6 +145,17 @@ table {
     margin-bottom: 0.5mm;
 }
 
+.check-indicator {
+    display: inline-block;
+    width: 2.5mm;
+    height: 2.5mm;
+    border: 0.5pt solid #222;
+    line-height: 2.5mm;
+    text-align: center;
+    vertical-align: middle;
+    margin-right: 1mm;
+}
+
 .marcado {
     font-weight: bold;
 }
@@ -167,31 +178,6 @@ table {
     padding: 2mm 2.5mm;
     font-size: 7pt;
     text-align: justify;
-    line-height: 1.5;
-}
-
-/* ── Assinaturas finais ── */
-.assinaturas {
-    margin-top: 5mm;
-}
-
-.assinaturas table td {
-    width: 50%;
-    text-align: center;
-    padding: 0 4mm;
-    vertical-align: bottom;
-}
-
-.assin-linha {
-    border-top: 0.5pt solid #333;
-    margin: 0 auto 1mm;
-    width: 70mm;
-}
-
-.assin-label {
-    font-size: 7pt;
-    text-align: center;
-    font-weight: bold;
     line-height: 1.5;
 }
 

@@ -28,7 +28,7 @@
         $modeloAtivo       = $modeloAtivo ?: (reset($modelos) ?: []);
         $setorNomeOficial  = $modeloAtivo['setor_nome'] ?? $setorNome ?? 'Secretaria de Meio Ambiente';
         $listaObjetos      = array_values($modeloAtivo['objetos'] ?? []);
-        $colunasObjetos    = array_chunk($listaObjetos, (int) ceil(count($listaObjetos) / 2));
+        $colunasObjetos    = array_chunk($listaObjetos, max(1, (int) ceil(count($listaObjetos) / 2)));
         $objSelecionado    = trim($objeto ?? '');
         $emailSetor        = $modeloAtivo['rodape_contato'] ?? $modeloAtivo['email'] ?? '';
 
@@ -198,7 +198,10 @@
                                     $selecionado = $objSelecionado === $descricao
                                         || ($baseDescricao !== '' && stripos($objSelecionado, $baseDescricao) !== false);
                                 @endphp
-                                <div class="check {{ $selecionado ? 'marcado' : '' }}">[{{ $selecionado ? 'X' : '&nbsp;' }}] {{ $descricao }}</div>
+                                <div class="check {{ $selecionado ? 'marcado' : '' }}">
+                                    <span class="check-indicator">{{ $selecionado ? 'X' : '' }}</span>
+                                    {{ $descricao }}
+                                </div>
                             @endforeach
                         </td>
                     @endforeach
@@ -236,32 +239,6 @@
             Lei Federal nº 9.605/1998 (Lei de Crimes Ambientais), no Decreto Estadual nº 14.024/2012 e na Lei Municipal nº 498/2013 de Seabra-BA,
             bem como a nulidade deste ato e a cassação de eventuais licenças concedidas com base nas informações aqui declaradas.
         </div>
-    </div>
-
-    {{-- ══════════════════════════════════════════════════════
-         ASSINATURAS
-    ══════════════════════════════════════════════════════ --}}
-    <div class="assinaturas" style="margin-top: 8mm;">
-        <table>
-            <tr>
-                <td style="text-align:center; padding: 0 6mm;">
-                    <div class="assin-linha"></div>
-                    <div class="assin-label">
-                        {{ $aluno->nome }}<br>
-                        Requerente / Responsável Legal<br>
-                        <span style="font-weight:normal;">Seabra - BA, {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</span>
-                    </div>
-                </td>
-                <td style="text-align:center; padding: 0 6mm;">
-                    <div class="assin-linha"></div>
-                    <div class="assin-label">
-                        Servidor Responsável pelo Recebimento<br>
-                        {{ strtoupper($setorNomeOficial) }}<br>
-                        <span style="font-weight:normal;">Data: ____/____/________</span>
-                    </div>
-                </td>
-            </tr>
-        </table>
     </div>
 
     {{-- ══════════════════════════════════════════════════════
