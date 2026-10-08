@@ -129,7 +129,7 @@
                             <td data-label="Ações">
                                 <div class="emp-actions">
                                     {{-- Botão Nova Licença / Requisição --}}
-                                    <a href="{{ route('requerimentos.aluno.novo', ['empreendimento_id' => $emp->id]) }}"
+                                    <a href="{{ route('requerimentos.cidadao.novo', ['empreendimento_id' => $emp->id]) }}"
                                        class="emp-btn-req"
                                        title="Abrir novo processo de licenciamento para este empreendimento">
                                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -207,7 +207,7 @@
                                     </a>
 
                                     {{-- Botão Nova Licença / Requisição --}}
-                                    <a href="{{ route('requerimentos.aluno.novo', ['empreendimento_id' => $emp->id]) }}"
+                                    <a href="{{ route('requerimentos.cidadao.novo', ['empreendimento_id' => $emp->id]) }}"
                                     class="emp-btn-req"
                                     title="Abrir novo processo de licenciamento para este empreendimento">
                                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

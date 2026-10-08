@@ -44,7 +44,7 @@ O seu requerimento referente a **{{ $requerimento->objetoDoRequerimento }}** foi
 @if($solicitaNovoDocumento)
 **Ação necessária:** Acesse o sistema para corrigir as informações ou reenviar a documentação solicitada.
 
-<x-mail::button :url="route('requerimentos.aluno.visualizar', $requerimento->id)">
+<x-mail::button :url="route('requerimentos.cidadao.visualizar', $requerimento->id)">
 Corrigir e Reenviar Documento
 </x-mail::button>
 @else
@@ -67,7 +67,7 @@ O seu requerimento referente a **{{ $requerimento->objetoDoRequerimento }}** foi
 
 **Ação necessária:** Nenhuma ação pendente. Você já pode visualizar o resultado final ou documentos emitidos no sistema.
 
-<x-mail::button :url="route('requerimentos.aluno.visualizar', $requerimento->id)">
+<x-mail::button :url="route('requerimentos.cidadao.visualizar', $requerimento->id)">
 Visualizar Requerimento
 </x-mail::button>
 
@@ -87,7 +87,7 @@ O seu requerimento referente a **{{ $requerimento->objetoDoRequerimento }}** ago
 
 **Ação necessária:** Nenhuma ação necessária no momento. Você será avisado assim que houver uma nova atualização.
 
-<x-mail::button :url="route('requerimentos.aluno.visualizar', $requerimento->id)">
+<x-mail::button :url="route('requerimentos.cidadao.visualizar', $requerimento->id)">
 Acompanhar Requerimento
 </x-mail::button>
 @endif

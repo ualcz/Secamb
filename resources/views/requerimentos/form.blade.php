@@ -14,7 +14,7 @@
     <div class="setores-nav">
         <strong>Setor:</strong>
         @foreach($modelos as $mod)
-            <a href="{{ route('requerimentos.aluno.novo', array_merge(['setor' => $mod['id']], request()->filled('empreendimento_id') ? ['empreendimento_id' => request('empreendimento_id')] : [])) }}"
+            <a href="{{ route('requerimentos.cidadao.novo', array_merge(['setor' => $mod['id']], request()->filled('empreendimento_id') ? ['empreendimento_id' => request('empreendimento_id')] : [])) }}"
                class="{{ ($modeloChave ?? '') == $mod['id'] ? 'active' : '' }} btn-nav" id="navegacao-btn">
                 {{ $mod['setor_sigla'] }}
             </a>
@@ -42,7 +42,7 @@
         </div>
     @endif
 
-        <form id="formRequerimento" action="{{ route('aluno.enviar-email') }}" method="POST" enctype="multipart/form-data"
+        <form id="formRequerimento" action="{{ route('cidadao.enviar-email') }}" method="POST" enctype="multipart/form-data"
             data-draft-key="requerimento-{{ auth()->id() }}-{{ $modeloAtivo['id'] ?? 'geral' }}"
             data-restore-draft="{{ $errors->any() ? 'false' : 'true' }}"
             data-clear-draft="{{ session()->has('sucesso') ? 'true' : 'false' }}">

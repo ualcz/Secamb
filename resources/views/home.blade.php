@@ -21,7 +21,7 @@
                 <div class="hero-actions">
                     @auth
                         <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                            <a href="{{ route('requerimentos.aluno.novo') }}" class="btn-primary">
+                            <a href="{{ route('requerimentos.cidadao.novo') }}" class="btn-primary">
                                 Novo Requerimento →
                             </a>
                             <a href="{{ route('empreendimentos.index') }}" class="btn-primary" style="background:#0284c7; border-color:#0284c7;">

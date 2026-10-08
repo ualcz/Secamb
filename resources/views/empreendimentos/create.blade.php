@@ -11,7 +11,7 @@
     {{-- Botão Voltar --}}
     <div style="margin-bottom: 20px;">
         @if(request('retorno') === 'requerimento')
-            <a href="{{ route('requerimentos.aluno.novo') }}" class="emp-btn-cancel" style="display: inline-flex; align-items: center; gap: 6px;">
+            <a href="{{ route('requerimentos.cidadao.novo') }}" class="emp-btn-cancel" style="display: inline-flex; align-items: center; gap: 6px;">
                 ← Voltar ao Requerimento
             </a>
         @else
@@ -214,7 +214,7 @@
 
             {{-- Ações --}}
             <div class="emp-form-actions">
-                <a href="{{ request('retorno') === 'requerimento' ? route('requerimentos.aluno.novo') : route('empreendimentos.index') }}" class="emp-btn-cancel">
+                <a href="{{ request('retorno') === 'requerimento' ? route('requerimentos.cidadao.novo') : route('empreendimentos.index') }}" class="emp-btn-cancel">
                     Cancelar
                 </a>
                 <button type="submit" class="emp-btn-submit">

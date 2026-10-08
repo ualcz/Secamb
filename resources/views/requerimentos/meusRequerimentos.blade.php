@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Meus Requerimentos - SDP')
-@section('tag', 'Aluno')
+@section('title', 'Meus Requerimentos - SECAMB')
+@section('tag', 'Cidadão')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/meusRequerimentos.css') }}?v={{ filemtime(public_path('css/meusRequerimentos.css')) }}">
@@ -10,7 +10,7 @@
 
     {{-- Filtro de Pesquisa com Campo Único --}}
     <div class="req-filter-card">
-        <form method="GET" action="{{ route('requerimentos.aluno.meusRequerimentos') }}" class="req-filter-form">
+        <form method="GET" action="{{ route('requerimentos.cidadao.meusRequerimentos') }}" class="req-filter-form">
             <input
                 type="text"
                 name="busca"
@@ -24,7 +24,7 @@
             </button>
 
             @if(request()->filled('busca'))
-                <a href="{{ route('requerimentos.aluno.meusRequerimentos') }}" class="req-btn-limpar">
+                <a href="{{ route('requerimentos.cidadao.meusRequerimentos') }}" class="req-btn-limpar">
                     Limpar
                 </a>
             @endif
@@ -94,8 +94,7 @@
                                     </td>
                                 @endif
                                 <td class="req-col-acoes">
-                                    {{-- --}}
-                                    <a href="/requerimentos/aluno/visualizar/{{ $requerimento->id }}" class="req-btn-imprimir">Ver mais</a>
+                                    <a href="{{ route('requerimentos.cidadao.visualizar', $requerimento->id) }}" class="req-btn-imprimir">Ver mais</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -135,7 +134,7 @@
                         <div class="req-card-status {{ $requerimento->status_aluno }}">
                             <span>{{ $requerimento->status_aluno }}</span>
                         </div>
-                        <a href="/requerimentos/aluno/visualizar/{{ $requerimento->id }}" class="req-btn-imprimir">Ver mais</a>
+                        <a href="{{ route('requerimentos.cidadao.visualizar', $requerimento->id) }}" class="req-btn-imprimir">Ver mais</a>
                     </div>
                 </div>
             @endforeach
