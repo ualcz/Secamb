@@ -7,7 +7,7 @@
     <title>@yield('title', 'Secamb')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('css/header.css') }}?v={{ filemtime(public_path('css/header.css')) }}">
-    <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/footer.css') }}?v={{ filemtime(public_path('css/footer.css')) }}">
 </head>
 
 <body class="flex flex-col min-h-screen bg-zinc-100">
@@ -237,7 +237,7 @@
         <div class="footer-inner">
 
             <div class="footer-brand">
-                <img src="{{ asset('img/logoVertical.png') }}" alt="Logo IFBA" class="footer-logo">
+                <img src="{{ asset('img/logo_prefeitura_seabra.png') }}" alt="Logo Prefeitura Municipal de Seabra" class="footer-logo">
                 <div>
                     <div class="footer-brand-name">Secamb</div>
                     <div class="footer-brand-sub">Sistema de Requisição de Licenciamento Ambiental</div>

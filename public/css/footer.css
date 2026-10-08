@@ -47,10 +47,10 @@ body {
 }
 
 .footer-logo {
-    width: 34px;
+    width: 38px;
     height: auto;
-    opacity: 0.85;
-    filter: brightness(0) invert(1);
+    max-height: 44px;
+    object-fit: contain;
 }
 
 .footer-brand-name {

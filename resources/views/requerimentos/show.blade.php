@@ -145,11 +145,12 @@
                 </div>
                 <div>
                     @php
-                        $statusClass = match($requerimento->status_aluno) {
-                            'Aberto' => 'badge-Aberto',
-                            'Em Análise' => 'badge-analise',
-                            'Concluído' => 'badge-concluido',
-                            'Indeferido' => 'badge-indeferido',
+                        $statusClass = match($requerimento->status) {
+                            'Aberto', 'Novo' => 'badge-Aberto',
+                            'Em Análise', 'Em Analise', 'Em Atendimento' => 'badge-analise',
+                            'Concluído', 'Concluido', 'Finalizado' => 'badge-concluido',
+                            'Indeferido', 'Expirado' => 'badge-indeferido',
+                            'Despacho', 'Devolvido' => 'badge-despacho',
                             default => 'badge-analise'
                         };
                     @endphp
@@ -157,7 +158,7 @@
                         <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="10"/>
                         </svg>
-                        {{ $requerimento->status_aluno }}
+                        {{ $requerimento->status ?? 'Aberto' }}
                     </span>
                 </div>
             </div>

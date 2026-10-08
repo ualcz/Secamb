@@ -87,10 +87,14 @@
                                     <div> {{ $requerimento['objetoDoRequerimento'] ?? $requerimento->objetoDoRequerimento }}</div>
                                 </td>
                                 @if($requerimento->status)
-                                    <td class="req-col-objeto {{ $requerimento->status }}">
+                                    <td class="req-col-status {{ $requerimento->status }} {{ Str::slug($requerimento->status) }}">
                                         <span>
                                             {{ $requerimento->status }}
                                         </span>
+                                    </td>
+                                @else
+                                    <td class="req-col-status Aberto status-aberto">
+                                        <span>Aberto</span>
                                     </td>
                                 @endif
                                 <td class="req-col-acoes">
@@ -125,14 +129,14 @@
                         <strong>{{ $requerimento['objetoDoRequerimento'] ?? $requerimento->objetoDoRequerimento }}</strong>
                         @if($requerimento->empreendimento)
                             <div style="font-size: 0.8rem; color: #059669; font-weight: 600; margin-top: 3px;">
-                                🏢 {{ $requerimento->empreendimento->nome }}
+                                {{ $requerimento->empreendimento->nome }}
                             </div>
                         @endif
                     </div>
 
                     <div class="req-card-actions">
-                        <div class="req-card-status {{ $requerimento->status_aluno }}">
-                            <span>{{ $requerimento->status_aluno }}</span>
+                        <div class="req-card-status {{ $requerimento->status ?? 'Aberto' }} {{ Str::slug($requerimento->status ?? 'aberto') }}">
+                            <span>{{ $requerimento->status ?? 'Aberto' }}</span>
                         </div>
                         <a href="{{ route('requerimentos.cidadao.visualizar', $requerimento->id) }}" class="req-btn-imprimir">Ver mais</a>
                     </div>

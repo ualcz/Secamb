@@ -255,10 +255,15 @@
 }
 
 .req-card-actions .req-card-status span {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     width: auto;
     font-size: 0.75rem;
+    font-weight: 600;
     white-space: nowrap;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    letter-spacing: 0.01em;
 }
 
 .req-card-btn-imprimir {
@@ -281,60 +286,85 @@
     background: #1d4ed8;
 }
 
-.Aberto span{
-    color: rgb(245, 148, 30);
-    background-color: rgb(255, 232, 204);
-    padding: 5px 10px 5px 10px;
-    border-radius: 4px;
-    display: block;
-    width: 100%;
+/* ── Badges de Status ──────────────────────────────────────────────────────── */
+
+.Aberto span,
+.aberto span,
+.status-aberto span,
+.Novo span,
+.novo span,
+.status-novo span {
+    color: #b45309;
+    background-color: #fef3c7;
+    border: 1px solid #fde68a;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    display: inline-block;
     text-align: center;
+    font-weight: 600;
 }
-.aberto span{
-    color: rgb(245, 148, 30);
-    background-color: rgb(255, 232, 204);
-    padding: 5px 10px 5px 10px;
-    border-radius: 4px;
-    display: block;
-    width: 100%;
+
+.Análise span,
+.analise span,
+.status-analise span,
+.status-em-analise span,
+.status-em-atendimento span {
+    color: #6b21a8;
+    background-color: #f3e8ff;
+    border: 1px solid #e9d5ff;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    display: inline-block;
     text-align: center;
+    font-weight: 600;
 }
-.Análise span{
-    color: rgb(78, 25, 102);
-    background-color: rgb(241, 204, 255);
-    padding: 5px 10px 5px 10px;
-    border-radius: 4px;
-    display: block;
-    width: 100%;
+
+.Concluído span,
+.concluido span,
+.status-concluido span,
+.Finalizado span,
+.finalizado span,
+.status-finalizado span {
+    color: #15803d;
+    background-color: #dcfce7;
+    border: 1px solid #bbf7d0;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    display: inline-block;
     text-align: center;
+    font-weight: 600;
 }
-.Concluído span{
-    color: rgb(18, 106, 14);
-    background-color: rgb(202, 255, 200);
-    padding: 5px 10px 5px 10px;
-    border-radius: 4px;
-    display: block;
-    width: 100%;
+
+.Indeferido span,
+.indeferido span,
+.status-indeferido span,
+.Expirado span,
+.expirado span,
+.status-expirado span {
+    color: #b91c1c;
+    background-color: #fee2e2;
+    border: 1px solid #fecaca;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    display: inline-block;
     text-align: center;
+    font-weight: 600;
 }
-.Indeferido span{
-    color: rgb(135, 3, 3);
-    background-color: rgb(255, 174, 174);
-    padding: 5px 10px 5px 10px;
-    border-radius: 4px;
-    display: block;
-    width: 100%;
-    text-align: center;
-}
+
 .Despacho span,
-.despacho span{
+.despacho span,
+.status-despacho span,
+.Devolvido span,
+.devolvido span,
+.status-devolvido span {
     color: #0369a1;
     background-color: #e0f2fe;
-    padding: 5px 10px 5px 10px;
-    border-radius: 4px;
-    display: block;
-    width: 100%;
+    border: 1px solid #bae6fd;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    display: inline-block;
     text-align: center;
+    font-weight: 600;
 }
 
 /* ── Estado Vazio (Empty State) ───────────────────────────────────────────── */
