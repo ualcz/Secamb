@@ -147,6 +147,10 @@
 
 /* ── Tabela de Empreendimentos (Manual Figura 3) ─────────────────────────── */
 
+.mobile-empreendimentos {
+    display: none;
+}
+
 .emp-table-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
@@ -695,5 +699,33 @@
         justify-content: center;
         width: 100%;
         box-sizing: border-box;
+    }
+}
+
+@media (max-width: 640px) {
+    .desktop-empreendimentos {
+        display: none;
+    }
+
+    .mobile-empreendimentos {
+        display: block;
+    }
+
+    .empreendimento-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .busca {
+        display: grid !important;
+        grid-template-columns: 4fr 1fr !important;
+    }
+
+    .busca button {
+        width: 90%;
     }
 }
