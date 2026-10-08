@@ -52,6 +52,19 @@ Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCa
 
 /*
 |--------------------------------------------------------------------------
+| MEU PERFIL & DADOS CADASTRAIS (todos os usuários autenticados)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
+    Route::get('/perfil/editar', [PerfilController::class, 'edit'])->name('perfil.edit');
+    Route::put('/perfil', [PerfilController::class, 'update'])->name('perfil.update');
+    Route::get('/perfil/senha', [PerfilController::class, 'editSenha'])->name('perfil.senha');
+    Route::put('/perfil/senha', [PerfilController::class, 'updateSenha'])->name('perfil.senha.update');
+});
+
+/*
+|--------------------------------------------------------------------------
 | COMPLETAR PERFIL — cidadãos com login social
 |--------------------------------------------------------------------------
 */
@@ -143,16 +156,11 @@ Route::middleware(['auth', 'responsavel'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:cidadao', 'perfil.completo'])->group(function () {
-    Route::get('/requerimentos/cidadao', function () {
-        $setores = \App\Models\Setor::publicos()->get();
-        return view('requerimentos.aluno', compact('setores'));
-    })->name('requerimentos.aluno');
-
-    Route::post('/requerimentos/aluno/enviar-email', [EnvioEmailController::class, 'enviar'])->name('aluno.enviar-email');
-    Route::get('/requerimentos/aluno/novo', [RequerimentoController::class, 'create'])->name('requerimentos.aluno.novo');
-    Route::get('/requerimentos/aluno/meusRequerimentos', [RequerimentoController::class, 'index'])->name('requerimentos.aluno.meusRequerimentos');
-    Route::get('/requerimentos/aluno/visualizar/{requerimento}', [RequerimentoController::class, 'show'])
-        ->name('requerimentos.aluno.visualizar');
+    Route::post('/requerimentos/cidadao/enviar-email', [EnvioEmailController::class, 'enviar'])->name('cidadao.enviar-email');
+    Route::get('/requerimentos/cidadao/novo', [RequerimentoController::class, 'create'])->name('requerimentos.cidadao.novo');
+    Route::get('/requerimentos/cidadao/meusRequerimentos', [RequerimentoController::class, 'index'])->name('requerimentos.cidadao.meusRequerimentos');
+    Route::get('/requerimentos/cidadao/visualizar/{requerimento}', [RequerimentoController::class, 'show'])
+        ->name('requerimentos.cidadao.visualizar');
     Route::post('/requerimentos/{requerimento}/reenviar', [RequerimentoController::class, 'reenviarRequerimento'])->name('requerimentos.reenviar');
 });
 

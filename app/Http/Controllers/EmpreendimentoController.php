@@ -99,7 +99,7 @@ class EmpreendimentoController extends Controller
 
             if ($request->input('retorno') === 'requerimento') {
                 return redirect()
-                    ->route('requerimentos.aluno.novo', ['empreendimento_id' => $empreendimento->id])
+                    ->route('requerimentos.cidadao.novo', ['empreendimento_id' => $empreendimento->id])
                     ->with('sucesso', "Empreendimento '{$empreendimento->nome}' cadastrado e selecionado com sucesso!");
             }
 

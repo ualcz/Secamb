@@ -84,6 +84,6 @@ class SocialiteController extends Controller
 
         Auth::login($usuario, true);
 
-        return redirect()->route('requerimentos.aluno');
+        return redirect()->route('requerimentos.cidadao.meusRequerimentos');
     }
 }

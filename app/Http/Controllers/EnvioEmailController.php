@@ -183,7 +183,7 @@ class EnvioEmailController extends Controller
         $this->enviarNotificacoes($requerimento, $cidadao, $setor, $objeto);
 
         return redirect()
-            ->route('requerimentos.aluno.meusRequerimentos')
+            ->route('requerimentos.cidadao.meusRequerimentos')
             ->with('sucesso', "Requerimento nº {$requerimento->numero_protocolo} enviado com sucesso!");
     }
 

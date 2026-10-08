@@ -92,6 +92,6 @@ class LoginController extends Controller
         }
 
         // Cidadão → painel de processos
-        return redirect()->route('requerimentos.aluno');
+        return redirect()->route('requerimentos.cidadao.meusRequerimentos');
     }
 }

@@ -40,6 +40,6 @@ class AdminDashboardController extends Controller
     }
 
     public function adminProfile(){
-        return view('admin.adminProfile');
+        return redirect()->route('perfil.index');
     }
 }
