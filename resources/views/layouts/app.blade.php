@@ -17,7 +17,7 @@
             <div class="header-inner">
 
                 {{-- Logotipo --}}
-            <a href="{{ auth()->check() ? (auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->user()->isServidor() ? route('servidor.dashboard') : route('requerimentos.aluno'))) : url('/') }}" class="header-brand">
+            <a href="{{ auth()->check() ? (auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->user()->isServidor() ? route('servidor.dashboard') : route('requerimentos.cidadao.meusRequerimentos'))) : url('/') }}" class="header-brand">
                     <img src="{{ asset('img/logo_prefeitura_seabra.png') }}" alt="Logo Prefeitura de Seabra">
                     <div class="header-brand-text">
                         <span class="header-brand-title">SECAMB</span>
@@ -31,7 +31,7 @@
                     @php
                         $perfilRoute = auth()->user()->isAdmin()
                             ? route('admin.dashboard')
-                            : (auth()->user()->isServidor() ? route('servidor.dashboard') : route('requerimentos.aluno'));
+                            : (auth()->user()->isServidor() ? route('servidor.dashboard') : route('requerimentos.cidadao.meusRequerimentos'));
                     @endphp
 
                     <nav class="header-nav">
@@ -57,16 +57,16 @@
                                 <span>Empreendimentos</span>
                             </a>
 
-                            <a href="{{ route('requerimentos.aluno.novo') }}"
-                            class="nav-link {{ request()->routeIs('requerimentos.aluno.novo') ? 'active' : '' }}">
+                            <a href="{{ route('requerimentos.cidadao.novo') }}"
+                            class="nav-link {{ request()->routeIs('requerimentos.cidadao.novo') ? 'active' : '' }}">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                                 </svg>
                                 <span>Novo Requerimento</span>
                             </a>
 
-                            <a href="{{ route('requerimentos.aluno.meusRequerimentos') }}"
-                            class="nav-link {{ request()->routeIs('requerimentos.aluno.meusRequerimentos', 'requerimentos.aluno.visualizar') ? 'active' : '' }}">
+                            <a href="{{ route('requerimentos.cidadao.meusRequerimentos') }}"
+                            class="nav-link {{ request()->routeIs('requerimentos.cidadao.meusRequerimentos', 'requerimentos.cidadao.visualizar') ? 'active' : '' }}">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
@@ -103,10 +103,10 @@
                             <a href="{{ route('empreendimentos.index') }}" class="nav-link {{ request()->routeIs('empreendimentos.*') ? 'active' : '' }}" aria-label="Empreendimentos">
                                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21V6.5A2.5 2.5 0 015.5 4H18a2 2 0 012 2v15M3 21h18M8 8h3m-3 4h3m5-4h2m-2 4h2"/></svg>
                             </a>
-                            <a href="{{ route('requerimentos.aluno.novo') }}" class="nav-link {{ request()->routeIs('requerimentos.aluno.novo') ? 'active' : '' }}" aria-label="Novo requerimento">
+                            <a href="{{ route('requerimentos.cidadao.novo') }}" class="nav-link {{ request()->routeIs('requerimentos.cidadao.novo') ? 'active' : '' }}" aria-label="Novo requerimento">
                                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
                             </a>
-                            <a href="{{ route('requerimentos.aluno.meusRequerimentos') }}" class="nav-link {{ request()->routeIs('requerimentos.aluno.meusRequerimentos', 'requerimentos.aluno.visualizar') ? 'active' : '' }}" aria-label="Meus requerimentos">
+                            <a href="{{ route('requerimentos.cidadao.meusRequerimentos') }}" class="nav-link {{ request()->routeIs('requerimentos.cidadao.meusRequerimentos', 'requerimentos.cidadao.visualizar') ? 'active' : '' }}" aria-label="Meus requerimentos">
                                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             </a>
                         @endif
@@ -145,10 +145,20 @@
                                 <span>{{ explode(' ', auth()->user()->nome)[0] }}</span>
                             </summary>
                             <div class="user-menu-panel">
+                                <a href="{{ route('perfil.index') }}">
+                                    Meu Perfil
+                                </a>
                                 @if(auth()->user()->isAdmin())
-                                    <a href="{{ route('admin.adminProfile') }}">Perfil</a>
+                                    <a href="{{ route('perfil.senha') }}">
+                                        Alterar Senha
+                                    </a>
                                 @else
-                                    <a href="{{ $perfilRoute }}">Perfil</a>
+                                    <a href="{{ route('perfil.edit') }}">
+                                        Editar Dados
+                                    </a>
+                                    <a href="{{ route('perfil.senha') }}">
+                                        Alterar Senha
+                                    </a>
                                 @endif
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
