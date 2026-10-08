@@ -113,10 +113,10 @@
                 @endphp
                 <label style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 8px; cursor: pointer;">
                     <span style="display: inline-flex; align-items: center; gap: 6px;">
-                        <input type="radio" 
-                               name="objetoDoRequerimento" 
-                               value="{{ $descricao }}" 
-                               onchange="alternarObjetoOutro(false); mostrarDocumentosAssunto({{ $indexAssunto }})" 
+                        <input type="radio"
+                               name="objetoDoRequerimento"
+                               value="{{ $descricao }}"
+                               onchange="alternarObjetoOutro(false); mostrarDocumentosAssunto({{ $indexAssunto }})"
                                {{ $isChecked ? 'checked' : '' }}>
                         {{ $descricao }}
                         @if(!empty($assuntoItem['link_norma']))
@@ -155,14 +155,14 @@
                     <rect x="3" y="11" width="18" height="11" rx="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-                Selecione â€œOutroâ€ para liberar este campo.
+                Selecione <strong>Outro</strong> para liberar este campo.
             </small>
-            <input type="text" 
-                   name="objeto_outro" 
+            <input type="text"
+                   name="objeto_outro"
                    value="{{ old('objeto_outro') }}"
                    @disabled(old('objetoDoRequerimento') !== 'outro')
                    style="background-color: {{ old('objetoDoRequerimento') === 'outro' ? '#fff' : '#f1f5f9' }}; border-color: {{ old('objetoDoRequerimento') === 'outro' ? '#ccc' : '#cbd5e1' }}; color: {{ old('objetoDoRequerimento') === 'outro' ? '#111827' : '#64748b' }}; cursor: {{ old('objetoDoRequerimento') === 'outro' ? 'text' : 'not-allowed' }};"
-                   placeholder="Especifique caso necessÃ¡rio"
+                   placeholder="Especifique caso necessário"
                    oninput="const el = document.getElementById('nome-assunto-outro-preview'); if(el) el.textContent = 'Outro: ' + this.value;">
         </div>
     </fieldset>
@@ -171,7 +171,7 @@
     <fieldset>
         <legend>Justificativa / Motivo</legend>
         <div class="campo">
-            <textarea name="motivo" rows="4" placeholder="Descreva os motivos da sua solicitaÃ§Ã£o...">{{ old('motivo') }}</textarea>
+            <textarea name="motivo" rows="4" placeholder="Descreva os motivos da sua solicitação...">{{ old('motivo') }}</textarea>
         </div>
     </fieldset>
 

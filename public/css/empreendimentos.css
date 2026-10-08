@@ -566,6 +566,15 @@
         grid-column: span 12;
     }
 
+    .floating-group {
+        position: relative;
+        margin-bottom: 0px !important;
+    }
+
+    .emp-form-grid {
+        gap: 20px;
+    }
+
     .emp-header {
         flex-direction: column;
         align-items: stretch;
