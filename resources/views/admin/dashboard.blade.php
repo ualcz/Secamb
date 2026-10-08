@@ -103,24 +103,31 @@
 </div>
 
 <div class="graficos mb-5">
-    <div class="p-3 bg-white rounded shadow-[0_2px_2px_0_rgba(0,0,0,0.14),_0_3px_1px_-2px_rgba(0,0,0,0.2),_0_1px_5px_0_rgba(0,0,0,0.12)] grafico-linha">
-        {!! $chart->container() !!}
+    <div class="p-3 bg-white rounded shadow-[0_2px_2px_0_rgba(0,0,0,0.14),_0_3px_1px_-2px_rgba(0,0,0,0.2),_0_1px_5px_0_rgba(0,0,0,0.12)] barChart">
+        {!! $barChart->container() !!}
     </div>
 
-    <div class="p-3 bg-white rounded shadow-[0_2px_2px_0_rgba(0,0,0,0.14),_0_3px_1px_-2px_rgba(0,0,0,0.2),_0_1px_5px_0_rgba(0,0,0,0.12)] grafico-pizza">
-         {!! $pieChart->container() !!}
+    <div class="lineCharts">
+        <div class="p-3 bg-white rounded shadow-[0_2px_2px_0_rgba(0,0,0,0.14),_0_3px_1px_-2px_rgba(0,0,0,0.2),_0_1px_5px_0_rgba(0,0,0,0.12)] lineChart">
+            {!! $chart->container() !!}
+        </div>
+        <div class="p-3 bg-white rounded shadow-[0_2px_2px_0_rgba(0,0,0,0.14),_0_3px_1px_-2px_rgba(0,0,0,0.2),_0_1px_5px_0_rgba(0,0,0,0.12)] lineChart">
+            {!! $concluidos->container() !!}
+        </div>
+        <div class="p-3 bg-white rounded shadow-[0_2px_2px_0_rgba(0,0,0,0.14),_0_3px_1px_-2px_rgba(0,0,0,0.2),_0_1px_5px_0_rgba(0,0,0,0.12)] lineChart">
+            {!! $andamento->container() !!}
+        </div>
     </div>
 </div>
 
-    <div class="mb-[-15px] p-3 bg-white rounded shadow-[0_2px_2px_0_rgba(0,0,0,0.14),_0_3px_1px_-2px_rgba(0,0,0,0.2),_0_1px_5px_0_rgba(0,0,0,0.12)] grafico-pizza">
-        {!! $progressBarChart->container() !!}
-    </div>
-
+<script src="{{ $barChart->cdn() }}"></script>
 <script src="{{ $chart->cdn() }}"></script>
-<script src="{{ $pieChart->cdn() }}"></script>
-<script src="{{ $progressBarChart->cdn() }}"></script>
+<script src="{{ $concluidos->cdn() }}"></script>
+<script src="{{ $andamento->cdn() }}"></script>
 
+{{ $barChart->script() }}
 {{ $chart->script() }}
-{{ $pieChart->script() }}
-{{ $progressBarChart->script() }}
+{{ $concluidos->script() }}
+{{ $andamento->script() }}
+
 @endsection

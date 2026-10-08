@@ -13,9 +13,9 @@ return [
     |
     */
 
-    'font_family' => 'Helvetica, Arial, sans-serif',
+    'font-family' => 'Instrument Sans, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
 
-    'font_color' => '#373d3f',
+    'font_color' => '#ffffff',
 
     /*
     |--------------------------------------------------------------------------
@@ -28,6 +28,7 @@ return [
     */
 
     'colors' => [
+        '#F4E9E9',
         LarapexChart::COLOR_MINT_GREEN,
         LarapexChart::COLOR_ROYAL_BLUE,
         LarapexChart::COLOR_CORAL_RED,

@@ -219,17 +219,28 @@
     display: block;
 }
 
+.lineCharts{
+    display: grid;
+    grid-template-rows: 26% 26% 26%;
+    gap: 5px;
+}
+
 .graficos{
     margin-top: 2%;
     gap:3%;
     display: grid;
-    grid-template-columns: 4fr 3fr;
+    grid-template-columns: 4fr 2fr;
 }
 
-.grafico-linha{
+.barChart{
     text-align: start;
+    height: 78%;
+    background: linear-gradient(90deg, #1C419A 2%, #B5BBB1 100%);
 
 }
-.grafico-pizza{
+.lineChart{
     text-align: end;
+/* SCSS Gradient */
+    background: linear-gradient(90deg, #1C419A 2%, #B5BBB1 100%);
+    margin-bottom: 2%;
 }

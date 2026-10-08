@@ -26,6 +26,7 @@ class StatusSetorChart
 
             $emAnalise[] = $total > 0 ? round($analise) : 0;
         }
+        
         $progressBarChart = (new LarapexChart)->horizontalBarChart()
             ->setTitle('Status por Setor')
             ->setSubtitle('Requerimentos em análise (por setor)')
