@@ -132,7 +132,7 @@
     text-align: center;
     border-radius: 5px;
     padding: 5%;
-    background: linear-gradient(90deg, #1C419A 2%, #B5BBB1 95%);
+    background: linear-gradient(90deg, #1C419A 2%, #B7B6B6 95%);
 }
 
 .icone_total, .icone_analise, .icone_recebidos{
@@ -235,12 +235,12 @@
 .barChart{
     text-align: start;
     height: 78%;
-    background: linear-gradient(90deg, #1C419A 2%, #B5BBB1 100%);
+    background: linear-gradient(90deg, #1C419A 2%, #B7B6B6 100%);
 
 }
 .lineChart{
     text-align: end;
 /* SCSS Gradient */
-    background: linear-gradient(90deg, #1C419A 2%, #B5BBB1 100%);
+    background: linear-gradient(90deg, #1C419A 2%, #B7B6B6 100%);
     margin-bottom: 2%;
 }

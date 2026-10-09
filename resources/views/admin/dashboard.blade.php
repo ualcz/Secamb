@@ -102,6 +102,20 @@
     </div>
 </div>
 
+<div class="mt-4 mb-4" style="text-align: center;">
+    <span class="badge badge-setor border" style="font-size: 0.85rem; background:#dbeafe; border-color:#60a5fa; padding:5px; margin-right: 2%;">
+        <a style="color:#1d4ed8; text-decoration:none; font-weight:600;">{{ $statusDominantePorcentagem }}% dos requerimentos estão em {{ $statusDominanteNome }}</a>
+    </span>
+
+    <span class="info-card badge badge-setor border" style="font-size: 0.85rem; background:#dbeafe; border-color:#60a5fa; padding:5px; margin-right: 2%">
+        <a style="color:#1d4ed8; text-decoration:none; font-weight:600;">{{ $totalEmpreendimentos }} Empreendimentos cadastrados</a>
+    </span>
+
+    <span class="info-card badge badge-setor border" style="font-size: 0.85rem; background:#dbeafe; border-color:#60a5fa; padding:5px;">
+        <a style="color:#1d4ed8; text-decoration:none; font-weight:600;">{{ $totalSetores }} Setores cadastrados</a>
+    </span>
+</div>
+
 <div class="graficos mb-5">
     <div class="p-3 bg-white rounded shadow-[0_2px_2px_0_rgba(0,0,0,0.14),_0_3px_1px_-2px_rgba(0,0,0,0.2),_0_1px_5px_0_rgba(0,0,0,0.12)] barChart">
         {!! $barChart->container() !!}

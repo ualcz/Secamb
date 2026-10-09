@@ -140,7 +140,7 @@
                 <div>
                     <span class="info-label">Nº Protocolo</span>
                     <h1 class="card-titulo" style="font-size: 1.5rem; color: #2563eb;">
-                        {{ $requerimento->id }}
+                        {{ date('Y') }}/{{ $requerimento->id }}
                     </h1>
                 </div>
                 <div>

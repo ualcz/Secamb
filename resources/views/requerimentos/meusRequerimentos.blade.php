@@ -69,7 +69,7 @@
                                 <td class="req-col-protocolo">
                                     <span class="req-badge-protocolo">
                                          <div >     
-                                            <span>{{ $requerimento->id }}</span>
+                                            <span>{{ date('Y') }}/{{ $requerimento->id }}</span>
                                         </div>
                                     </span>
                                 </td>

@@ -182,7 +182,7 @@
             <a href="{{ route('home') }}" class="header-brand">
                     <img src="{{ asset('img/logo_prefeitura_seabra.png') }}" alt="Logo Prefeitura Seabra">
                     <div class="header-brand-text">
-                        <span class="header-brand-title">Secamb</span>
+                        <span class="header-brand-title">SECAMB</span>
                         <span class="header-brand-subtitle">Requisição de Licenciamento Ambiental</span>
                     </div>
                 </a>
