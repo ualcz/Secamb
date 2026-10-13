@@ -105,3 +105,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // Inicializa catálogo de serviços do setor de destino se existir
     atualizarAssuntosDestino();
 });
+
+function toggleTimelineDetalhes(btn) {
+    var panel = btn.closest('.timeline-panel');
+    if (!panel) return;
+    var conteudo = panel.querySelector('.timeline-detalhes-conteudo');
+    if (!conteudo) return;
+
+    var aberto = conteudo.style.display !== 'none';
+    conteudo.style.display = aberto ? 'none' : 'block';
+    btn.classList.toggle('aberto', !aberto);
+    var label = btn.querySelector('span');
+    if (label) {
+        label.textContent = !aberto ? 'ocultar' : 'detalhes';
+    }
+}

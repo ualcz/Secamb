@@ -14,60 +14,8 @@
         </svg>
         Imprimir comprovante
     </a>
-    <div class="historico">
-        <h3>Histórico da Tramitação</h3>
+    @include('requerimentos.partials.timeline')
 
-        <ul class="timeline">
-            @forelse($requerimento->historicos as $historico)
-                <li class="timeline-item status-{{ Str::slug($historico->status) }}">
-                    <div class="timeline-badge"></div>
-                    <div class="timeline-panel">
-                        <div class="timeline-heading">
-                            <span class="badge-status">{{ $historico->status }}</span>
-                            <span class="timeline-date">
-                                {{ $historico->created_at->format('d/m/Y \à\s H:i') }}
-                            </span>
-                        </div>
-                        <div class="timeline-body">
-                            <p><strong>Responsável:</strong> {{ $historico->usuario->nome ?? 'Sistema' }}</p>
-                            @if($historico->observacao)
-                                @php
-                                    $textoObservacao = $historico->observacao;
-                                    $servicoSolicitado = null;
-                                    if (preg_match('/\[Serviço Solicitado:\s*(.+?)\]\R?/i', $textoObservacao, $matchServico)) {
-                                        $servicoSolicitado = $matchServico[1];
-                                        $textoObservacao = str_replace($matchServico[0], '', $textoObservacao);
-                                    }
-                                @endphp
-                                <div class="timeline-observacao">
-                                    <strong>Observação:</strong>
-                                    @if($servicoSolicitado)
-                                        <div style="margin: 6px 0; padding: 4px 10px; background: #ede9fe; color: #5b21b6; border-left: 3px solid #7c3aed; border-radius: 4px; font-size: 0.8125rem; font-weight: 600;">
-                                            📋 Serviço / Demanda: {{ $servicoSolicitado }}
-                                        </div>
-                                    @endif
-                                    <div>{!! nl2br(e(trim($textoObservacao))) !!}</div>
-                                </div>
-                            @endif
-                            @if($historico->nome_documento_solicitado)
-                                <div class="timeline-observacao">
-                                    <strong>Documento Solicitado:</strong> {{ $historico->nome_documento_solicitado }}
-                                </div>
-                            @endif
-                            {{-- DOCUMENTOS ANEXADOS NESTA TRAMITAÇÃO --}}
-                            @include('requerimentos.partials.historico-documentos', [
-                                'documentos' => $historico->documentos,
-                                'historico' => $historico,
-                                'requerimento' => $requerimento,
-                            ])
-                        </div>
-                    </div>
-                </li>
-            @empty
-                <p>Nenhum registro no histórico até o momento.</p>
-            @endforelse
-        </ul>
-    </div>
 
     <div class="protocolo-info">
         @if(session('sucesso'))
@@ -235,5 +183,5 @@
     </div>
 </div>
 
-<script src="{{ asset('js/show-requerimento.js') }}"></script>
+<script src="{{ asset('js/show-requerimento.js') }}?v={{ filemtime(public_path('js/show-requerimento.js')) }}"></script>
 @endsection

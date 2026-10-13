@@ -6,61 +6,7 @@
 <div class="detalhes-container">
     <x-btn-voltar style="grid-column: span 2;" />
 
-    <div class="historico">
-        <h3>Histórico de Tramitação</h3>
-
-        <ul class="timeline">
-            @forelse($historicos as $historico)
-                <li class="timeline-item status-{{ Str::slug($historico->status) }}">
-                    <div class="timeline-badge"></div>
-                    <div class="timeline-panel">
-                        <div class="timeline-heading">
-                            <span class="badge-status">{{ $historico->status }}</span>
-                            <span class="timeline-date">
-                                {{ $historico->created_at->format('d/m/Y \\Ã \\s H:i') }}
-                            </span>
-                        </div>
-                        <div class="timeline-body">
-                            <p><strong>Responsável:</strong> {{ $historico->usuario?->nome ?? 'Sistema' }}</p>
-                            @if($historico->observacao)
-                                @php
-                                    $textoObservacao = $historico->observacao;
-                                    $servicoSolicitado = null;
-                                    if (preg_match('/\[Serviço Solicitado:\s*(.+?)\]\R?/i', $textoObservacao, $matchServico)) {
-                                        $servicoSolicitado = $matchServico[1];
-                                        $textoObservacao = str_replace($matchServico[0], '', $textoObservacao);
-                                    }
-                                @endphp
-                                <div class="timeline-observacao">
-                                    <strong>Observação:</strong>
-                                    @if($servicoSolicitado)
-                                        <div style="margin: 6px 0; padding: 4px 10px; background: #ede9fe; color: #5b21b6; border-left: 3px solid #7c3aed; border-radius: 4px; font-size: 0.8125rem; font-weight: 600;">
-                                            📋 Serviço / Demanda: {{ $servicoSolicitado }}
-                                        </div>
-                                    @endif
-                                    <div>{!! nl2br(e(trim($textoObservacao))) !!}</div>
-                                </div>
-                            @endif
-                            @if($historico->solicita_novo_documento)
-                                <div class="timeline-observacao">
-                                    <strong>Documento solicitado:</strong> {{ $historico->nome_documento_solicitado ?? 'Documento corrigido' }}
-                                </div>
-                            @endif
-
-                            {{-- DOCUMENTOS ANEXADOS NESTA TRAMITAÃ‡ÃƒO --}}
-                            @include('requerimentos.partials.historico-documentos', [
-                                'documentos' => $historico->documentos,
-                                'historico' => $historico,
-                                'requerimento' => $requerimento,
-                            ])
-                        </div>
-                    </div>
-                </li>
-            @empty
-                <p>Nenhum registro no histórico até o momento.</p>
-            @endforelse
-        </ul>
-    </div>
+    @include('requerimentos.partials.timeline')
 
     <div class="protocolo-info">
         <div class="card-painel">
@@ -74,8 +20,8 @@
                 @php
                     $statusClass = match($requerimento->status) {
                         'Aberto' => 'badge-Aberto',
-                        'Em AnÃ¡lise' => 'badge-analise',
-                        'ConcluÃ­do' => 'badge-concluido',
+                        'Em Análise' => 'badge-analise',
+                        'Concluído' => 'badge-concluido',
                         'Indeferido' => 'badge-indeferido',
                         'Despacho' => 'badge-despacho',
                         default => 'badge-analise'

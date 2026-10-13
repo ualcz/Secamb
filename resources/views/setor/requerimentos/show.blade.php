@@ -7,7 +7,7 @@
     <x-btn-voltar style="grid-column: span 2;"/>
 
     {{-- 1. Histórico e Linha do Tempo da Tramitação --}}
-    @include('setor.requerimentos.partials.historico')
+    @include('requerimentos.partials.timeline')
 
     <div class="protocolo-info">
         @if(session('sucesso'))
@@ -37,9 +37,6 @@
     </div>
 </div>
 
-<script>
-    window.catalogoSetoresDestino = @json($catalogoSetoresDestino ?? []);
-    window.oldAssuntoDestinoId = @json(old('assunto_destino_id'));
-</script>
+
 <script src="{{ asset('js/show-requerimento.js') }}?v={{ filemtime(public_path('js/show-requerimento.js')) }}"></script>
 @endsection

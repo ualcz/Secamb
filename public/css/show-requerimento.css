@@ -6,7 +6,7 @@
     width: min(1400px, 100% - 2rem);
     margin: 0 auto 2rem;
     display: grid;
-    grid-template-columns: minmax(280px, 0.85fr) minmax(0, 2fr);
+    grid-template-columns: minmax(460px, 1.45fr) minmax(0, 2fr);
     gap: 1.25rem;
     align-items: start;
 }
@@ -480,7 +480,7 @@
     position: relative;
     list-style: none;
     margin: 1.25rem 0 0;
-    padding: 0 0 0 2rem;
+    padding: 0 0 0 1.5rem;
 }
 
 .timeline::before {
@@ -488,24 +488,24 @@
     position: absolute;
     top: 0.5rem;
     bottom: 0.5rem;
-    left: 0.43rem;
+    left: 0.35rem;
     width: 2px;
     background: #e5e7eb;
 }
 
 .timeline-item {
     position: relative;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .timeline-item:last-child { margin-bottom: 0; }
 
 .timeline-badge {
     position: absolute;
-    top: 1rem;
-    left: -2rem;
-    width: 0.95rem;
-    height: 0.95rem;
+    top: 0.75rem;
+    left: -1.5rem;
+    width: 0.85rem;
+    height: 0.85rem;
     box-sizing: border-box;
     background: #ffffff;
     border: 3px solid #9ca3af;
@@ -514,7 +514,7 @@
 }
 
 .timeline-panel {
-    padding: 0.9rem 1rem;
+    padding: 0.55rem 0.75rem;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -523,58 +523,181 @@
 
 .timeline-panel:hover {
     border-color: #d1d5db;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-.timeline-heading {
+/* Linha única rigorosa do histórico */
+.timeline-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 0.65rem;
+    gap: 0.45rem;
+    width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
 }
 
 .badge-status {
+    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    padding: 0.3rem 0.6rem;
+    padding: 0.18rem 0.5rem;
     border-radius: 999px;
     background: #f3f4f6;
     color: #374151;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
+    white-space: nowrap;
+    line-height: 1.2;
 }
 
 .timeline-date {
+    flex-shrink: 0;
     color: #9ca3af;
     font-size: 0.72rem;
     font-weight: 500;
     white-space: nowrap;
 }
 
-.timeline-body {
-    color: #4b5563;
-    font-size: 0.84rem;
-    line-height: 1.5;
+.timeline-sep {
+    flex-shrink: 0;
+    color: #d1d5db;
+    font-size: 0.75rem;
+    line-height: 1;
 }
 
-.timeline-body p { margin: 0; }
-.timeline-body strong,
-.timeline-observacao strong {
-    color: #374151;
+.timeline-responsavel-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    flex: 1 1 auto;
+    color: #4b5563;
+    font-size: 0.73rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.timeline-responsavel-nome {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Linha de tramitação entre setores dentro do card (visível antes de expandir) */
+.timeline-tramitacao-row {
+    margin-top: 0.35rem;
+    display: flex;
+    align-items: center;
+}
+
+.timeline-rota-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+.timeline-rota-icone {
+    color: #4f46e5;
+    flex-shrink: 0;
+}
+
+.timeline-rota-label {
+    color: #64748b;
+    font-size: 0.68rem;
+    font-weight: 500;
+    margin-right: 2px;
+}
+
+.timeline-rota-setor {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.timeline-rota-seta {
+    color: #4f46e5;
+    font-weight: 800;
+    font-size: 0.75rem;
+    margin: 0 1px;
+}
+
+/* Botão de alternar detalhes */
+.timeline-toggle-btn {
+    flex-shrink: 0;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    font-size: 0.73rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 4px;
+    transition: color 0.15s ease, background-color 0.15s ease;
+    user-select: none;
+}
+
+.timeline-toggle-btn:hover {
+    color: #1d4ed8;
+    background-color: #eff6ff;
+}
+
+.timeline-chevron {
+    transition: transform 0.2s ease;
+}
+
+.timeline-toggle-btn.aberto .timeline-chevron {
+    transform: rotate(180deg);
+}
+
+/* Conteúdo extra de observação e anexos */
+.timeline-detalhes-conteudo {
+    margin-top: 0.55rem;
+    border-top: 1px solid #f3f4f6;
+    padding-top: 0.55rem;
+}
+
+/* Tag de serviço dentro dos detalhes */
+.timeline-servico-tag {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 3px 10px;
+    background: #ede9fe;
+    color: #5b21b6;
+    border-left: 3px solid #7c3aed;
+    border-radius: 4px;
+    font-size: 0.8rem;
     font-weight: 600;
 }
 
 .timeline-observacao {
-    margin-top: 0.65rem;
-    padding: 0.65rem 0.75rem;
+    display: inline-block;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 0.45rem;
+    padding: 0.35rem 0.65rem;
     background: #f8fafc;
-    border-left: 3px solid #d1d5db;
+    border-left: 3px solid #cbd5e1;
     border-radius: 0 6px 6px 0;
     color: #4b5563;
-    font-size: 0.82rem;
-    line-height: 1.5;
-    white-space: pre-line;
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.timeline-observacao strong {
+    color: #374151;
+    font-weight: 600;
+    margin-right: 4px;
 }
 
 /* Estados da Timeline */
