@@ -148,27 +148,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const inputs = blocoAtivo.querySelectorAll('input[type="file"][data-obrigatorio="true"]');
+        const inputsObrigatorios = blocoAtivo.querySelectorAll('input[type="file"][data-obrigatorio="true"]');
+        const todosInputs = blocoAtivo.querySelectorAll('input[type="file"]');
 
-        if (inputs.length === 0) {
-            habilitarBotao(true);
-            return;
-        }
-
-        const todoPreenchido = Array.from(inputs).every(
+        const todoPreenchido = inputsObrigatorios.length === 0 || Array.from(inputsObrigatorios).every(
             input => input.files && input.files.length > 0
         );
 
         habilitarBotao(todoPreenchido);
 
-        // Atualiza o estado visual de cada campo individualmente
-        inputs.forEach(input => {
-            const card = input.closest('.campo') || input.parentElement;
-            if (input.files && input.files.length > 0) {
-                input.style.outline = '2px solid #10b981';
-                input.style.borderRadius = '4px';
+        // Atualiza o estado visual de cada card individualmente
+        todosInputs.forEach(input => {
+            const card = input.closest('.doc-card') || input.closest('.campo') || input.parentElement;
+            if (!card) return;
+            const hasFiles = input.files && input.files.length > 0;
+            if (hasFiles) {
+                card.classList.add('doc-card-preenchido');
+                card.classList.remove('doc-card-obrigatorio');
             } else {
-                input.style.outline = '';
+                card.classList.remove('doc-card-preenchido');
+                if (input.dataset.obrigatorio === 'true') {
+                    card.classList.add('doc-card-obrigatorio');
+                }
             }
         });
     }

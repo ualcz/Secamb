@@ -23,50 +23,69 @@
                     <strong style="font-size: 16px; color: #047857;">{{ $assuntoItem['descricao'] }}</strong>
                 </div>
                 @if(count($docs) > 0)
-                    <h3 style="font-size: 1.25rem; text-align: center; margin-bottom: 12px;">Documentos Obrigatórios</h3>
-                    @foreach($docs as $doc)
-                        @php
-                            $tiposAceitos = !empty($doc['tipos_aceitos'])
-                                ? '.' . str_replace(',', ',.', str_replace([' ', '.'], ['', ''], strtolower($doc['tipos_aceitos'])))
-                                : '.pdf,.doc,.docx,.png,.jpg,.jpeg';
-                        @endphp
-                        <div class="campo" style="background: rgb(249, 235, 235); padding: 20px; border-radius: 6px; border: 1px solid rgb(255, 203, 203); margin-bottom: 16px;">
-                            <label style="display: block; font-weight: bold; margin-bottom: 4px; font-size: 14px;">
-                                {{ $doc['nome'] }}
-                                @if($doc['obrigatorio'])
-                                    <span style="color: #dc2626; font-weight: normal;">(Obrigatório)</span>
-                                @else
-                                    <span style="color: #6b7280; font-weight: normal;">(Opcional)</span>
-                                @endif
-                            </label>
-                            @if(!empty(trim($doc['descricao'] ?? '')))
-                                <div style="display: block; background: #fffbeb; color: #78350f; padding: 10px 14px; margin: 8px 0 12px; font-size: 15px; font-weight: 600; line-height: 1.5; border: 1px solid #fcd34d;">{{ $doc['descricao'] }}</div>
-                            @endif
-                            @if(!empty($doc['link_modelo']))
-                                <a href="{{ $doc['link_modelo'] }}" target="_blank" rel="noopener noreferrer"
-                                   style="display: inline-flex; align-items: center; gap: 5px; margin: 4px 0 12px; color: #1d4ed8; font-size: 13px; line-height: 1.2; font-weight: 600;">
-                                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="7 10 12 15 17 10"></polyline>
-                                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                                    </svg>
-                                    Baixar modelo
-                                </a>
-                            @endif
+                    <h3 style="font-size: 1.25rem; text-align: center; margin-bottom: 16px; font-weight: 700; color: #1f2937;">Documentos Obrigatórios</h3>
+                    <div class="documentos-grid">
+                        @foreach($docs as $doc)
+                            @php
+                                $tiposAceitos = !empty($doc['tipos_aceitos'])
+                                    ? '.' . str_replace(',', ',.', str_replace([' ', '.'], ['', ''], strtolower($doc['tipos_aceitos'])))
+                                    : '.pdf,.doc,.docx,.png,.jpg,.jpeg';
+                            @endphp
+                            <div class="campo doc-card {{ $doc['obrigatorio'] ? 'doc-card-obrigatorio' : 'doc-card-opcional' }}">
+                                <div class="doc-card-header">
+                                    <div class="doc-card-title">
+                                        <span class="doc-nome">{{ $doc['nome'] }}</span>
+                                    </div>
+                                    @if($doc['obrigatorio'])
+                                        <span class="doc-badge badge-obrigatorio">Obrigatório</span>
+                                    @else
+                                        <span class="doc-badge badge-opcional">Opcional</span>
+                                    @endif
+                                </div>
 
-                            <x-file-input
-                                name="documentos[{{ $doc['id'] ?? $loop->index }}]"
-                                required="{{ $doc['obrigatorio'] ? 'true' : 'false' }}"
-                                label="{{ $doc['nome'] }}"
-                                helpText=""
-                                accept="{{ $tiposAceitos }}"
-                            />
-                        </div>
-                    @endforeach
+                                @if(!empty(trim($doc['descricao'] ?? '')))
+                                    <div class="doc-card-descricao">
+                                        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="min-width: 16px; margin-top: 2px;">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                        </svg>
+                                        <span>{{ $doc['descricao'] }}</span>
+                                    </div>
+                                @endif
+
+                                @if(!empty($doc['link_modelo']))
+                                    <a href="{{ $doc['link_modelo'] }}" target="_blank" rel="noopener noreferrer" class="doc-link-modelo">
+                                        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                                        </svg>
+                                        Baixar modelo
+                                    </a>
+                                @endif
+
+                                <div class="doc-card-upload">
+                                    <x-file-input
+                                        name="documentos[{{ $doc['id'] ?? $loop->index }}]"
+                                        required="{{ $doc['obrigatorio'] ? 'true' : 'false' }}"
+                                        label=""
+                                        :compact="true"
+                                        :multiple="false"
+                                        accept="{{ $tiposAceitos }}"
+                                    />
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 @else
-                    <p style="color: #666; font-size: 14px; margin-bottom: 12px;">
-                        Este assunto não possui documentos obrigatórios.
-                    </p>
+                    <div class="doc-empty-state">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>Este assunto não possui documentos obrigatórios.</span>
+                    </div>
                 @endif
             </div>
         @endforeach
@@ -78,12 +97,9 @@
                 <strong id="nome-assunto-outro-preview" style="font-size: 16px; color: #047857;">Outro Requerimento</strong>
             </div>
             <p style="color: #666; font-size: 14px; margin-bottom: 12px;">
-                Requerimento personalizado. Caso possua documentos comprobatórios, anexe no campo complementar abaixo.
+                Requerimento personalizado. Descreva os detalhes na justificativa do requerimento.
             </p>
         </div>
-
-        <!-- Anexos complementares para qualquer requerimento -->
-        <x-file-input />
     </fieldset>
 
     <div class="step-nav">
