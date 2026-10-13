@@ -150,6 +150,7 @@ class ResponsavelSetorController extends Controller
 
         $requerimento->update([
             'status' => $validated['status'],
+            'setor_retorno_id' => in_array($validated['status'], ['Concluído', 'Indeferido']) ? null : $requerimento->setor_retorno_id,
         ]);
 
         $novoHistorico = HistoricoRequerimento::create([
@@ -199,17 +200,20 @@ class ResponsavelSetorController extends Controller
     {
         $this->autorizarSetor($setor);
 
-        if ((int) $requerimento->setor_id !== (int) $setor->id || $requerimento->setor_retorno_id) {
+        if ((int) $requerimento->setor_id !== (int) $setor->id) {
             abort(404);
         }
 
         $validated = $request->validate([
-            'setor_destino_id'   => ['required', 'integer', Rule::exists('setores', 'id')->where('ativo', true)],
-            'assunto_destino_id' => ['nullable', 'integer', Rule::exists('assuntos_requerimentos', 'id')->where('ativo', true)],
-            'observacao'         => 'required|string|max:10000',
-            'arquivos'           => 'nullable|array',
-            'arquivos.*'         => 'nullable|file|max:51200',
+            'setor_destino_id'    => ['required', 'integer', Rule::exists('setores', 'id')->where('ativo', true)],
+            'assunto_destino_id'  => ['nullable', 'integer', Rule::exists('assuntos_requerimentos', 'id')->where('ativo', true)],
+            'tipo_encaminhamento' => ['nullable', 'string', 'in:transferencia,despacho'],
+            'observacao'          => 'required|string|max:10000',
+            'arquivos'            => 'nullable|array',
+            'arquivos.*'          => 'nullable|file|max:51200',
         ]);
+
+        $tipoEncaminhamento = $validated['tipo_encaminhamento'] ?? 'transferencia';
 
         $destino = Setor::query()
             ->where('ativo', true)
@@ -224,19 +228,29 @@ class ResponsavelSetorController extends Controller
             ? AssuntoRequerimento::where('setor_id', $destino->id)->where('ativo', true)->find($validated['assunto_destino_id'])
             : null;
 
-        $historico = DB::transaction(function () use ($setor, $destino, $requerimento, $validated, $assuntoDestino) {
+        $historico = DB::transaction(function () use ($setor, $destino, $requerimento, $validated, $assuntoDestino, $tipoEncaminhamento) {
             $atual = Requerimento::query()->lockForUpdate()->findOrFail($requerimento->id);
-            if ((int) $atual->setor_id !== (int) $setor->id || $atual->setor_retorno_id) {
+            if ((int) $atual->setor_id !== (int) $setor->id) {
                 abort(409, 'Este requerimento já foi encaminhado ou mudou de setor.');
             }
 
-            $atual->update([
-                'setor_id' => $destino->id,
-                'setor_retorno_id' => $setor->id,
-                'status' => 'Despacho',
-            ]);
+            if ($tipoEncaminhamento === 'despacho') {
+                $atual->update([
+                    'setor_id' => $destino->id,
+                    'setor_retorno_id' => $setor->id,
+                    'status' => 'Despacho',
+                ]);
+                $orientacaoTexto = "Despacho de {$setor->setor_sigla} para {$destino->setor_sigla}.";
+            } else {
+                // Transferência direta/definitiva entre setores
+                $atual->update([
+                    'setor_id' => $destino->id,
+                    'setor_retorno_id' => null,
+                    'status' => 'Em Análise',
+                ]);
+                $orientacaoTexto = "Encaminhado de {$setor->setor_sigla} para {$destino->setor_sigla}.";
+            }
 
-            $orientacaoTexto = "Orientação para: {$destino->setor_sigla}";
             if ($assuntoDestino) {
                 $orientacaoTexto .= "\n[Serviço Solicitado: {$assuntoDestino->descricao}]";
             }
@@ -257,13 +271,17 @@ class ResponsavelSetorController extends Controller
                 historico: $historico,
                 arquivos: $arquivos,
                 usuario: Auth::user(),
-                titulo: 'Documento de encaminhamento'
+                titulo: $tipoEncaminhamento === 'despacho' ? 'Documento de despacho' : 'Documento de encaminhamento'
             );
         }
 
+        $msgSucesso = $tipoEncaminhamento === 'despacho'
+            ? 'Requerimento encaminhado para despacho em ' . $destino->setor_nome . '.'
+            : 'Requerimento transferido para ' . $destino->setor_nome . ' com sucesso.';
+
         return redirect()
             ->route('setor.responsavel.dashboard', $setor->id)
-            ->with('success', 'Requerimento encaminhado para ' . $destino->setor_nome . '.');
+            ->with('success', $msgSucesso);
     }
 
     public function responderEncaminhamento(Request $request, Setor $setor, Requerimento $requerimento)
@@ -296,7 +314,7 @@ class ResponsavelSetorController extends Controller
                 'requerimento_id' => $atual->id,
                 'user_id' => Auth::id(),
                 'status' => $atual->status,
-                'observacao' => "Resposta para: {$setorOrigem->setor_sigla}\n{$validated['observacao']}",
+                'observacao' => "Resposta de {$setor->setor_sigla} para {$setorOrigem->setor_sigla}.\n{$validated['observacao']}",
             ]);
 
             return [$setorOrigem, $historico];
