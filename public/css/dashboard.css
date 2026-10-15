@@ -1,3 +1,6 @@
+.apexcharts-legend {
+    display: none !important;
+}
 
 .dash-filter-card {
     background: #ffffff;
@@ -221,8 +224,9 @@
 
 .lineCharts{
     display: grid;
-    grid-template-rows: 26% 26% 26%;
-    gap: 5px;
+    /* grid-template-rows: 26% 26% 26%; */
+    grid-template-rows: repeat(3, 1fr);
+    /* gap: 5px; */
 }
 
 .graficos{
@@ -234,7 +238,7 @@
 
 .barChart{
     text-align: start;
-    height: 78%;
+    grid-template-columns: 1fr;
     background: linear-gradient(90deg, #1C419A 2%, #B7B6B6 100%);
 
 }
@@ -243,4 +247,104 @@
 /* SCSS Gradient */
     background: linear-gradient(90deg, #1C419A 2%, #B7B6B6 100%);
     margin-bottom: 2%;
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+    .cards {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .linha2 {
+        font-size: 22px;
+    }
+
+    .graficos{
+        display: grid;
+        grid-template-rows: 1fr;
+        margin: auto 0;
+    }
+
+}
+    
+/* Celular */
+@media (max-width: 768px) {
+    .cards {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .avisos{
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .info-card{
+        margin-top: 15px;
+    }
+
+    .graficos{
+        display: grid;
+        grid-template-columns: 1fr;
+        max-width: 480px;
+        margin: 0 auto;
+    }
+
+    .lineChart{
+        margin-top: 20px;
+    }
+
+    .barChart{
+        margin-top: 10px;
+    }
+
+    .card_individual {
+        padding: 20px;
+    }
+
+    .linha1 {
+        font-size: 14px;
+    }
+
+    .linha2 {
+        font-size: 20px;
+    }
+
+    .linha3 {
+        font-size: 12px;
+    }
+
+    .icone_total,
+    .icone_analise,
+    .icone_recebidos {
+        padding: 12px;
+    }
+}
+
+/* Celulares muito pequenos */
+@media (max-width: 480px) {
+    .card_individual {
+        grid-template-columns: 1.5fr 1fr;
+        padding: 15px;
+    }
+
+    .linha1 {
+        font-size: 13px;
+    }
+
+    .linha2 {
+        font-size: 18px;
+    }
+
+    .linha3 {
+        font-size: 11px;
+    }
+
+    .graficos{
+        display: grid;
+        grid-template-columns: 1fr;
+        max-width: 300px;
+        margin-bottom: 0px;
+    }
 }

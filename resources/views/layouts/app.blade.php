@@ -21,7 +21,7 @@
                     <img src="{{ asset('img/logo_prefeitura_seabra.png') }}" alt="Logo Prefeitura de Seabra">
                     <div class="header-brand-text">
                         <span class="header-brand-title">SECAMB</span>
-                        <span class="header-brand-subtitle">Sistema de Requisição de Licenciamento Ambiental</span>
+                        <span class="header-brand-subtitle mr-5">Requisição de Licenciamento Ambiental</span>
                     </div>
                 </a>
 
