@@ -68,9 +68,7 @@
                                 </td>
                                 <td class="req-col-protocolo">
                                     <span class="req-badge-protocolo">
-                                         <div >     
-                                            <span>{{ date('Y') }}/{{ $requerimento->id }}</span>
-                                        </div>
+                                        {{ $requerimento->numero_protocolo ?? (($requerimento->created_at?->format('Y') ?? date('Y')) . '/' . $requerimento->id) }}
                                     </span>
                                 </td>
                                 <td class="req-col-setor">
@@ -114,7 +112,7 @@
                     <div class="req-card-top">
                         <div style="display: flex; gap: 8px; align-items: center;">
                             <span class="req-badge-protocolo">
-                                #{{ $requerimento['id'] ?? $requerimento->id ?? 'S/N' }}
+                                {{ $requerimento->numero_protocolo ?? (($requerimento->created_at?->format('Y') ?? date('Y')) . '/' . $requerimento->id) }}
                             </span>
                             <span class="req-text-setor">
                                 {{ $requerimento->setor?->setor_sigla ?? $requerimento->setor_sigla ?? 'N/A' }}
