@@ -124,6 +124,13 @@ class EnvioEmailController extends Controller
                 }
 
                 if (!empty($errosAnexos)) {
+                    if ($request->expectsJson() || $request->ajax()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => implode(' ', $errosAnexos),
+                            'errors'  => $errosAnexos
+                        ], 422);
+                    }
                     return back()->withErrors($errosAnexos)->withInput();
                 }
             }
@@ -174,13 +181,33 @@ class EnvioEmailController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ocorreu um erro ao protocolar seu requerimento: ' . $e->getMessage()
+                ], 500);
+            }
+
             return back()
                 ->withErrors(['geral' => 'Ocorreu um erro ao protocolar seu requerimento: ' . $e->getMessage()])
                 ->withInput();
         }
 
-        // Envia notificações por e-mail de forma resiliente (falha não bloqueia o usuário)
-        $this->enviarNotificacoes($requerimento, $cidadao, $setor, $objeto);
+        // Envia notificações por e-mail em segundo plano (defer), liberando a resposta HTTP imediata ao usuário
+        \Illuminate\Support\defer(function () use ($requerimento, $cidadao, $setor, $objeto) {
+            $this->enviarNotificacoes($requerimento, $cidadao, $setor, $objeto);
+        });
+
+        // Suporte a resposta JSON para animação de sucesso no loading
+        if ($request->expectsJson() || $request->ajax()) {
+            session()->flash('sucesso', "Requerimento nº {$requerimento->numero_protocolo} enviado com sucesso!");
+            return response()->json([
+                'success'   => true,
+                'protocolo' => $requerimento->numero_protocolo,
+                'redirect'  => route('requerimentos.cidadao.meusRequerimentos'),
+                'mensagem'  => "Requerimento nº {$requerimento->numero_protocolo} enviado com sucesso!",
+            ]);
+        }
 
         return redirect()
             ->route('requerimentos.cidadao.meusRequerimentos')
