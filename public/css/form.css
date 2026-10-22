@@ -114,17 +114,145 @@
     resize: vertical;
 }
 
-.opcoes-objeto label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
+/* ── Objeto do Requerimento (Cards Interativos) ─────────────────────── */
 .opcoes-objeto {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0px 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 10px;
+}
+
+.card-objeto-requerimento {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.card-objeto-requerimento:hover {
+    border-color: #94a3b8;
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.06);
+}
+
+.card-objeto-requerimento:has(input[type="radio"]:checked) {
+    border-color: #0284c7;
+    background-color: #f0f9ff;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.card-objeto-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.card-objeto-radio-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-objeto-radio-wrap input[type="radio"] {
+    accent-color: #0284c7;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.card-objeto-titulo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.35;
+    transition: color 0.2s ease;
+}
+
+.card-objeto-requerimento:has(input[type="radio"]:checked) .card-objeto-titulo {
+    color: #0369a1;
+}
+
+/* Botão de Ponto de Interrogação / Consulta da Norma */
+.btn-ajuda-norma {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #eff6ff;
+    border: 1.5px solid #bfdbfe;
+    color: #1d4ed8;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.btn-ajuda-norma:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+    color: #ffffff;
+    transform: scale(1.12);
+    box-shadow: 0 2px 5px rgba(29, 78, 216, 0.25);
+}
+
+.badge-outro {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    font-size: 0.72rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* Observação Destacada e Legível */
+.card-objeto-obs {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: #334155;
+    font-size: 0.83rem;
+    line-height: 1.45;
+    transition: all 0.2s ease;
+}
+
+.card-objeto-obs svg {
+    color: #0284c7;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.card-objeto-requerimento:has(input[type="radio"]:checked) .card-objeto-obs {
+    background: #e0f2fe;
+    border-color: #bae6fd;
+    color: #0c4a6e;
+}
+
+.card-objeto-requerimento:has(input[type="radio"]:checked) .card-objeto-obs svg {
+    color: #0369a1;
 }
 
 .btn-enviar {
@@ -544,7 +672,7 @@ form {
 /* Responsividade */
 
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .opcoes-objeto {
         display: grid;
         grid-template-columns: 1fr;
