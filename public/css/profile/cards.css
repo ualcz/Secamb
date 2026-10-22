@@ -1,0 +1,242 @@
+/* ==========================================================================
+   SECAMB - Módulo: Cards Cadastrais e de Segurança (cards.css)
+   ========================================================================== */
+
+/* Grid de Cards */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.profile-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.profile-card-full {
+    grid-column: 1 / -1;
+}
+
+/* Cabeçalho do Card */
+.profile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+}
+
+.profile-card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.profile-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: #f0fdf4;
+    color: #15803d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-blue {
+    background-color: #f0f9ff;
+    color: #0284c7;
+}
+
+.icon-purple {
+    background-color: #faf5ff;
+    color: #9333ea;
+}
+
+.icon-amber {
+    background-color: #fffbeb;
+    color: #d97706;
+}
+
+/* Corpo e Campos de Informação */
+.profile-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-field-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+}
+
+.profile-field-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+    word-break: break-word;
+}
+
+.profile-field-muted {
+    font-weight: 400;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* ── Card de Segurança & Acesso ─────────────────────────────────────────── */
+
+.profile-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.profile-meta-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.profile-meta-item .profile-field-label {
+    margin: 0;
+}
+
+.profile-meta-item .profile-field-value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+
+/* Banner de Ação de Segurança */
+.security-action-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.security-action-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.security-action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #86efac;
+    color: #16a34a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.security-action-text h4 {
+    margin: 0 0 2px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #14532d;
+}
+
+.security-action-text p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: #166534;
+}
+
+.btn-security-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 1.5px solid #16a34a;
+    color: #16a34a;
+    padding: 9px 18px;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-security-action:hover {
+    background: #16a34a;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+}
+
+/* ── Responsividade dos Cards ───────────────────────────────────────────── */
+
+@media (max-width: 840px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-meta-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .security-action-box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-security-action {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-card {
+        padding: 16px 14px;
+        border-radius: 12px;
+    }
+
+    .profile-card-header h3 {
+        font-size: 0.95rem;
+    }
+
+    .profile-card-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .profile-field-value {
+        font-size: 0.88rem;
+    }
+}

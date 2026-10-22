@@ -1,0 +1,323 @@
+/* ==========================================================================
+   SECAMB - Módulo: Formulários de Edição de Dados e Senha (forms.css)
+   ========================================================================== */
+
+.edit-perfil-wrapper {
+    max-width: 860px;
+    margin: 0 auto 48px;
+    padding: 0 16px;
+}
+
+.edit-perfil-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 28px;
+}
+
+.edit-perfil-card-header {
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+}
+
+.edit-perfil-card-header h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 6px;
+}
+
+.edit-perfil-card-header p {
+    font-size: 0.88rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.form-section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #0369a1;
+    margin: 24px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-section-title:first-of-type {
+    margin-top: 0;
+}
+
+/* Seletor de Tipo de Pessoa (Física vs Jurídica) */
+.tipo-selector-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.tipo-selector-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+}
+
+.tipo-selector-card:hover {
+    border-color: #94a3b8;
+}
+
+.tipo-selector-card.active,
+.tipo-selector-card:has(input[type="radio"]:checked) {
+    border-color: #0284c7;
+    background-color: #f0f9ff;
+}
+
+.tipo-selector-card input[type="radio"] {
+    accent-color: #0284c7;
+    width: 18px;
+    height: 18px;
+}
+
+.tipo-selector-card .tipo-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.tipo-selector-card .tipo-sub {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Grids de Formulário */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-grid-3 {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 16px;
+}
+
+.form-grid-cep {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.form-label .required {
+    color: #ef4444;
+}
+
+.form-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-input-icon {
+    position: absolute;
+    left: 14px;
+    color: #94a3b8;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #0f172a;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.form-control.has-icon {
+    padding-left: 42px;
+}
+
+.form-control:focus {
+    border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.form-control.is-invalid {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+}
+
+.form-error {
+    font-size: 0.8rem;
+    color: #ef4444;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.form-help {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* Botões de Ação do Formulário */
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.btn-salvar-perfil {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #0284c7;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+    transition: all 0.2s ease;
+}
+
+.btn-salvar-perfil:hover {
+    background-color: #0369a1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(2, 132, 199, 0.3);
+}
+
+.btn-salvar-senha {
+    background-color: #059669;
+}
+
+.btn-salvar-senha:hover {
+    background-color: #047857;
+    box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+}
+
+.btn-cancelar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ffffff;
+    color: #64748b;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.btn-cancelar:hover {
+    background-color: #f8fafc;
+    color: #334155;
+    border-color: #cbd5e1;
+}
+
+/* Alternador de visualização de senha */
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-password:hover {
+    color: #475569;
+}
+
+/* Indicador de Busca de CEP */
+.cep-status {
+    font-size: 0.8rem;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.cep-loading {
+    color: #0284c7;
+}
+
+.cep-success {
+    color: #16a34a;
+}
+
+.cep-error {
+    color: #ef4444;
+}
+
+/* Responsividade dos Formulários */
+@media (max-width: 640px) {
+    .form-grid-2,
+    .form-grid-3,
+    .form-grid-cep,
+    .tipo-selector-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .edit-perfil-card {
+        padding: 18px 14px;
+        border-radius: 12px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-salvar-perfil,
+    .btn-cancelar {
+        width: 100%;
+        justify-content: center;
+    }
+}

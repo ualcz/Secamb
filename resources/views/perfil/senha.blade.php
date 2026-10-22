@@ -4,7 +4,7 @@
 @section('tag', 'Perfil')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/profile.css') }}?v={{ filemtime(public_path('css/profile.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/profile/forms.css') }}?v={{ filemtime(public_path('css/profile/forms.css')) }}">
 
 <div class="edit-perfil-wrapper">
 
