@@ -140,7 +140,7 @@ function adicionarAnexoRow() {
         <td>
             <input type="text"
                    name="documentos[${index}][descricao]"
-                   placeholder="Instruções para o aluno (opcional)"
+                   placeholder="Instruções para o cidadão (opcional)"
                    class="input-tabela"
                    style="font-size: 0.8125rem;">
         </td>

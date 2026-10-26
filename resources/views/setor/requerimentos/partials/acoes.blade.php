@@ -67,7 +67,7 @@
                         {{ old('status', $requerimento->status) == 'Indeferido' ? 'required' : '' }}
                     >{{ old('observacao') }}</textarea>
                     <div class="acao-campo-secundario">
-                        <label for="solicita_novo_documento" class="info-label">Solicitar documento ao aluno?</label>
+                        <label for="solicita_novo_documento" class="info-label">Solicitar documento ao cidadão?</label>
                         <select name="solicita_novo_documento" id="solicita_novo_documento" class="select-status" onchange="toggleCampoNomeDocumento()">
                             <option value="0" {{ old('solicita_novo_documento') == '0' ? 'selected' : '' }}>Não</option>
                             <option value="1" {{ old('solicita_novo_documento') == '1' ? 'selected' : '' }}>Sim</option>

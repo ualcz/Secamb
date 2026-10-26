@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Novo Requerimento - SDP IFBA')
-@section('tag', 'Aluno')
+@section('tag', 'Cidadão')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/form.css') }}?v={{ filemtime(public_path('css/form.css')) }}">

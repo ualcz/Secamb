@@ -4,11 +4,11 @@
 
 Olá,
 
-O aluno **{{ $requerimento->usuario?->nome ?? 'Aluno' }}** enviou novas informações / documentos para o requerimento de **{{ $requerimento->objetoDoRequerimento }}**.
+O cidadão **{{ $requerimento->usuario?->nome ?? 'Cidadão' }}** enviou novas informações / documentos para o requerimento de **{{ $requerimento->objetoDoRequerimento }}**.
 
 @if(!empty(trim($mensagem)))
 <x-mail::panel>
-**Mensagem do Aluno:**<br>
+**Mensagem do Cidadão:**<br>
 {!! nl2br(e($mensagem)) !!}
 </x-mail::panel>
 @endif
@@ -26,11 +26,11 @@ Analisar no Painel
 </x-mail::button>
 
 @else
-{{-- Enviado pelo setor para o aluno --}}
+{{-- Enviado pelo setor para o cidadão --}}
 @if($requerimento->status === 'Indeferido')
 # Requerimento Indeferido #{{ $requerimento->numero_protocolo }}
 
-Olá, **{{ $requerimento->usuario?->nome ?? 'Aluno(a)' }}**.
+Olá, **{{ $requerimento->usuario?->nome ?? 'Cidadão(ã)' }}**.
 
 O seu requerimento referente a **{{ $requerimento->objetoDoRequerimento }}** foi **indeferido**.
 
@@ -54,7 +54,7 @@ Corrigir e Reenviar Documento
 @elseif($requerimento->status === 'Concluído')
 # Requerimento Concluído #{{ $requerimento->numero_protocolo }}
 
-Olá, **{{ $requerimento->usuario?->nome ?? 'Aluno(a)' }}**.
+Olá, **{{ $requerimento->usuario?->nome ?? 'Cidadão(ã)' }}**.
 
 O seu requerimento referente a **{{ $requerimento->objetoDoRequerimento }}** foi **concluído com sucesso**.
 
@@ -74,7 +74,7 @@ Visualizar Requerimento
 @else
 # Requerimento em Análise #{{ $requerimento->numero_protocolo }}
 
-Olá, **{{ $requerimento->usuario?->nome ?? 'Aluno(a)' }}**.
+Olá, **{{ $requerimento->usuario?->nome ?? 'Cidadão(ã)' }}**.
 
 O seu requerimento referente a **{{ $requerimento->objetoDoRequerimento }}** agora está **em análise** pelo setor responsável.
 

@@ -42,7 +42,7 @@
                     <span class="info-valor">{{ $requerimento->created_at->format('d/m/Y \\Ã \\s H:i') }}</span>
                 </div>
                 <div class="info-grupo">
-                    <span class="info-label">Aluno</span>
+                    <span class="info-label">Cidadão</span>
                     <span class="info-valor">{{ $requerimento->usuario?->nome ?? 'NÃ£o informado' }}</span>
                 </div>
                 <div class="info-grupo">
