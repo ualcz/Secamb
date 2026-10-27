@@ -1,0 +1,476 @@
+/* ==========================================================================
+   Header Mobile & Menu Gaveta (Drawer) - SECAMB
+   Design com Hierarquia Visual, Equilíbrio e Toque Ergonômico
+   ========================================================================== */
+
+.mobile-header.site-header {
+    background: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-header .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    position: relative;
+    max-width: 100%;
+    height: auto;
+}
+
+.mobile-header .header-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 10px;
+}
+
+.mobile-header .header-logo {
+    width: 34px;
+    height: auto;
+    max-height: 38px;
+    object-fit: contain;
+}
+
+.mobile-header .header-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-header .header-brand-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #119B70;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.mobile-header .header-brand-subtitle {
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.1;
+    color: #64748b;
+}
+
+.hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #334155;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.hamburger-btn:hover {
+    background-color: #f1f5f9;
+    color: #119B70;
+}
+
+/* ==========================================================================
+   Overlay e Container da Gaveta
+   ========================================================================== */
+
+.mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 998;
+}
+
+.mobile-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.header-menu-container {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 300px;
+    max-width: 86vw;
+    height: 100%;
+    max-height: 100dvh;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.12);
+    transition: right 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 999;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.header-menu-container.is-open {
+    right: 0;
+}
+
+/* ==========================================================================
+   Cabeçalho do Drawer (Topo)
+   ========================================================================== */
+
+.mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.drawer-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.drawer-logo {
+    width: 28px;
+    height: auto;
+    max-height: 32px;
+    object-fit: contain;
+}
+
+.drawer-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #119B70;
+    display: block;
+    line-height: 1;
+}
+
+.drawer-subtitle {
+    font-size: 0.7rem;
+    color: #64748b;
+    display: block;
+    line-height: 1.2;
+}
+
+.mobile-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #475569;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.mobile-close-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+/* ==========================================================================
+   Card de Identificação do Usuário
+   ========================================================================== */
+
+.mobile-user-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.mobile-user-card:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.user-avatar-badge {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #119B70, #059669);
+    color: #ffffff;
+    font-size: 0.90rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(17, 155, 112, 0.25);
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.user-name {
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-documento {
+    font-size: 0.76rem;
+    color: #64748b;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+/* ==========================================================================
+   Separadores e Rótulos de Seção
+   ========================================================================== */
+
+.menu-divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 8px 0;
+}
+
+.menu-section-label {
+    font-size: 0.70rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    padding: 8px 4px 4px 4px;
+    margin: 4px 0 2px 0;
+    text-align: left;
+}
+
+/* ==========================================================================
+   Lista de Navegação (Scoped to Drawer)
+   ========================================================================== */
+
+.header-menu-container .header-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 4px;
+    width: 100%;
+}
+
+.header-menu-container .nav-link {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: #334155;
+    background: transparent;
+    transition: all 0.15s ease;
+    min-height: 44px;
+    text-align: left;
+}
+
+.header-menu-container .nav-link span {
+    display: inline-block !important;
+    font-size: 0.92rem;
+    color: inherit;
+}
+
+.header-menu-container .nav-icon {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+}
+
+.header-menu-container .nav-link:hover {
+    background: #f8fafc;
+    color: #119B70;
+}
+
+.header-menu-container .nav-link:hover .nav-icon {
+    background: #e2e8f0;
+    color: #119B70;
+}
+
+.header-menu-container .nav-link.active {
+    background: #ecfdf5;
+    color: #047857;
+    font-weight: 600;
+}
+
+.header-menu-container .nav-link.active .nav-icon {
+    background: #d1fae5;
+    color: #047857;
+}
+
+/* ==========================================================================
+   Dropdown de Setores na Gaveta Mobile
+   ========================================================================== */
+
+.header-menu-container .dropdown-setores {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.header-menu-container .dropdown-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: none;
+    background: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+}
+
+.header-menu-container .dropdown-toggle-btn .dropdown-arrow {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+}
+
+.header-menu-container .dropdown-toggle-btn .dropdown-arrow.rotated {
+    transform: rotate(180deg);
+}
+
+.header-menu-container .dropdown-toggle-btn:hover {
+    background: #f8fafc;
+    color: #119B70;
+}
+
+.header-menu-container .dropdown-menu-setores {
+    display: none;
+    flex-direction: column;
+    gap: 3px;
+    padding-left: 24px;
+    margin: 4px 0;
+    position: static;
+    box-shadow: none;
+    border: none;
+    background: transparent;
+}
+
+.header-menu-container .dropdown-menu-setores.show {
+    display: flex;
+}
+
+.header-menu-container .dropdown-item {
+    padding: 7px 12px;
+    font-size: 0.85rem;
+    color: #64748b;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.header-menu-container .dropdown-item:hover,
+.header-menu-container .dropdown-item.active {
+    background: #ecfdf5;
+    color: #047857;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Rodapé do Drawer (Ações / Sair)
+   ========================================================================== */
+
+.mobile-drawer-footer {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.btn-logout-modern {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fee2e2;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.btn-logout-modern:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+}
+
+.btn-logout-modern:active {
+    transform: scale(0.99);
+}
+
+.btn-login-modern {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #119B70;
+    color: #ffffff;
+    border-radius: 10px;
+    font-size: 0.90rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(17, 155, 112, 0.25);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-login-modern:hover {
+    background: #0d7f5b;
+}
+
+.guest-mobile-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
