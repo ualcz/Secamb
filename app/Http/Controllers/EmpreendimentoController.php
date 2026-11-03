@@ -63,6 +63,7 @@ class EmpreendimentoController extends Controller
             'cep'                => 'nullable|string|max:10',
             'cidade'             => 'nullable|string|max:100',
             'estado'             => 'nullable|string|max:2',
+            'unidade_conservacao' => 'nullable|string|max:255',
 
             // Dados de Contato / Responsável (Figura 9 do manual)
             'contato_nome'       => 'nullable|string|max:255',
@@ -153,6 +154,7 @@ class EmpreendimentoController extends Controller
             'cep'                => 'nullable|string|max:10',
             'cidade'             => 'nullable|string|max:100',
             'estado'             => 'nullable|string|max:2',
+            'unidade_conservacao' => 'nullable|string|max:3',
 
             'contato_nome'       => 'nullable|string|max:255',
             'contato_telefone'   => 'nullable|string|max:30',

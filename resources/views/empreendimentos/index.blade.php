@@ -56,7 +56,7 @@
                     />
                 </div>
             @endif
-            <div class="emp-toolbar-actions">
+            <div class="emp-toolbar-actions mt-5">
                 @if(!$empreendimentos->isEmpty() || request()->filled('busca'))
                     <button type="submit" class="emp-btn-submit">Buscar</button>
                 @endif

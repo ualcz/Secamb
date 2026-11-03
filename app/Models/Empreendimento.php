@@ -39,6 +39,7 @@ class Empreendimento extends Model
         'bacia_hidrografica',  // Bacia Hidrográfica onde está inserido
         'recurso_hidrico',     // Recurso Hídrico utilizado/impactado
         'fase_operacao',       // 'Localização' | 'Instalação' | 'Operação' | 'Não se Aplica'
+        'unidade_conservacao',
 
         // Contato/Responsável pelo empreendimento
         'contato_nome',

@@ -560,6 +560,10 @@
     color: #065f46;
 }
 
+.nome_unidade_conservacao {
+    display: none;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .emp-col-8, .emp-col-6, .emp-col-4, .emp-col-3 {

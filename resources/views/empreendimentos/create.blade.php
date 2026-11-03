@@ -167,6 +167,28 @@
                             placeholder="Ex: Rio Campestre, Poço Artesiano"/>
                     </div>
                 </div>
+                <div class="emp-form-group emp-col-6" style="box-sizing: border-box; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px;">
+                        <label >Atividade situada em Unidade de Conservação ou em sua zona de amortecimento?</label>
+
+                        <div class="flex gap-10" style="justify-content: center;">
+                                <div>
+                                    <input type="radio" name="unidade_conservacao" value="nao" id="unidade_conservacao_nao" checked>
+                                    <label for="unidade_conservacao">Não</label>
+                                </div>
+
+                                <div>
+                                    <input type="radio" name="unidade_conservacao" value="sim" id="unidade_conservacao_sim">
+                                    <label for="unidade_conservacao">Sim</label>
+                                </div>
+                        </div>
+                        <div class="emp-form-group emp-col-6 nome_unidade_conservacao" id="container_unidade_conservacao">
+                                <x-floating-input
+                                    name="unidade_conservacao"
+                                    id="nome_unidade_conservacao"
+                                    label="Nome da Unidade de Conservação"
+                                    />
+                            </div>
+                    </div>
             </div>
 
             {{-- 2. Dados de Contato do Responsável --}}
@@ -261,6 +283,22 @@
                 e.target.value = v;
             });
         }
+    });
+
+    const radios = document.querySelectorAll('input[name="unidade_conservacao"]');
+    const container = document.getElementById('container_unidade_conservacao');
+    const campo = document.getElementById('nome_unidade_conservacao');
+
+    radios.forEach(radio => {
+        radio.addEventListener('change', function () {
+            if (this.value === 'sim') {
+                container.style.display = 'block';
+                campo.setAttribute('required', 'required');
+            } else {
+                container.style.display = 'none';
+                campo.removeAttribute('required');
+            }
+        });
     });
 </script>
 <script src="{{ asset('js/endereco.js') }}"></script>

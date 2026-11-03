@@ -113,6 +113,10 @@
                         <input type="text" name="recurso_hidrico" id="recurso_hidrico" class="emp-input" value="{{ old('recurso_hidrico', $empreendimento->recurso_hidrico) }}">
                     </div>
                 </div>
+                <div class="emp-form-group emp-col-6 mt-2">
+                        <label for="unidade_conservacao">Unidade de Conservação ou Zona de Amortecimento</label>
+                        <input type="text" name="unidade_conservacao" id="unidade_conservacao" class="emp-input" value="{{ old('unidade_conservacao', $empreendimento->unidade_conservacao) ?? 'Não possui.'}}">
+                    </div>
             </div>
 
             {{-- 2. Dados de Contato do Responsável --}}
