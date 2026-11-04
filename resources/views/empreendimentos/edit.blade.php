@@ -116,7 +116,52 @@
                 <div class="emp-form-group emp-col-6 mt-2">
                         <label for="unidade_conservacao">Unidade de Conservação ou Zona de Amortecimento</label>
                         <input type="text" name="unidade_conservacao" id="unidade_conservacao" class="emp-input" value="{{ old('unidade_conservacao', $empreendimento->unidade_conservacao) ?? 'Não possui.'}}">
-                    </div>
+                </div>
+                @if ($empreendimento->localizacao_licenca != null)
+                    @if ($empreendimento->localizacao_licenca === 'municipio')
+                        <div class="emp-form-group emp-col-6 mt-2">
+                            <label>Licença localizada no {{$empreendimento->localizacao_licenca}}</label class="text-2x1">
+                                <div class="flex gap-5">
+                                    <div>
+                                        <label for="licenca_anterior_tipo">Tipo</label>
+                                        <input type="text" name="licenca_anterior_tipo" id="licenca_anterior_tipo" class="emp-input" value="{{ old('licenca_anterior_tipo', $empreendimento->licenca_anterior_tipo)}}"> 
+                                    </div>
+                                                                        
+                                    <div>
+                                        <label for="licenca_anterior_processo">Número do processo</label>
+                                        <input type="text" name="licenca_anterior_processo" id="licenca_anterior_processo" class="emp-input" value="{{ old('licenca_anterior_processo', $empreendimento->licenca_anterior_processo)}}">
+                                    </div>
+                                </div>
+                        </div>
+                    @endif
+
+                    @if ($empreendimento->localizacao_licenca === 'estado')
+                        <div class="emp-form-group emp-col-6 mt-2">
+                            <label>Licença localizada no {{$empreendimento->localizacao_licenca}}</label class="text-2x1">
+                                <div class="flex gap-5">
+                                    <div>
+                                        <label for="resolucao_cepram">Resolução CEPRAM</label>
+                                        <input type="text" name="resolucao_cepram" id="resolucao_cepram" class="emp-input" value="{{ old('resolucao_cepram', $empreendimento->resolucao_cepram)}}">
+                                    </div>
+                                        
+                                    <div>
+                                        <label for="resolucao_cepram_validade">Validade da Resolução CEPRAM</label>
+                                        <input type="text" name="resolucao_cepram_validade" id="resolucao_cepram_validade" class="emp-input" value="{{ old('resolucao_cepram_validade', \Carbon\Carbon::parse($empreendimento->resolucao_cepram_validade)->format('d/m/Y')) }}">
+                                    </div>
+                                        
+                                    <div>
+                                        <label for="portaria_inema">Número da portaria INEMA</label>
+                                        <input type="text" name="portaria_inema" id="portaria_inema" class="emp-input" value="{{ old('portaria_inema', $empreendimento->portaria_inema)}}">
+                                    </div>
+                                        
+                                    <div>
+                                        <label for="portaria_inema_validade">Validade da portaria INEMA</label>
+                                        <input type="text" name="portaria_inema_validade" id="portaria_inema_validade" class="emp-input" value="{{ old('portaria_inema_validade', \Carbon\Carbon::parse($empreendimento->portaria_inema_validade)->format('d/m/Y')) }}">
+                                    </div>
+                                </div>
+                            </div>
+                    @endif
+                @endif
             </div>
 
             {{-- 2. Dados de Contato do Responsável --}}

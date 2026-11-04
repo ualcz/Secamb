@@ -40,6 +40,14 @@ class Empreendimento extends Model
         'recurso_hidrico',     // Recurso Hídrico utilizado/impactado
         'fase_operacao',       // 'Localização' | 'Instalação' | 'Operação' | 'Não se Aplica'
         'unidade_conservacao',
+        'localizacao_licenca',
+        'licenca_anterior_tipo',
+        'licenca_anterior_processo',
+        'resolucao_cepram',
+        'portaria_inema',
+        'resolucao_cepram_validade',
+        'portaria_inema_validade',
+
 
         // Contato/Responsável pelo empreendimento
         'contato_nome',

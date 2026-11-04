@@ -128,9 +128,6 @@
                         placeholder="Ex: Centro, Povoado Velame"/>
                     </div>
 
-
-
-
                     <div class="emp-form-group emp-col-4">
                         <x-floating-input
                             name="cidade"
@@ -167,107 +164,128 @@
                             placeholder="Ex: Rio Campestre, Poço Artesiano"/>
                     </div>
                 </div>
-                <div class="emp-form-group emp-col-6" style="box-sizing: border-box; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px;">
-                    <label >Atividade situada em Unidade de Conservação ou em sua zona de amortecimento?</label>
 
-                    <div class="flex gap-10" style="justify-content: center;">
-                            <div>
-                                <input type="radio" name="unidade_conservacao" value="nao" id="unidade_conservacao_nao" checked>
-                                <label for="unidade_conservacao">Não</label>
-                            </div>
-
-                            <div>
-                                <input type="radio" name="unidade_conservacao" value="sim" id="unidade_conservacao_sim">
-                                <label for="unidade_conservacao">Sim</label>
-                            </div>
-                    </div>
-                    <div class="emp-form-group emp-col-6 nome_unidade_conservacao" id="container_unidade_conservacao">
-                        <x-floating-input
-                            name="unidade_conservacao"
-                            id="nome_unidade_conservacao"
-                            label="Nome da Unidade de Conservação"
-                        />
-                    </div>
+                <div class="mb-5">
+                    <x-radio-options
+                        name="unidade_conservacao"
+                        label="Atividade situada em Unidade de Conservação ou em sua zona de amortecimento?"
+                        target="container_unidade_conservacao"
+                        required="nome_unidade_conservacao"
+                    >
+                        <div
+                            id="container_unidade_conservacao"
+                            style="display:none;"
+                            class="mt-3"
+                        >
+                            <x-floating-input
+                                name="unidade_conservacao"
+                                id="nome_unidade_conservacao"
+                                label="Nome da Unidade de Conservação"
+                            />
+                        </div>
+                    </x-radio-options>
                 </div>
 
-                <div class="emp-form-group emp-col-6 mt-6" style="box-sizing: border-box; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px;">
-                    <label>O empreendimento possui licença ou autorização anterior?</label>
+                    <x-radio-options
+                        name="licenca_anterior"
+                        label="O empreendimento possui licença ou autorização anterior?"
+                        target="container_licenca_anterior"
+                    >
+                        <div
+                            id="container_licenca_anterior"
+                            style="display:none;"
+                            class="mt-3"
+                        >
 
-                    <div class="flex gap-10" style="justify-content: center;">
-                            <div>
-                                <input type="radio" name="licenca_anterior" value="nao" id="licenca_anterior_nao" checked>
-                                <label for="licenca_anterior">Não</label>
-                            </div>
+                            <label>Especifique a localização:</label>
 
-                            <div>
-                                <input type="radio" name="licenca_anterior" value="sim" id="licenca_anterior_sim">
-                                <label for="licenca_anterior">Sim</label>
-                            </div>
-                    </div>
-                    <div class="emp-form-group emp-col-6 nome_unidade_conservacao" id="container_licenca_anterior">
-                        <label>Especifique a localização:</label>
-                        <div class="flex gap-10" style="justify-content: center;">
-                            <div>
-                                <input type="radio" name="localizacao_licenca" value="municipio" id="localizacao_licenca_municipio">
-                                <label for="localizacao_licenca">No município</label>
-                            </div>
+                            <div class="flex gap-10" style="justify-content: center;">
 
-                            <div>
-                                <input type="radio" name="localizacao_licenca" value="estado" id="localizacao_licenca_estado">
-                                <label for="localizacao_licenca">No estado</label>
+                                <div>
+                                    <input
+                                        type="radio"
+                                        name="localizacao_licenca"
+                                        value="municipio"
+                                        id="localizacao_licenca_municipio"
+                                    >
+
+                                    <label for="localizacao_licenca_municipio">
+                                        No município
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <input
+                                    type="radio"
+                                    name="localizacao_licenca"
+                                    value="estado"
+                                    id="localizacao_licenca_estado"
+                                >
+
+                                    <label for="localizacao_licenca_estado">
+                                        No estado
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="emp-form-group emp-col-6 nome_unidade_conservacao mt-2" id="container_licenca_anterior_municipio">
-                        <x-floating-input
-                            name="licenca_anterior_tipo"
-                            id="licenca_anterior_tipo"
-                            label="Tipo"
-                            placeholder="Digite o tipo da licença"
-                        />
-
-                        <x-floating-input
-                            name="licenca_anterior_processo"
-                            id="licenca_anterior_processo"
-                            label="Número do processo"
-                            placeholder="Digite o número do processo"
-                        />
-                    </div>
-
-                    <div class="emp-form-group emp-col-6 nome_unidade_conservacao mt-2" id="container_licenca_anterior_estado">
-                        <div class="flex gap-10">
+                        
+                    <div
+                        id="container_licenca_anterior_municipio"
+                        style="display:none;" class="grid grid-cols-3 gap-4 mt-5"
+                    >
+                       <div class="col-span-2">
                             <x-floating-input
-                                name="resolucao_cepram"
-                                id="resolucao_cepram"
-                                label="Número da resolução CEPRAM"
-                                placeholder="Digite o número da resolução CEPRAM"
-                            />
-
-                            <x-floating-input
-                                name="resolucao_cepram_validade"
-                                id="resolucao_cepram_validade"
-                                label="Validade CEPRAM"
-                                type="date"
+                                name="licenca_anterior_tipo"
+                                id="licenca_anterior_tipo"
+                                label="Tipo"
                             />
                         </div>
 
-                        <div class="flex gap-10">
+                        <div class="col-span-1">
                             <x-floating-input
-                                name="portaria_inema"
-                                id="portaria_inema"
-                                label="Portaria INEMA"
-                                placeholder="Digite a portaria INEMA"
-                            />
-
-                            <x-floating-input
-                                name="portaria_inema_validade"
-                                id="portaria_inema_validade"
-                                label="Validade INEMA"
-                                type="date"
+                                name="licenca_anterior_processo"
+                                id="licenca_anterior_processo"
+                                label="Número do processo"
                             />
                         </div>
                     </div>
+
+                        <div
+                            id="container_licenca_anterior_estado"
+                            style="display:none;" class="grid grid-cols-2 gap-4 mt-5"
+                        >
+                            <div>
+                                <x-floating-input
+                                    name="resolucao_cepram"
+                                    id="resolucao_cepram"
+                                    label="Número da resolução CEPRAM"
+                                />
+
+                                <x-floating-input
+                                    name="portaria_inema"
+                                    id="portaria_inema"
+                                    label="Portaria INEMA"
+                                />
+                            </div>
+
+                            <div>
+                                <x-floating-input
+                                    name="resolucao_cepram_validade"
+                                    id="resolucao_cepram_validade"
+                                    type="date"
+                                    label="Validade CEPRAM"
+                                />
+
+                                <x-floating-input
+                                    name="portaria_inema_validade"
+                                    id="portaria_inema_validade"
+                                    type="date"
+                                    label="Validade INEMA"
+                                />
+                            </div>
+                        </div>
+                    </x-radio-options>
                 </div>
             </div>
 
@@ -408,7 +426,7 @@
     radioLicenca.forEach(opcaoLocal => {
         opcaoLocal.addEventListener('change', function () {
             if (this.value === 'municipio') {
-                containerLicencaMunicipio.style.display = 'block';
+                containerLicencaMunicipio.style.display = 'grid';
                 campoLicencaTipo.setAttribute('required', 'required');
                 campoLicencaProcesso.setAttribute('required', 'required');
             } else {
@@ -429,7 +447,7 @@
     radioLicenca.forEach(opcaoLocal => {
         opcaoLocal.addEventListener('change', function () {
             if (this.value === 'estado') {
-                containerLicencaEstado.style.display = 'block';
+                containerLicencaEstado.style.display = 'grid';
                 campoResolucaoCepram.setAttribute('required', 'required');
                 campoValidadeResolucaoCepram.setAttribute('required', 'required');
                 campoPortariaInema.setAttribute('required', 'required');
