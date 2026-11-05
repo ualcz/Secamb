@@ -49,6 +49,12 @@ class Empreendimento extends Model
         'portaria_inema_validade',
         'processo_semma_numero',
         'processo_semma_tipo',
+        'notificacao_pendencia',
+        'embargo_pendencia',
+        'advertencia_pendencia',
+        'apreensao_pendencia',
+        'multa_pendencia',
+        'interdicao_pendencia',
 
 
         // Contato/Responsável pelo empreendimento

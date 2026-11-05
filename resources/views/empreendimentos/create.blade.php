@@ -289,7 +289,7 @@
                     </x-radio-options>
                 </div>
 
-                <div>
+                <div class="mb-5">
                     <x-radio-options
                         name="processo_semma"
                         label="Existe outro processo referente a este empreendimento em tramitação na SEMMA?"
@@ -313,6 +313,68 @@
                                     name="processo_semma_tipo"
                                     id="processo_semma_tipo"
                                     label="Tipo do processo"
+                                />
+                            </div>
+                        </div>
+                    </x-radio-options>
+                </div>
+
+                <div>
+                    <x-radio-options
+                        name="pendencia_ambiental"
+                        label="O requerente tem pendência ambiental junto ao INEMA, IBAMA ou na SEMMA, relativa ao empreendimento objeto deste requerimento?"
+                        target="container_pendencia_ambiental"
+                    >
+                        <div
+                            id="container_pendencia_ambiental"
+                            style="display:none;"
+                            class="mt-3 grid grid-cols-2 gap-4"
+                        >
+                            <div>
+                                <x-floating-input
+                                    name="notificacao_pendencia"
+                                    id="notificacao_pendencia"
+                                    label="Número da notificação"
+                                />
+                            </div>
+
+                            <div>
+                                <x-floating-input
+                                    name="embargo_pendencia"
+                                    id="embargo_pendencia"
+                                    label="Número do embargo"
+                                />
+                            </div>
+
+                            <div>
+                                <x-floating-input
+                                    name="advertencia_pendencia"
+                                    id="advertencia_pendencia"
+                                    label="Número da advertência"
+                                />
+                            </div>
+
+                            <div>
+                                <x-floating-input
+                                    name="apreensao_pendencia"
+                                    id="apreensao_pendencia"
+                                    label="Número da apreensão"
+                                />
+                            </div>
+
+                            <div>
+                                <x-floating-input
+                                    name="multa_pendencia"
+                                    id="multa_pendencia"
+                                    label="Número da multa"
+                                />
+                            </div>
+
+                            <div>
+                                <x-floating-input
+                                    name="interdicao_pendencia"
+                                    id="interdicao_pendencia"
+                                    label="Número da interdição"
                                 />
                             </div>
                         </div>
@@ -513,6 +575,43 @@
                 containerProcessoSemma.style.display = 'none';
                 campoNumeroProcessoSemma.removeAttribute('required');
                 campoTipoProcessoSemma.removeAttribute('required');
+            }
+        });
+    });
+
+    // Pendência ambiental;
+    const containerPendenciaAmbiental = document.getElementById('container_pendencia_ambiental');
+    const campoNotificacaoPendencia = document.getElementById('notificacao_pendencia');
+    const campoAdvertenciaPendencia = document.getElementById('advertencia_pendencia');
+
+    const campoMultaPendencia = document.getElementById('multa_pendencia');
+    const campoEmbargoPendencia = document.getElementById('embargo_pendencia');
+    const campoApreensaoPendencia = document.getElementById('apreensao_pendencia');
+    const campoInterdicaoPendencia = document.getElementById('interdicao_pendencia');
+
+    const radioPendenciaAmbiental = document.querySelectorAll(
+        'input[name="pendencia_ambiental"]'
+    );
+
+    radioPendenciaAmbiental.forEach(opcaoLocal => {
+        opcaoLocal.addEventListener('change', function () {
+            if (this.value === 'sim') {
+                containerPendenciaAmbiental.style.display = 'grid';
+                campoNotificacaoPendencia.setAttribute('required', 'required');
+                campoAdvertenciaPendencia.setAttribute('required', 'required');
+                campoMultaPendencia.setAttribute('required', 'required');
+                campoEmbargoPendencia.setAttribute('required', 'required');
+                campoApreensaoPendencia.setAttribute('required', 'required');
+                campoInterdicaoPendencia.setAttribute('required', 'required');
+            } else {
+                containerPendenciaAmbiental.style.display = 'none';
+                campoNotificacaoPendencia.removeAttribute('required');
+                campoAdvertenciaPendencia.removeAttribute('required');
+                campoMultaPendencia.removeAttribute('required');
+                campoEmbargoPendencia.removeAttribute('required');
+                campoApreensaoPendencia.removeAttribute('required');
+                campoInterdicaoPendencia.removeAttribute('required');
+
             }
         });
     });

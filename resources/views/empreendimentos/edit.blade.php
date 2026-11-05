@@ -186,6 +186,43 @@
                             </div>
                     @endif
                 @endif
+
+                @if ($empreendimento->notificacao_pendencia != null)
+                    <div class="emp-form-group emp-col-6 mt-5">
+                        <label>Pendência ambiental</label>
+                            <div class="flex gap-5">
+                                <div>
+                                    <label for="notificacao_pendencia">Notificação</label>
+                                    <input type="text" name="notificacao_pendencia" id="notificacao_pendencia" class="emp-input" value="{{ old('notificacao_pendencia', $empreendimento->notificacao_pendencia)}}">
+                                </div>
+                                    
+                                <div>
+                                    <label for="embargo_pendencia">Embargo</label>
+                                    <input type="text" name="embargo_pendencia" id="embargo_pendencia" class="emp-input" value="{{ old('embargo_pendencia', $empreendimento->embargo_pendencia)}}">
+                                </div>
+                                    
+                                <div>
+                                    <label for="advertencia_pendencia">Advertência</label>
+                                    <input type="text" name="advertencia_pendencia" id="advertencia_pendencia" class="emp-input" value="{{ old('advertencia_pendencia', $empreendimento->advertencia_pendencia)}}">
+                                </div>
+                                    
+                                <div>
+                                    <label for="apreensao_pendencia">Apreensão</label>
+                                    <input type="text" name="apreensao_pendencia" id="apreensao_pendencia" class="emp-input" value="{{ old('apreensao_pendencia', $empreendimento->apreensao_pendencia)}}">
+                                </div>
+                                    
+                                <div>
+                                    <label for="multa_pendencia">Multa</label>
+                                    <input type="text" name="multa_pendencia" id="multa_pendencia" class="emp-input" value="{{ old('multa_pendencia', $empreendimento->multa_pendencia)}}">
+                                </div>
+                                    
+                                <div>
+                                    <label for="interdicao_pendencia">Interdição</label>
+                                    <input type="text" name="interdicao_pendencia" id="interdicao_pendencia" class="emp-input" value="{{ old('interdicao_pendencia', $empreendimento->interdicao_pendencia)}}">
+                                </div>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             {{-- 2. Dados de Contato do Responsável --}}

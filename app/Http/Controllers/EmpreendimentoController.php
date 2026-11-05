@@ -73,6 +73,12 @@ class EmpreendimentoController extends Controller
             'portaria_inema_validade' => 'nullable|date',
             'processo_semma_numero' => 'nullable|string|max:25',
             'processo_semma_tipo' => 'nullable|string|max:255',
+            'notificacao_pendencia' => 'nullable|string|max:50',
+            'embargo_pendencia' => 'nullable|string|max:50',
+            'advertencia_pendencia' => 'nullable|string|max:50',
+            'apreensao_pendencia' => 'nullable|string|max:50',
+            'multa_pendencia' => 'nullable|string|max:50',
+            'interdicao_pendencia' => 'nullable|string|max:50',
 
             // Dados de Contato / Responsável (Figura 9 do manual)
             'contato_nome'       => 'nullable|string|max:255',
@@ -173,6 +179,12 @@ class EmpreendimentoController extends Controller
             'portaria_inema_validade' => 'nullable|date',
             'processo_semma_numero' => 'nullable|string|max:25',
             'processo_semma_tipo' => 'nullable|string|max:255',
+            'notificacao_pendencia' => 'nullable|string|max:50',
+            'embargo_pendencia' => 'nullable|string|max:50',
+            'advertencia_pendencia' => 'nullable|string|max:50',
+            'apreensao_pendencia' => 'nullable|string|max:50',
+            'multa_pendencia' => 'nullable|string|max:50',
+            'interdicao_pendencia' => 'nullable|string|max:50',
 
             'contato_nome'       => 'nullable|string|max:255',
             'contato_telefone'   => 'nullable|string|max:30',
