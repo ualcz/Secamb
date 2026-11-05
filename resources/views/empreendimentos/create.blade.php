@@ -186,6 +186,7 @@
                     </x-radio-options>
                 </div>
 
+                <div class="mb-5">
                     <x-radio-options
                         name="licenca_anterior"
                         label="O empreendimento possui licença ou autorização anterior?"
@@ -286,6 +287,37 @@
                             </div>
                         </div>
                     </x-radio-options>
+                </div>
+
+                <div>
+                    <x-radio-options
+                        name="processo_semma"
+                        label="Existe outro processo referente a este empreendimento em tramitação na SEMMA?"
+                        target="container_processo_semma"
+                    >
+                        <div
+                            id="container_processo_semma"
+                            style="display:none;"
+                            class="mt-3 grid grid-cols-3 gap-4"
+                        >
+                            <div class="col-span-1">
+                                <x-floating-input
+                                    name="processo_semma_numero"
+                                    id="processo_semma_numero"
+                                    label="Número do processo"
+                                />
+                            </div>
+
+                            <div class="col-span-2">
+                                <x-floating-input
+                                    name="processo_semma_tipo"
+                                    id="processo_semma_tipo"
+                                    label="Tipo do processo"
+                                />
+                            </div>
+                        </div>
+                    </x-radio-options>
+                </div>
                 </div>
             </div>
 
@@ -458,6 +490,29 @@
                 campoValidadeResolucaoCepram.removeAttribute('required');
                 campoPortariaInema.removeAttribute('required');
                 campoValidadePortariaInema.removeAttribute('required');
+            }
+        });
+    });
+
+    // Processo em tramitação na SEMMA;
+    const containerProcessoSemma = document.getElementById('container_processo_semma');
+    const campoNumeroProcessoSemma = document.getElementById('processo_semma_numero');
+    const campoTipoProcessoSemma = document.getElementById('processo_semma_tipo');
+
+    const radioProcessoSemma = document.querySelectorAll(
+        'input[name="processo_semma"]'
+    );
+
+    radioProcessoSemma.forEach(opcaoLocal => {
+        opcaoLocal.addEventListener('change', function () {
+            if (this.value === 'sim') {
+                containerProcessoSemma.style.display = 'grid';
+                campoNumeroProcessoSemma.setAttribute('required', 'required');
+                campoTipoProcessoSemma.setAttribute('required', 'required');
+            } else {
+                containerProcessoSemma.style.display = 'none';
+                campoNumeroProcessoSemma.removeAttribute('required');
+                campoTipoProcessoSemma.removeAttribute('required');
             }
         });
     });

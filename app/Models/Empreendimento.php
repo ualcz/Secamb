@@ -47,6 +47,8 @@ class Empreendimento extends Model
         'portaria_inema',
         'resolucao_cepram_validade',
         'portaria_inema_validade',
+        'processo_semma_numero',
+        'processo_semma_tipo',
 
 
         // Contato/Responsável pelo empreendimento
