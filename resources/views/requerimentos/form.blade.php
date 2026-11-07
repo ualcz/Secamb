@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Novo Requerimento - SDP IFBA')
+@section('title', 'Novo Requerimento - SECAMB')
 @section('tag', 'Cidadão')
 
 @section('content')
@@ -8,23 +8,35 @@
 
 <div class="form-box">
     <!-- Overlay de Carregamento -->
-   <x-loading-overlay form-id="formRequerimento" />
+    <x-loading-overlay form-id="formRequerimento" />
 
-    <!-- Navegação entre modelos / setores -->
-    <div class="setores-nav">
-        <strong>Setor:</strong>
-        @foreach($modelos as $mod)
-            <a href="{{ route('requerimentos.cidadao.novo', array_merge(['setor' => $mod['id']], request()->filled('empreendimento_id') ? ['empreendimento_id' => request('empreendimento_id')] : [])) }}"
-               class="{{ ($modeloChave ?? '') == $mod['id'] ? 'active' : '' }} btn-nav" id="navegacao-btn">
-                {{ $mod['setor_sigla'] }}
-            </a>
-        @endforeach
-    </div>
+    <!-- Cabeçalho Hierárquico do Requerimento e Setor Responsável -->
+    <div class="req-header">
+        <h1 class="req-header-titulo">{{ $modeloAtivo['titulo'] ?? 'Novo Requerimento' }}</h1>
 
-    <!-- Título do Requerimento -->
-    <div style="text-align: center; margin-bottom: 20px; font-size: 1.2rem;">
-        <h3 style="margin: 0;">{{ $modeloAtivo['titulo'] ?? 'Requerimento Geral' }}</h3>
-        <small style="color: #666;">{{ $setorDestino['nome'] ?? 'Setor Responsável' }}</small>
+        <div class="req-setor-wrap">
+            <span class="req-setor-label">Setor:</span>
+
+            <div class="req-setores-nav">
+                @foreach($modelos as $mod)
+                    @php 
+                        $isActive = (($modeloChave ?? '') == $mod['id']);
+                        $nomeDiferente = !empty($mod['setor_nome']) && trim(strtolower($mod['setor_nome'])) !== trim(strtolower($mod['setor_sigla']));
+                    @endphp
+                    <a href="{{ route('requerimentos.cidadao.novo', array_merge(['setor' => $mod['id']], request()->filled('empreendimento_id') ? ['empreendimento_id' => request('empreendimento_id')] : [])) }}"
+                       class="req-setor-badge {{ $isActive ? 'active' : '' }}"
+                       title="{{ $mod['setor_nome'] ?? $mod['setor_sigla'] }}">
+                        @if($isActive)
+                            <span class="req-setor-dot"></span>
+                        @endif
+                        <span class="req-setor-sigla">{{ $mod['setor_sigla'] }}</span>
+                        @if($isActive && $nomeDiferente)
+                            <span class="req-setor-nome-extenso">{{ $mod['setor_nome'] }}</span>
+                        @endif
+                    </a>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     @if (session('sucesso'))

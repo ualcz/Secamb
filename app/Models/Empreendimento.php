@@ -27,6 +27,8 @@ class Empreendimento extends Model
         'nome',                // Nome Fantasia ou Razão Social
         'cnpj',                // CNPJ (null se for pessoa física/produtor rural)
         'tipo_atividade',      // Descrição da atividade econômica principal
+        'porte',               // 'Micro' | 'Pequeno' | 'Médio' | 'Grande'
+        'cnae',                // Código da Receita Federal (CNAE / Tipologia)
 
         // Localização (fixo no empreendimento — não usa tabela enderecos)
         'endereco',            // Rua/Estrada e número
@@ -34,6 +36,8 @@ class Empreendimento extends Model
         'cep',
         'cidade',              // Padrão: Seabra
         'estado',              // Padrão: BA
+        'latitude',            // Coordenadas Geográficas (SIRGAS 2000)
+        'longitude',           // Coordenadas Geográficas (SIRGAS 2000)
 
         // Dados ambientais do empreendimento (Seção 1.2 do manual)
         'bacia_hidrografica',  // Bacia Hidrográfica onde está inserido

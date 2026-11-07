@@ -76,6 +76,8 @@
                                 data-endereco="{{ $emp->endereco_completo ?: 'Não informado' }}"
                                 data-bacia="{{ $emp->bacia_hidrografica ?? 'Não informada' }}"
                                 data-fase="{{ $emp->fase_operacao ?? 'Não informada' }}"
+                                data-porte="{{ $emp->porte ?? 'Não informado' }}"
+                                data-coordenadas="{{ $emp->latitude ? $emp->latitude . ' / ' . $emp->longitude : '' }}"
                                 {{ (string) old('empreendimento_id', $empreendimentoSelecionadoId ?? '') === (string) $emp->id ? 'selected' : '' }}>
                                 {{ $emp->nome }} {{ $emp->cnpj ? '— CNPJ: ' . $emp->cnpj : '' }}
                             </option>
@@ -89,9 +91,11 @@
                 <div style="font-weight: 700; color: #065f46; font-size: 0.95rem;" id="prev-emp-nome"></div>
                 <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; font-size: 0.825rem; color: #1e293b;">
                     <div><strong>CNPJ:</strong> <span id="prev-emp-cnpj"></span></div>
+                    <div><strong>Porte:</strong> <span id="prev-emp-porte"></span></div>
                     <div><strong>Localização:</strong> <span id="prev-emp-endereco"></span></div>
                     <div><strong>Bacia:</strong> <span id="prev-emp-bacia"></span></div>
                     <div><strong>Fase:</strong> <span id="prev-emp-fase"></span></div>
+                    <div id="prev-emp-coords-box" style="display: none;"><strong>Coordenadas:</strong> <span id="prev-emp-coordenadas"></span></div>
                 </div>
             </div>
         </div>
@@ -188,11 +192,11 @@
         </div>
     </fieldset>
 
-    <!-- 3. Justificativa / Motivo -->
+    <!-- 4. Descrição da Solicitação / Observações -->
     <fieldset>
-        <legend>Justificativa / Motivo</legend>
+        <legend>Descrição da Solicitação / Observações (Opcional)</legend>
         <div class="campo">
-            <textarea name="motivo" rows="4" placeholder="Descreva os motivos da sua solicitação...">{{ old('motivo') }}</textarea>
+            <textarea name="motivo" rows="3" placeholder="Ex: Solicito Licença Unificada para atividade de extração mineral conforme projetos em anexo...">{{ old('motivo') }}</textarea>
         </div>
     </fieldset>
 
@@ -212,9 +216,21 @@
 
         document.getElementById('prev-emp-nome').textContent = selectedOption.getAttribute('data-nome') || '';
         document.getElementById('prev-emp-cnpj').textContent = selectedOption.getAttribute('data-cnpj') || '';
+        document.getElementById('prev-emp-porte').textContent = selectedOption.getAttribute('data-porte') || 'Não informado';
         document.getElementById('prev-emp-endereco').textContent = selectedOption.getAttribute('data-endereco') || '';
         document.getElementById('prev-emp-bacia').textContent = selectedOption.getAttribute('data-bacia') || '';
         document.getElementById('prev-emp-fase').textContent = selectedOption.getAttribute('data-fase') || '';
+
+        const coords = selectedOption.getAttribute('data-coordenadas');
+        const coordsBox = document.getElementById('prev-emp-coords-box');
+        if (coordsBox) {
+            if (coords) {
+                document.getElementById('prev-emp-coordenadas').textContent = coords;
+                coordsBox.style.display = 'block';
+            } else {
+                coordsBox.style.display = 'none';
+            }
+        }
 
         card.style.display = 'block';
     }

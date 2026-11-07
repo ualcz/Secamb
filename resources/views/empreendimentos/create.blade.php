@@ -90,6 +90,25 @@
                             placeholder="Ex: Hotelaria, Mineração, Agropecuária, Comércio"/>
                     </div>
 
+                    <div class="emp-form-group emp-col-3">
+                        <x-floating-input
+                            name="cnae"
+                            label="Cód. Atividade / CNAE"
+                            value="{{ old('cnae') }}"
+                            placeholder="Ex: B4.1 ou 0810-0/99"/>
+                    </div>
+
+                    <div class="floating-group emp-form-group emp-col-3">
+                        <select name="porte" id="porte" class="floating-select emp-select">
+                            <option value="" disabled {{ old('porte') ? '' : 'selected' }} hidden>Selecione...</option>
+                            <option value="Micro" {{ old('porte') === 'Micro' ? 'selected' : '' }}>Micro</option>
+                            <option value="Pequeno" {{ old('porte') === 'Pequeno' ? 'selected' : '' }}>Pequeno</option>
+                            <option value="Médio" {{ old('porte') === 'Médio' ? 'selected' : '' }}>Médio</option>
+                            <option value="Grande" {{ old('porte') === 'Grande' ? 'selected' : '' }}>Grande</option>
+                        </select>
+                        <label for="porte" class="floating-label">Porte do Empreendimento</label>
+                    </div>
+
                     <div class="floating-group emp-form-group emp-col-6">
                         <select name="fase_operacao" id="fase_operacao" class="floating-select emp-select" required>
                             <option value="" disabled {{ old('fase_operacao') ? '' : 'selected' }} hidden>Selecione uma opção...</option>
@@ -162,6 +181,22 @@
                             label="Recurso Hídrico Utilizado / Impactado"
                             value="{{ old('recurso_hidrico') }}"
                             placeholder="Ex: Rio Campestre, Poço Artesiano"/>
+                    </div>
+
+                    <div class="emp-form-group emp-col-6">
+                        <x-floating-input
+                            name="latitude"
+                            label="Coordenadas: Latitude (SIRGAS 2000)"
+                            value="{{ old('latitude') }}"
+                            placeholder="Ex: -12.418290 ou 12°25'05'' S"/>
+                    </div>
+
+                    <div class="emp-form-group emp-col-6">
+                        <x-floating-input
+                            name="longitude"
+                            label="Coordenadas: Longitude (SIRGAS 2000)"
+                            value="{{ old('longitude') }}"
+                            placeholder="Ex: -41.769850 ou 41°46'11'' W"/>
                     </div>
                 </div>
 

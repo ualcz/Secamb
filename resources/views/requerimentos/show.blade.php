@@ -123,19 +123,26 @@
             </div>
 
             <div class="info-grupo" style="margin-top: 0.75rem;">
-                <span class="info-label">Motivo / Solicitação</span>
+                <span class="info-label">Descrição da Solicitação</span>
                 <div class="box-motivo">
-                    <span class="info-valor">{{ $requerimento->motivo }}</span>
+                    <span class="info-valor">{{ $requerimento->motivo ?: 'Sem observações adicionais informadas.' }}</span>
                 </div>
             </div>
 
             @if($requerimento->empreendimento)
                 <div style="margin-top: 1rem; padding: 14px 18px; border-radius: 8px; border: 1px solid #bbf7d0; background-color: #f0fdf4;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <svg width="18" height="18" fill="none" stroke="#059669" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                        </svg>
-                        <strong style="color: #065f46; font-size: 0.95rem;">Empreendimento Vinculado</strong>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" fill="none" stroke="#059669" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                            <strong style="color: #065f46; font-size: 0.95rem;">Empreendimento Vinculado</strong>
+                        </div>
+                        @if($requerimento->empreendimento->porte)
+                            <span style="background: #059669; color: #fff; font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 4px;">
+                                Porte: {{ $requerimento->empreendimento->porte }}
+                            </span>
+                        @endif
                     </div>
                     <div class="grid-2">
                         <div class="info-grupo">
@@ -147,12 +154,40 @@
                             <span class="info-valor">{{ $requerimento->empreendimento->cnpj ?? 'Não informado' }}</span>
                         </div>
                         <div class="info-grupo">
+                            <span class="info-label">Atividade / Ramo</span>
+                            <span class="info-valor">{{ $requerimento->empreendimento->tipo_atividade ?? 'Não informada' }}</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Cód. Atividade / CNAE</span>
+                            <span class="info-valor">{{ $requerimento->empreendimento->cnae ?? 'Não informado' }}</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Fase Atual</span>
+                            <span class="info-valor">{{ $requerimento->empreendimento->fase_operacao ?? 'Não informada' }}</span>
+                        </div>
+                        <div class="info-grupo">
                             <span class="info-label">Localização</span>
                             <span class="info-valor">{{ $requerimento->empreendimento->endereco_completo ?: 'Seabra - BA' }}</span>
                         </div>
                         <div class="info-grupo">
                             <span class="info-label">Bacia Hidrográfica</span>
                             <span class="info-valor">{{ $requerimento->empreendimento->bacia_hidrografica ?? 'Não informada' }}</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Recurso Hídrico</span>
+                            <span class="info-valor">{{ $requerimento->empreendimento->recurso_hidrico ?? 'Não informado' }}</span>
+                        </div>
+                        @if($requerimento->empreendimento->latitude || $requerimento->empreendimento->longitude)
+                        <div class="info-grupo">
+                            <span class="info-label">Coordenadas (SIRGAS 2000)</span>
+                            <span class="info-valor">
+                                Lat: {{ $requerimento->empreendimento->latitude ?? '—' }} | Long: {{ $requerimento->empreendimento->longitude ?? '—' }}
+                            </span>
+                        </div>
+                        @endif
+                        <div class="info-grupo">
+                            <span class="info-label">Unidade de Conservação</span>
+                            <span class="info-valor">{{ $requerimento->empreendimento->unidade_conservacao ?? 'Não possui' }}</span>
                         </div>
                     </div>
                 </div>

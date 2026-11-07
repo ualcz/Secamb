@@ -67,6 +67,22 @@
                         <input type="text" name="tipo_atividade" id="tipo_atividade" class="emp-input" value="{{ old('tipo_atividade', $empreendimento->tipo_atividade) }}">
                     </div>
 
+                    <div class="emp-form-group emp-col-3">
+                        <label for="cnae">Cód. Atividade / CNAE</label>
+                        <input type="text" name="cnae" id="cnae" class="emp-input" value="{{ old('cnae', $empreendimento->cnae) }}" placeholder="Ex: B4.1 ou 0810-0/99">
+                    </div>
+
+                    <div class="emp-form-group emp-col-3">
+                        <label for="porte">Porte do Empreendimento</label>
+                        <select name="porte" id="porte" class="emp-select">
+                            <option value="">Selecione o porte...</option>
+                            <option value="Micro" {{ old('porte', $empreendimento->porte) === 'Micro' ? 'selected' : '' }}>Micro</option>
+                            <option value="Pequeno" {{ old('porte', $empreendimento->porte) === 'Pequeno' ? 'selected' : '' }}>Pequeno</option>
+                            <option value="Médio" {{ old('porte', $empreendimento->porte) === 'Médio' ? 'selected' : '' }}>Médio</option>
+                            <option value="Grande" {{ old('porte', $empreendimento->porte) === 'Grande' ? 'selected' : '' }}>Grande</option>
+                        </select>
+                    </div>
+
                     <div class="emp-form-group emp-col-6">
                         <label for="fase_operacao">Fase de Operação</label>
                         <select name="fase_operacao" id="fase_operacao" class="emp-select">
@@ -111,6 +127,16 @@
                     <div class="emp-form-group emp-col-6">
                         <label for="recurso_hidrico">Recurso Hídrico Utilizado / Impactado</label>
                         <input type="text" name="recurso_hidrico" id="recurso_hidrico" class="emp-input" value="{{ old('recurso_hidrico', $empreendimento->recurso_hidrico) }}">
+                    </div>
+
+                    <div class="emp-form-group emp-col-6">
+                        <label for="latitude">Coordenadas: Latitude (SIRGAS 2000)</label>
+                        <input type="text" name="latitude" id="latitude" class="emp-input" value="{{ old('latitude', $empreendimento->latitude) }}" placeholder="Ex: -12.418290 ou 12°25'05'' S">
+                    </div>
+
+                    <div class="emp-form-group emp-col-6">
+                        <label for="longitude">Coordenadas: Longitude (SIRGAS 2000)</label>
+                        <input type="text" name="longitude" id="longitude" class="emp-input" value="{{ old('longitude', $empreendimento->longitude) }}" placeholder="Ex: -41.769850 ou 41°46'11'' W">
                     </div>
                 </div>
                 <div class="emp-form-group emp-col-6 mt-2">

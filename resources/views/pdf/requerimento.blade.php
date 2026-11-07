@@ -70,6 +70,9 @@
          TÍTULO & PROTOCOLO
     ══════════════════════════════════════════════════════ --}}
     <div class="titulo-doc">Requerimento de Licenciamento Ambiental</div>
+    <div class="fundamento-legal" style="font-size: 6.5pt; text-align: center; color: #444; margin-top: -2mm; margin-bottom: 2mm;">
+        <strong>Fundamento Legal:</strong> Resolução CEPRAM nº 4.789/2018, Lei Municipal nº 498/2013 e Decreto Municipal nº 301/2014
+    </div>
     <div class="protocolo-linha">
         Protocolo Nº: <strong>{{ $numeroProtocolo ?: '_______________' }}</strong>
         &nbsp;&nbsp;&nbsp;
@@ -140,9 +143,10 @@
         <div class="secao-titulo">2. Dados do Empreendimento / Atividade</div>
         <table class="campos">
             <colgroup>
-                <col style="width:50%">
-                <col style="width:25%">
-                <col style="width:25%">
+                <col style="width:40%">
+                <col style="width:20%">
+                <col style="width:20%">
+                <col style="width:20%">
             </colgroup>
             <tr>
                 <td colspan="2">
@@ -153,6 +157,24 @@
                     <span class="rotulo">CNPJ</span>
                     <span class="valor">{{ $emp?->cnpj ?? '—' }}</span>
                 </td>
+                <td>
+                    <span class="rotulo">Porte do Empreendimento</span>
+                    <span class="valor">{{ $emp?->porte ?? 'Não informado' }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span class="rotulo">Tipo de Atividade Econômica</span>
+                    <span class="valor">{{ $emp?->tipo_atividade ?? '—' }}</span>
+                </td>
+                <td>
+                    <span class="rotulo">Código da Atividade (CNAE / Tipologia)</span>
+                    <span class="valor">{{ $emp?->cnae ?? '—' }}</span>
+                </td>
+                <td>
+                    <span class="rotulo">Fase Atual</span>
+                    <span class="valor">{{ $emp?->fase_operacao ?? '—' }}</span>
+                </td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -160,24 +182,98 @@
                     <span class="valor">{{ $emp?->endereco ?? '—' }}</span>
                 </td>
                 <td>
-                    <span class="rotulo">Bairro</span>
-                    <span class="valor">{{ $emp?->bairro ?? '—' }}</span>
+                    <span class="rotulo">Bairro / Município</span>
+                    <span class="valor">{{ ($emp?->bairro ? $emp->bairro . ' - ' : '') . ($emp?->cidade ?? 'Seabra') . '/' . ($emp?->estado ?? 'BA') }}</span>
+                </td>
+                <td>
+                    <span class="rotulo">CEP</span>
+                    <span class="valor">{{ $emp?->cep ?? '—' }}</span>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <span class="rotulo">Tipo de Atividade / Ramo</span>
-                    <span class="valor">{{ $emp?->tipo_atividade ?? '—' }}</span>
-                </td>
-                <td>
-                    <span class="rotulo">Fase de Operação</span>
-                    <span class="valor">{{ $emp?->fase_operacao ?? '—' }}</span>
-                </td>
-                <td>
                     <span class="rotulo">Bacia Hidrográfica</span>
                     <span class="valor">{{ $emp?->bacia_hidrografica ?? '—' }}</span>
                 </td>
+                <td>
+                    <span class="rotulo">Recurso Hídrico</span>
+                    <span class="valor">{{ $emp?->recurso_hidrico ?? '—' }}</span>
+                </td>
+                <td>
+                    <span class="rotulo">Latitude (SIRGAS 2000)</span>
+                    <span class="valor">{{ $emp?->latitude ?? '—' }}</span>
+                </td>
+                <td>
+                    <span class="rotulo">Longitude (SIRGAS 2000)</span>
+                    <span class="valor">{{ $emp?->longitude ?? '—' }}</span>
+                </td>
             </tr>
+            @if($emp)
+            <tr>
+                <td colspan="2">
+                    <span class="rotulo">Situado em Unidade de Conservação ou Amortecimento?</span>
+                    <span class="valor">{{ $emp->unidade_conservacao ? $emp->unidade_conservacao : 'Não possui / Não situado' }}</span>
+                </td>
+                <td colspan="2">
+                    <span class="rotulo">Existe Outro Processo na SEMMA?</span>
+                    <span class="valor">
+                        @if($emp->processo_semma_numero || $emp->processo_semma_tipo)
+                            Sim (Nº {{ $emp->processo_semma_numero ?? '—' }} - Tipo: {{ $emp->processo_semma_tipo ?? '—' }})
+                        @else
+                            Não informado / Não possui
+                        @endif
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span class="rotulo">Possui Licença ou Autorização Anterior?</span>
+                    <span class="valor">
+                        @if($emp->licenca_anterior_tipo || $emp->licenca_anterior_processo || $emp->resolucao_cepram || $emp->portaria_inema)
+                            @if($emp->localizacao_licenca === 'municipio')
+                                Município - Tipo: {{ $emp->licenca_anterior_tipo ?? '—' }} (Proc. {{ $emp->licenca_anterior_processo ?? '—' }})
+                            @else
+                                Estado - CEPRAM: {{ $emp->resolucao_cepram ?? '—' }} | INEMA: {{ $emp->portaria_inema ?? '—' }}
+                            @endif
+                        @else
+                            Não possui
+                        @endif
+                    </span>
+                </td>
+                <td colspan="2">
+                    <span class="rotulo">Pendências Ambientais (INEMA / IBAMA / SEMMA)</span>
+                    <span class="valor">
+                        @php
+                            $pendencias = array_filter([
+                                $emp->notificacao_pendencia ? 'Notificação: ' . $emp->notificacao_pendencia : null,
+                                $emp->embargo_pendencia ? 'Embargo: ' . $emp->embargo_pendencia : null,
+                                $emp->multa_pendencia ? 'Multa: ' . $emp->multa_pendencia : null,
+                                $emp->advertencia_pendencia ? 'Advertência: ' . $emp->advertencia_pendencia : null,
+                                $emp->apreensao_pendencia ? 'Apreensão: ' . $emp->apreensao_pendencia : null,
+                                $emp->interdicao_pendencia ? 'Interdição: ' . $emp->interdicao_pendencia : null,
+                            ]);
+                        @endphp
+                        {{ count($pendencias) > 0 ? implode('; ', $pendencias) : 'Nenhuma pendência declarada' }}
+                    </span>
+                </td>
+            </tr>
+            @if($emp->contato_nome || $emp->contato_celular || $emp->contato_email)
+            <tr>
+                <td colspan="2">
+                    <span class="rotulo">Contato do Responsável / Representante</span>
+                    <span class="valor">{{ $emp->contato_nome ?? '—' }}</span>
+                </td>
+                <td>
+                    <span class="rotulo">Telefone / Celular</span>
+                    <span class="valor">{{ $emp->contato_celular ?? $emp->contato_telefone ?? '—' }}</span>
+                </td>
+                <td>
+                    <span class="rotulo">E-mail de Contato</span>
+                    <span class="valor">{{ $emp->contato_email ?? '—' }}</span>
+                </td>
+            </tr>
+            @endif
+            @endif
         </table>
     </div>
 
@@ -214,10 +310,10 @@
     </div>
 
     {{-- ══════════════════════════════════════════════════════
-         4. EXPOSIÇÃO DE MOTIVOS / JUSTIFICATIVA
+         4. DESCRIÇÃO DA SOLICITAÇÃO
     ══════════════════════════════════════════════════════ --}}
     <div class="secao">
-        <div class="secao-titulo">4. Exposição de Motivos / Justificativa</div>
+        <div class="secao-titulo">4. Descrição da Solicitação</div>
         <div class="linhas">
             @if(!empty($mensagem))
                 <div style="font-size: 7.5pt; margin-bottom: 1mm;">{!! nl2br(e($mensagem)) !!}</div>
