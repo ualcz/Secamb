@@ -41,10 +41,9 @@
                 <label class="filter-label">Status</label>
                 <select name="status" class="input-filtro">
                     <option value="">Todos</option>
-                    <option value="Aberto" {{ request('status') == 'Aberto' ? 'selected' : '' }}>Aberto</option>
-                    <option value="Em Análise" {{ request('status') == 'Em Análise' ? 'selected' : '' }}>Em Análise</option>
-                    <option value="Indeferido" {{ request('status') == 'Indeferido' ? 'selected' : '' }}>Indeferido</option>
-                    <option value="Concluído" {{ request('status') == 'Concluído' ? 'selected' : '' }}>Concluído</option>
+                    @foreach(\App\Models\Requerimento::STATUS_DISPONIVEIS as $status)
+                        <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $status }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -80,7 +79,7 @@
 </div>
 
 <section class="dash-section">
-    <h3 class="dash-section-title">Requerimentos recentes</h3>
+    <h3 class="dash-section-title">Requerimentos</h3>
 
     @if($requerimentos->isEmpty())
         <p style="color: #64748b; font-size: 0.875rem; margin: 0; padding: 12px 0;">
@@ -120,7 +119,7 @@
                                     {{ $requerimento->setor?->setor_sigla ?? $requerimento->setor_sigla }}
                                 </span>
                             </td>
-                            <td class="req-col-objeto {{ $requerimento->status ?? 'Aberto' }}" style="text-align: center;">
+                            <td class="req-col-objeto status-{{ Str::slug($requerimento->status ?? \App\Models\Requerimento::STATUS_PROTOCOLADO) }}" style="text-align: center;">
                                 <span>
                                     {{ $requerimento->status ?? '-'}}
                                 </span>
@@ -134,6 +133,10 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+
+        <div style="margin-top: 1rem;">
+            {{ $requerimentos->links() }}
         </div>
     @endif
 </section>

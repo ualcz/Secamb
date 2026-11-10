@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Requerimento;
 use App\Models\Setor;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class AdminConsultaController extends Controller
 {
@@ -50,7 +49,7 @@ class AdminConsultaController extends Controller
             $query->where('status', $request->input('status'));
         }
 
-        // 5. Filtro por Intervalo de Datas com fallback de 30 dias por padrão
+        // 5. Filtro por intervalo de datas, somente quando informado
         $hasDataInicio = $request->filled('data_inicio');
         $hasDataFim = $request->filled('data_fim');
 
@@ -61,13 +60,9 @@ class AdminConsultaController extends Controller
             if ($hasDataFim) {
                 $query->whereDate('created_at', '<=', $request->input('data_fim'));
             }
-        } else {
-            // Regra Padrão: Se o usuário não definiu datas, busca somente dos últimos 30 dias
-            $query->where('created_at', '>=', Carbon::now()->subDays(30));
         }
 
-        // Paginando para evitar lentidão e mantendo os parâmetros de busca na URL
-        $requerimentos = $query->latest()->paginate(15)->appends($request->query());
+        $requerimentos = $query->latest()->paginate(15)->withQueryString();
         $setores = Setor::where('ativo', true)->orderBy('setor_sigla')->get();
 
         return view('admin.consultaRequerimento', [
