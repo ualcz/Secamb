@@ -278,11 +278,14 @@
 
 .badge svg { flex-shrink: 0; }
 
-.badge-Aberto    { background: #fef3c7; color: #b45309; }
-.badge-analise   { background: #ede9fe; color: #6d28d9; }
-.badge-concluido { background: #d1fae5; color: #047857; }
-.badge-indeferido { background: #faddd1; color: #f8350e; }
-.badge-despacho  { background: #e0f2fe; color: #0369a1; }
+.badge-protocolado { background: #fef3c7; color: #b45309; }
+.badge-em-analise { background: #ede9fe; color: #6d28d9; }
+.badge-aguardando-complementacao { background: #ffedd5; color: #c2410c; }
+.badge-deferido { background: #e0f2fe; color: #0369a1; }
+.badge-licenca-emitida { background: #d1fae5; color: #047857; }
+.badge-indeferido { background: #fee2e2; color: #b91c1c; }
+.badge-encerrado { background: #e2e8f0; color: #475569; }
+.badge-expirado { background: #f1f5f9; color: #64748b; }
 
 /* =========================================================
    ACCORDION INFO ALUNO
@@ -701,20 +704,29 @@
 }
 
 /* Estados da Timeline */
-.status-Aberto .timeline-badge       { border-color: #f59e0b; }
-.status-Aberto .badge-status        { background: #fef3c7; color: #92400e; }
+.status-protocolado .timeline-badge { border-color: #f59e0b; }
+.status-protocolado .badge-status { background: #fef3c7; color: #92400e; }
 
-.status-em-analise .timeline-badge   { border-color: #8b5cf6; }
-.status-em-analise .badge-status    { background: #ede9fe; color: #6d28d9; }
+.status-em-analise .timeline-badge { border-color: #8b5cf6; }
+.status-em-analise .badge-status { background: #ede9fe; color: #6d28d9; }
 
-.status-indeferido .timeline-badge   { border-color: #ef4444; }
-.status-indeferido .badge-status    { background: #fee2e2; color: #b91c1c; }
+.status-aguardando-complementacao .timeline-badge { border-color: #f97316; }
+.status-aguardando-complementacao .badge-status { background: #ffedd5; color: #c2410c; }
 
-.status-concluido .timeline-badge    { border-color: #10b981; background: #10b981; }
-.status-concluido .badge-status     { background: #d1fae5; color: #047857; }
+.status-deferido .timeline-badge { border-color: #0ea5e9; }
+.status-deferido .badge-status { background: #e0f2fe; color: #0369a1; }
 
-.status-despacho .timeline-badge     { border-color: #0ea5e9; }
-.status-despacho .badge-status      { background: #e0f2fe; color: #0369a1; }
+.status-licenca-emitida .timeline-badge { border-color: #10b981; background: #10b981; }
+.status-licenca-emitida .badge-status { background: #d1fae5; color: #047857; }
+
+.status-indeferido .timeline-badge { border-color: #ef4444; }
+.status-indeferido .badge-status { background: #fee2e2; color: #b91c1c; }
+
+.status-encerrado .timeline-badge { border-color: #64748b; }
+.status-encerrado .badge-status { background: #e2e8f0; color: #475569; }
+
+.status-expirado .timeline-badge { border-color: #94a3b8; }
+.status-expirado .badge-status { background: #f1f5f9; color: #64748b; }
 
 /* Timeline Vazia */
 .timeline > p {
