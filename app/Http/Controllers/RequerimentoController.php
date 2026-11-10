@@ -103,9 +103,6 @@ class RequerimentoController extends Controller
                   ->orWhere('numero_protocolo', 'LIKE', '%' . $busca . '%')
                   ->orWhere('status', 'LIKE', '%' . $busca . '%');
 
-                if (stripos('aberto', $busca) !== false) {
-                    $q->orWhere('status', 'Despacho');
-                }
             });
         }
         if ($request->filled('objetoDoRequerimento')) {
@@ -113,8 +110,8 @@ class RequerimentoController extends Controller
         }
         if ($request->filled('status')) {
             $statusFiltro = $request->input('status');
-            if (strcasecmp($statusFiltro, 'Aberto') === 0) {
-                $query->whereIn('status', ['Aberto', 'Despacho']);
+            if (strcasecmp($statusFiltro, 'Protocolado') === 0) {
+                $query->where('status', Requerimento::STATUS_PROTOCOLADO);
             } else {
                 $query->where('status', 'LIKE', '%' . $statusFiltro . '%');
             }
@@ -165,7 +162,17 @@ class RequerimentoController extends Controller
         }
 
         $ultimoHistorico = $requerimento->historicos()->reorder()->latest('created_at')->first();
-        $exigeDocumentos = $requerimento->status === 'Indeferido'
+        if (!in_array($requerimento->status, [
+            Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
+            Requerimento::STATUS_INDEFERIDO,
+        ], true)) {
+            abort(409, 'Este processo não está aguardando correção ou complementação.');
+        }
+
+        $exigeDocumentos = in_array($requerimento->status, [
+            Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
+            Requerimento::STATUS_INDEFERIDO,
+        ], true)
             || (bool) $ultimoHistorico?->solicita_novo_documento;
 
         $validated = $request->validate([
@@ -174,7 +181,8 @@ class RequerimentoController extends Controller
             'arquivos.*'      => [$exigeDocumentos ? 'required' : 'nullable', 'file', 'max:51200'],
         ]);
         $requerimento->update([
-            'status' => 'Em Análise',
+            'status' => Requerimento::STATUS_EM_ANALISE,
+            'data_devolucao' => null,
         ]);
 
         $arquivos = $request->file('arquivos', []);

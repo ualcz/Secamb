@@ -19,9 +19,10 @@ use Illuminate\Support\Facades\Mail;
  * Prefeitura Municipal de Seabra / Secretaria Municipal de Meio Ambiente
  *
  * Ciclo de vida do status:
- *   Novo → Em Atendimento → Devolvido ⟳ (cidadão responde) → Finalizado
- *                        → Indeferido (encerrado negativamente)
- *   Devolvido sem resposta em 90 dias → Expirado
+ *   Protocolado → Em análise ↔ Aguardando complementação → Deferido → Licença emitida
+ *                                                            ↘ Encerrado
+ *   Em análise → Indeferido / Encerrado
+ *   Aguardando complementação sem resposta em 90 dias → Expirado
  */
 #[ObservedBy([RequerimentoObserver::class])]
 class Requerimento extends Model
@@ -29,12 +30,32 @@ class Requerimento extends Model
     protected $table = 'requerimentos';
 
     // ─── Status do processo ───────────────────────────────────────────────────
-    public const STATUS_NOVO           = 'Novo';
-    public const STATUS_EM_ATENDIMENTO = 'Em Atendimento';
-    public const STATUS_DEVOLVIDO      = 'Devolvido';
-    public const STATUS_FINALIZADO     = 'Finalizado';
-    public const STATUS_INDEFERIDO     = 'Indeferido';
-    public const STATUS_EXPIRADO       = 'Expirado';
+    public const STATUS_PROTOCOLADO                 = 'Protocolado';
+    public const STATUS_EM_ANALISE                  = 'Em análise';
+    public const STATUS_AGUARDANDO_COMPLEMENTACAO   = 'Aguardando complementação';
+    public const STATUS_DEFERIDO                    = 'Deferido';
+    public const STATUS_LICENCA_EMITIDA             = 'Licença emitida';
+    public const STATUS_INDEFERIDO                  = 'Indeferido';
+    public const STATUS_ENCERRADO                   = 'Encerrado';
+    public const STATUS_EXPIRADO                    = 'Expirado';
+
+    public const STATUS_TERMINAIS = [
+        self::STATUS_LICENCA_EMITIDA,
+        self::STATUS_INDEFERIDO,
+        self::STATUS_ENCERRADO,
+        self::STATUS_EXPIRADO,
+    ];
+
+    public const STATUS_DISPONIVEIS = [
+        self::STATUS_PROTOCOLADO,
+        self::STATUS_EM_ANALISE,
+        self::STATUS_AGUARDANDO_COMPLEMENTACAO,
+        self::STATUS_DEFERIDO,
+        self::STATUS_LICENCA_EMITIDA,
+        self::STATUS_INDEFERIDO,
+        self::STATUS_ENCERRADO,
+        self::STATUS_EXPIRADO,
+    ];
 
     protected $fillable = [
         // ─── Identificação ───────────────────────────────────────────────────
@@ -137,7 +158,29 @@ class Requerimento extends Model
     /** Status do processo visível para o cidadão. */
     public function getStatusCidadaoAttribute(): string
     {
-        return $this->status ?: self::STATUS_NOVO;
+        return $this->status ?: self::STATUS_PROTOCOLADO;
+    }
+
+    /** Status que o setor pode atribuir a partir da etapa atual. */
+    public function proximosStatusPossiveis(): array
+    {
+        return match ($this->status ?: self::STATUS_PROTOCOLADO) {
+            self::STATUS_PROTOCOLADO => [
+                self::STATUS_EM_ANALISE,
+                self::STATUS_ENCERRADO,
+            ],
+            self::STATUS_EM_ANALISE => [
+                self::STATUS_AGUARDANDO_COMPLEMENTACAO,
+                self::STATUS_DEFERIDO,
+                self::STATUS_INDEFERIDO,
+                self::STATUS_ENCERRADO,
+            ],
+            self::STATUS_DEFERIDO => [
+                self::STATUS_LICENCA_EMITIDA,
+                self::STATUS_ENCERRADO,
+            ],
+            default => [],
+        };
     }
 
     /** Sigla da secretaria/setor gestora do processo. */
@@ -170,11 +213,13 @@ class Requerimento extends Model
      */
     public function verificarExpiracao(): bool
     {
-        if ($this->status === self::STATUS_DEVOLVIDO && $this->data_devolucao) {
-            if ($this->data_devolucao->addDays(90)->isPast()) {
-                $this->update(['status' => self::STATUS_EXPIRADO]);
-                return true;
-            }
+        if (
+            $this->status === self::STATUS_AGUARDANDO_COMPLEMENTACAO
+            && $this->data_devolucao
+            && $this->data_devolucao->lte(now()->subDays(90))
+        ) {
+            $this->update(['status' => self::STATUS_EXPIRADO]);
+            return true;
         }
         return false;
     }

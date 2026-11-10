@@ -32,7 +32,7 @@ return new class extends Migration
             $table->text('motivo')->nullable();
 
             // Controle de status e tramitação
-            $table->string('status', 40)->default('Novo'); // Novo, Em Atendimento, Devolvido, Finalizado, Indeferido, Expirado
+            $table->string('status', 40)->default('Protocolado');
             $table->text('observacao_analise')->nullable();
             $table->timestamp('data_devolucao')->nullable();
             $table->string('email_message_id')->nullable();

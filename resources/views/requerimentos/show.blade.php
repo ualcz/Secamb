@@ -37,7 +37,10 @@
                 $ultimoHistorico = $requerimento->historicos->sortByDesc('created_at')->first();
             @endphp
 
-            @if($requerimento->status === 'Indeferido' || ($ultimoHistorico && $ultimoHistorico->solicita_novo_documento))
+            @if(in_array($requerimento->status, [
+                \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
+                \App\Models\Requerimento::STATUS_INDEFERIDO,
+            ], true) || ($ultimoHistorico && $ultimoHistorico->solicita_novo_documento))
                 <div class="alert-acao-necessaria card-painel">
                     <div class="alert-header">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -94,19 +97,22 @@
                 <div>
                     @php
                         $statusClass = match($requerimento->status) {
-                            'Aberto', 'Novo' => 'badge-Aberto',
-                            'Em Análise', 'Em Analise', 'Em Atendimento' => 'badge-analise',
-                            'Concluído', 'Concluido', 'Finalizado' => 'badge-concluido',
-                            'Indeferido', 'Expirado' => 'badge-indeferido',
-                            'Despacho', 'Devolvido' => 'badge-despacho',
-                            default => 'badge-analise'
+                            'Protocolado' => 'badge-protocolado',
+                            'Em análise' => 'badge-em-analise',
+                            'Aguardando complementação' => 'badge-aguardando-complementacao',
+                            'Deferido' => 'badge-deferido',
+                            'Licença emitida' => 'badge-licenca-emitida',
+                            'Indeferido' => 'badge-indeferido',
+                            'Encerrado' => 'badge-encerrado',
+                            'Expirado' => 'badge-expirado',
+                            default => 'badge-protocolado'
                         };
                     @endphp
                     <span class="badge {{ $statusClass }}">
                         <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="10"/>
                         </svg>
-                        {{ $requerimento->status ?? 'Aberto' }}
+                        {{ $requerimento->status ?? \App\Models\Requerimento::STATUS_PROTOCOLADO }}
                     </span>
                 </div>
             </div>

@@ -11,7 +11,7 @@ class QtdRequerimentosConcluidos
     {
         $dados = Requerimento::selectRaw('objetoDoRequerimento, MONTH(created_at) as mes, COUNT(*) as total')
             ->groupBy('objetoDoRequerimento', 'mes')
-            ->where('status', 'concluido')
+            ->whereIn('status', Requerimento::STATUS_TERMINAIS)
             ->orderBy('mes')
             ->get();
 
@@ -44,7 +44,7 @@ class QtdRequerimentosConcluidos
         }
 
         $concluidos = (new LarapexChart)->lineChart()
-        ->setTitle('Requerimentos concluídos (por mês)')
+        ->setTitle('Processos encerrados (por mês)')
         ->setDataset($series)
         ->setXAxis($meses)
         ->setHeight(130);

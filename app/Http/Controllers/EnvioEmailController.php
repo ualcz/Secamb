@@ -156,7 +156,7 @@ class EnvioEmailController extends Controller
                 'tipo_processo'           => $objeto,
                 'descricao'               => $motivo,
                 'motivo'                  => $motivo,
-                'status'                  => 'Aberto',
+                'status'                  => Requerimento::STATUS_PROTOCOLADO,
             ]);
 
             // Gera o número de protocolo: ANO/ID

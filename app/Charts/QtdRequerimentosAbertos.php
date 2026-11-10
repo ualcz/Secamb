@@ -11,7 +11,7 @@ class QtdRequerimentosAbertos
     {
         $dados = Requerimento::selectRaw('objetoDoRequerimento, MONTH(created_at) as mes, COUNT(*) as total')
             ->groupBy('objetoDoRequerimento', 'mes')
-            ->where('status', 'aberto')
+            ->where('status', Requerimento::STATUS_PROTOCOLADO)
             ->orderBy('mes')
             ->get();
 
@@ -44,7 +44,7 @@ class QtdRequerimentosAbertos
         }
 
         $chart = (new LarapexChart)->lineChart()
-        ->setTitle('Requerimentos abertos (por mês)')
+        ->setTitle('Requerimentos protocolados (por mês)')
         ->setDataset($series)
         ->setXAxis($meses)
         ->setHeight(130);

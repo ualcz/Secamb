@@ -11,7 +11,11 @@ class QtdRequerimentosEmAndamento
     {
         $dados = Requerimento::selectRaw('objetoDoRequerimento, MONTH(created_at) as mes, COUNT(*) as total')
             ->groupBy('objetoDoRequerimento', 'mes')
-            ->where('status', 'em andamento')
+            ->whereIn('status', [
+                Requerimento::STATUS_EM_ANALISE,
+                Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
+                Requerimento::STATUS_DEFERIDO,
+            ])
             ->orderBy('mes')
             ->get();
 
@@ -44,7 +48,7 @@ class QtdRequerimentosEmAndamento
         }
 
         $andamento = (new LarapexChart)->lineChart()
-        ->setTitle('Requerimentos em andamento (por mês)')
+        ->setTitle('Processos em andamento (por mês)')
         ->setDataset($series)
         ->setXAxis($meses)
         ->setHeight(130);

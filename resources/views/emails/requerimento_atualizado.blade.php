@@ -51,32 +51,52 @@ Corrigir e Reenviar Documento
 **Ação necessária:** Nenhuma ação necessária no momento. Aguarde orientações do setor caso necessário.
 @endif
 
-@elseif($requerimento->status === 'Concluído')
-# Requerimento Concluído #{{ $requerimento->numero_protocolo }}
+@elseif($requerimento->status === \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO)
+# Complementação necessária no requerimento #{{ $requerimento->numero_protocolo }}
 
 Olá, **{{ $requerimento->usuario?->nome ?? 'Cidadão(ã)' }}**.
 
-O seu requerimento referente a **{{ $requerimento->objetoDoRequerimento }}** foi **concluído com sucesso**.
+O setor solicitou complementações para o requerimento referente a **{{ $requerimento->objetoDoRequerimento }}**. Envie as informações e documentos solicitados em até 90 dias.
 
 @if(!empty(trim($mensagem)) && !in_array($mensagem, ['Status atualizado pelo setor.', 'Despacho registrado pelo setor.']))
 <x-mail::panel>
-**Despacho / Parecer do setor:**<br>
+**Orientação do setor:**<br>
 {!! nl2br(e($mensagem)) !!}
 </x-mail::panel>
 @endif
 
-**Ação necessária:** Nenhuma ação pendente. Você já pode visualizar o resultado final ou documentos emitidos no sistema.
-
 <x-mail::button :url="route('requerimentos.cidadao.visualizar', $requerimento->id)">
-Visualizar Requerimento
+Enviar complementação
 </x-mail::button>
 
+@elseif($requerimento->status === \App\Models\Requerimento::STATUS_DEFERIDO)
+# Requerimento deferido #{{ $requerimento->numero_protocolo }}
+
+O pedido foi deferido. A licença ainda não foi registrada como emitida; acompanhe o processo para a próxima atualização.
+
+@elseif($requerimento->status === \App\Models\Requerimento::STATUS_LICENCA_EMITIDA)
+# Licença emitida #{{ $requerimento->numero_protocolo }}
+
+A licença do requerimento **{{ $requerimento->objetoDoRequerimento }}** foi emitida. Consulte os documentos no sistema.
+
+<x-mail::button :url="route('requerimentos.cidadao.visualizar', $requerimento->id)">
+Visualizar licença e requerimento
+</x-mail::button>
+
+@elseif(in_array($requerimento->status, [
+    \App\Models\Requerimento::STATUS_ENCERRADO,
+    \App\Models\Requerimento::STATUS_EXPIRADO,
+], true))
+# Requerimento encerrado #{{ $requerimento->numero_protocolo }}
+
+O processo foi encerrado com o status **{{ $requerimento->status }}**.
+
 @else
-# Requerimento em Análise #{{ $requerimento->numero_protocolo }}
+# Atualização do requerimento #{{ $requerimento->numero_protocolo }}
 
 Olá, **{{ $requerimento->usuario?->nome ?? 'Cidadão(ã)' }}**.
 
-O seu requerimento referente a **{{ $requerimento->objetoDoRequerimento }}** agora está **em análise** pelo setor responsável.
+O seu requerimento referente a **{{ $requerimento->objetoDoRequerimento }}** está **{{ $requerimento->status }}**.
 
 @if(!empty(trim($mensagem)) && !in_array($mensagem, ['Status atualizado pelo setor.', 'Despacho registrado pelo setor.']))
 <x-mail::panel>

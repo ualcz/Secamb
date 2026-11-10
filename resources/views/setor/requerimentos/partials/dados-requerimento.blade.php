@@ -9,12 +9,15 @@
         <div>
             @php
                 $statusClass = match($requerimento->status) {
-                    'Aberto' => 'badge-Aberto',
-                    'Em Análise', 'Em Analise' => 'badge-analise',
-                    'Concluído', 'Concluido' => 'badge-concluido',
+                    'Protocolado' => 'badge-protocolado',
+                    'Em análise' => 'badge-em-analise',
+                    'Aguardando complementação' => 'badge-aguardando-complementacao',
+                    'Deferido' => 'badge-deferido',
+                    'Licença emitida' => 'badge-licenca-emitida',
                     'Indeferido' => 'badge-indeferido',
-                    'Despacho' => 'badge-despacho',
-                    default => 'badge-analise'
+                    'Encerrado' => 'badge-encerrado',
+                    'Expirado' => 'badge-expirado',
+                    default => 'badge-protocolado'
                 };
             @endphp
             <span class="badge {{ $statusClass }}">

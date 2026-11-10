@@ -85,14 +85,14 @@
                                     <div> {{ $requerimento['objetoDoRequerimento'] ?? $requerimento->objetoDoRequerimento }}</div>
                                 </td>
                                 @if($requerimento->status)
-                                    <td class="req-col-status {{ $requerimento->status }} {{ Str::slug($requerimento->status) }}">
+                                    <td class="req-col-status status-{{ Str::slug($requerimento->status) }}">
                                         <span>
                                             {{ $requerimento->status }}
                                         </span>
                                     </td>
                                 @else
-                                    <td class="req-col-status Aberto status-aberto">
-                                        <span>Aberto</span>
+                                    <td class="req-col-status status-protocolado">
+                                        <span>Protocolado</span>
                                     </td>
                                 @endif
                                 <td class="req-col-acoes">
@@ -133,8 +133,8 @@
                     </div>
 
                     <div class="req-card-actions">
-                        <div class="req-card-status {{ $requerimento->status ?? 'Aberto' }} {{ Str::slug($requerimento->status ?? 'aberto') }}">
-                            <span>{{ $requerimento->status ?? 'Aberto' }}</span>
+                        <div class="req-card-status status-{{ Str::slug($requerimento->status ?? 'protocolado') }}">
+                            <span>{{ $requerimento->status ?? 'Protocolado' }}</span>
                         </div>
                         <a href="{{ route('requerimentos.cidadao.visualizar', $requerimento->id) }}" class="req-btn-imprimir">Ver mais</a>
                     </div>

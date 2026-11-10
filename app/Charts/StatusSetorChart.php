@@ -22,7 +22,7 @@ class StatusSetorChart
 
             $analise = Requerimento::whereHas('setor', function ($qtdAnalise) use ($sigla) {
                 $qtdAnalise->where('setor_sigla', $sigla);
-            })->where('status', 'em análise')->count();
+            })->where('status', Requerimento::STATUS_EM_ANALISE)->count();
 
             $emAnalise[] = $total > 0 ? round($analise) : 0;
         }

@@ -5,12 +5,29 @@ function toggleMensagemIndeferido() {
 
     if (!selectStatus || !campoMensagem) return;
 
-    if (selectStatus.value === 'Indeferido') {
+    const exigeJustificativa = ['Aguardando complementação', 'Indeferido'].includes(selectStatus.value);
+
+    if (exigeJustificativa) {
         campoMensagem.style.display = 'block';
         if (textareaMensagem) textareaMensagem.setAttribute('required', 'required');
     } else {
         campoMensagem.style.display = 'none';
         if (textareaMensagem) textareaMensagem.removeAttribute('required');
+    }
+
+    if (selectStatus.value === 'Aguardando complementação') {
+        const solicitaSelect = document.getElementById('solicita_novo_documento');
+        if (solicitaSelect) {
+            solicitaSelect.value = '1';
+            toggleCampoNomeDocumento();
+        }
+    }
+
+    const labelObservacao = document.getElementById('label-observacao');
+    if (labelObservacao) {
+        labelObservacao.textContent = selectStatus.value === 'Aguardando complementação'
+            ? 'Orientação para complementação'
+            : 'Motivo do indeferimento';
     }
 }
 

@@ -29,11 +29,9 @@
                 <label class="filter-label">Status</label>
                 <select name="status" class="input-filtro">
                     <option value="">Todos</option>
-                    <option value="Aberto" {{ request('status') == 'Aberto' ? 'selected' : '' }}>Aberto</option>
-                    <option value="Em Análise" {{ request('status') == 'Em Análise' ? 'selected' : '' }}>Em Análise</option>
-                    <option value="Despacho" {{ request('status') == 'Despacho' ? 'selected' : '' }}>Despacho</option>
-                    <option value="Indeferido" {{ request('status') == 'Indeferido' ? 'selected' : '' }}>Indeferido</option>
-                    <option value="Concluído" {{ request('status') == 'Concluído' ? 'selected' : '' }}>Concluído</option>
+                    @foreach(\App\Models\Requerimento::STATUS_DISPONIVEIS as $status)
+                        <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $status }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -93,8 +91,8 @@
                             <td>{{ $requerimento->usuario?->nome ?? 'Usuário removido' }}</td>
                             <td>{{ $requerimento->usuario?->tipo_pessoa_formatado ?? '—' }}</td>
                             <td>{{ $requerimento->objetoDoRequerimento }}</td>
-                            <td class="{{ $requerimento->status ?? 'Aberto' }}" style="text-align: center;">
-                                <span>{{ $requerimento->status ?? 'Aberto' }}</span>
+                            <td class="status-{{ Str::slug($requerimento->status ?? \App\Models\Requerimento::STATUS_PROTOCOLADO) }}" style="text-align: center;">
+                                <span>{{ $requerimento->status ?? \App\Models\Requerimento::STATUS_PROTOCOLADO }}</span>
                             </td>
                             <td style="text-align: center; width: 120px;">
                                 <span class="badge badge-setor border" style="background:#dbeafe; border-color:#60a5fa;">

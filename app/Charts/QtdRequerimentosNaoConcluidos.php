@@ -19,16 +19,16 @@ class QtdRequerimentosNaoConcluidos
         foreach ($setores as $sigla) {
             $naoConcluidos = Requerimento::whereHas('setor', function ($q) use ($sigla) {
                 $q->where('setor_sigla', $sigla);
-            })->where('status', '!=', 'concluido')->count();
+            })->whereNotIn('status', Requerimento::STATUS_TERMINAIS)->count();
 
             $requerimentosNaoConcluidos[] = $naoConcluidos;
         }      
 
         return (new LarapexChart)->barChart()
-            ->setTitle('Requerimentos não concluídos (por setor)')
+            ->setTitle('Processos em andamento (por setor)')
             ->setHeight(400)
-            ->setSubtitle('Requerimentos que estão em aberto, em análise ou em andamento.')
-            ->addData($requerimentosNaoConcluidos, 'Requerimentos não concluídos')
+            ->setSubtitle('Processos que ainda não chegaram a um estado terminal.')
+            ->addData($requerimentosNaoConcluidos, 'Processos em andamento')
             ->setXAxis($setores);
     }
 }

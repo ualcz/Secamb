@@ -33,7 +33,7 @@ Conforme detalhado no **Manual do Usuário**:
 - **Módulo de Processos e Licenciamento:**
   - Abertura de novos processos de licenciamento vinculados a um empreendimento.
   - Geração automática de número de protocolo.
-  - Acompanhamento do status dos processos em tempo real (*Novo*, *Em Atendimento*, *Finalizado*, *Devolvido*, *Indeferido*, *Expirado*).
+  - Acompanhamento das etapas: *Protocolado*, *Em análise*, *Aguardando complementação*, *Deferido*, *Licença emitida*, *Indeferido*, *Encerrado* e *Expirado*.
   - Consulta rápida de processos através do número de protocolo.
 - **Área Administrativa:**
   - Gestão e triagem de todos os empreendimentos e processos cadastrados no município.
@@ -45,8 +45,12 @@ Conforme detalhado no **Manual do Usuário**:
 Cadastro / Login -> Gestão de Empreendimento (Cadastro / Vínculo)
                  -> Abertura de Processo de Licenciamento
                  -> Geração Automática de Protocolo
-                 -> Análise e Atualização de Status pela Secretaria
+                 -> Em análise <-> Aguardando complementação
+                 -> Deferido -> Licença emitida (quando aplicável)
+                 -> Indeferido / Encerrado
 ```
+
+Processos aguardando complementação expiram após 90 dias sem resposta. A tarefa é agendada diariamente; em produção, configure o agendador do Laravel para executar `php artisan schedule:run` a cada minuto. O comando de expiração também pode ser executado manualmente com `php artisan requerimentos:expirar`.
 
 ## Requisitos
 
@@ -113,4 +117,3 @@ composer run test
 # Gerar os assets para produção
 npm run build
 ```
-

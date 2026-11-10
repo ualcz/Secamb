@@ -27,67 +27,83 @@
     @endif
 
     {{-- AÇÃO 2: ATUALIZAR STATUS --}}
-    <details class="acao-item" name="acao-requerimento" {{ old('acao') === 'atualizar_status' ? 'open' : '' }}>
-        <summary class="acao-resumo">
-            <span class="acao-textos">
-                <span class="acao-titulo">Atualizar status</span>
-                <span class="acao-descricao">Em análise, indeferido ou concluído</span>
-            </span>
-        </summary>
-        <div class="acao-conteudo">
-            <form action="{{ route('setor.requerimentos.atualizarStatus', [$setor->id, $requerimento->id]) }}" method="POST" enctype="multipart/form-data" id="formCorrecao">
-                @csrf
-                @method('PATCH')
-                <input type="hidden" name="acao" value="atualizar_status">
+    @php
+        $statusPossiveis = $requerimento->proximosStatusPossiveis();
+        $statusSelecionado = old('status', $statusPossiveis[0] ?? '');
+        $solicitaComplementacao = $statusSelecionado === \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO;
+        $statusExigeJustificativa = in_array($statusSelecionado, [
+            \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
+            \App\Models\Requerimento::STATUS_INDEFERIDO,
+        ], true);
+    @endphp
+    @if($statusPossiveis)
+        <details class="acao-item" name="acao-requerimento" {{ old('acao') === 'atualizar_status' ? 'open' : '' }}>
+            <summary class="acao-resumo">
+                <span class="acao-textos">
+                    <span class="acao-titulo">Atualizar status</span>
+                    <span class="acao-descricao">Avance o processo para uma etapa permitida do fluxo</span>
+                </span>
+            </summary>
+            <div class="acao-conteudo">
+                <form action="{{ route('setor.requerimentos.atualizarStatus', [$setor->id, $requerimento->id]) }}" method="POST" enctype="multipart/form-data" id="formCorrecao">
+                    @csrf
+                    @method('PATCH')
+                    <input type="hidden" name="acao" value="atualizar_status">
 
-                <label for="status" class="info-label">Novo status</label>
-                <div class="form-status">
-                    <select name="status" id="status" class="select-status" required onchange="toggleMensagemIndeferido()">
-                        <option value="Em Análise" {{ old('status', $requerimento->status) == 'Em Análise' || old('status', $requerimento->status) == 'Em Analise' ? 'selected' : '' }}>Em Análise</option>
-                        <option value="Indeferido" {{ old('status', $requerimento->status) == 'Indeferido' ? 'selected' : '' }}>Indeferido</option>
-                        <option value="Concluído" {{ old('status', $requerimento->status) == 'Concluído' || old('status', $requerimento->status) == 'Concluido' ? 'selected' : '' }}>Concluído</option>
-                    </select>
-
-                    <button type="submit" class="btn-atualizar">Salvar status</button>
-                </div>
-
-                <div class="acao-arquivos">
-                    <label for="arquivos_servidor" class="info-label">Anexar documento ou parecer (opcional)</label>
-                    <input type="file" name="arquivos[]" id="arquivos_servidor" class="form-control file-input" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                </div>
-
-                <div id="campo-mensagem" style="display: {{ old('status', $requerimento->status) == 'Indeferido' ? 'block' : 'none' }};">
-                    <label for="observacao" class="info-label">Motivo do indeferimento</label>
-                    <textarea
-                        name="observacao"
-                        id="observacao"
-                        class="form-control"
-                        rows="3"
-                        placeholder="Informe o motivo e o que precisa ser corrigido."
-                        {{ old('status', $requerimento->status) == 'Indeferido' ? 'required' : '' }}
-                    >{{ old('observacao') }}</textarea>
-                    <div class="acao-campo-secundario">
-                        <label for="solicita_novo_documento" class="info-label">Solicitar documento ao cidadão?</label>
-                        <select name="solicita_novo_documento" id="solicita_novo_documento" class="select-status" onchange="toggleCampoNomeDocumento()">
-                            <option value="0" {{ old('solicita_novo_documento') == '0' ? 'selected' : '' }}>Não</option>
-                            <option value="1" {{ old('solicita_novo_documento') == '1' ? 'selected' : '' }}>Sim</option>
+                    <label for="status" class="info-label">Novo status</label>
+                    <div class="form-status">
+                        <select name="status" id="status" class="select-status" required onchange="toggleMensagemIndeferido()">
+                            @foreach($statusPossiveis as $status)
+                                <option value="{{ $status }}" {{ $statusSelecionado === $status ? 'selected' : '' }}>{{ $status }}</option>
+                            @endforeach
                         </select>
+
+                        <button type="submit" class="btn-atualizar">Salvar status</button>
                     </div>
-                    <div id="box-nome-documento" style="display: {{ old('solicita_novo_documento') == '1' ? 'block' : 'none' }};">
-                        <label for="nome_documento_solicitado" class="info-label">Documento solicitado</label>
-                        <input
-                            type="text"
-                            name="nome_documento_solicitado"
-                            id="nome_documento_solicitado"
-                            class="select-status campo-documento-solicitado"
-                            placeholder="Ex.: Atestado médico / Laudo"
-                            value="{{ old('nome_documento_solicitado') }}"
-                        >
+
+                    <div class="acao-arquivos">
+                        <label for="arquivos_servidor" class="info-label">Anexar documento ou parecer (opcional)</label>
+                        <input type="file" name="arquivos[]" id="arquivos_servidor" class="form-control file-input" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
                     </div>
-                </div>
-            </form>
-        </div>
-    </details>
+
+                    <div id="campo-mensagem" style="display: {{ $statusExigeJustificativa ? 'block' : 'none' }};">
+                        <label for="observacao" class="info-label" id="label-observacao">
+                            {{ $solicitaComplementacao ? 'Orientação para complementação' : 'Motivo do indeferimento' }}
+                        </label>
+                        <textarea
+                            name="observacao"
+                            id="observacao"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Informe a justificativa e as orientações necessárias."
+                            {{ $statusExigeJustificativa ? 'required' : '' }}
+                        >{{ old('observacao') }}</textarea>
+                        <div class="acao-campo-secundario">
+                            <label for="solicita_novo_documento" class="info-label">Solicitar documento ao cidadão?</label>
+                            <select name="solicita_novo_documento" id="solicita_novo_documento" class="select-status" onchange="toggleCampoNomeDocumento()">
+                                <option value="0" {{ old('solicita_novo_documento', $solicitaComplementacao ? '1' : '0') == '0' ? 'selected' : '' }}>Não</option>
+                                <option value="1" {{ old('solicita_novo_documento', $solicitaComplementacao ? '1' : '0') == '1' ? 'selected' : '' }}>Sim</option>
+                            </select>
+                        </div>
+                        <div id="box-nome-documento" style="display: {{ old('solicita_novo_documento', $solicitaComplementacao ? '1' : '0') == '1' ? 'block' : 'none' }};">
+                            <label for="nome_documento_solicitado" class="info-label">Documento solicitado</label>
+                            <input
+                                type="text"
+                                name="nome_documento_solicitado"
+                                id="nome_documento_solicitado"
+                                class="select-status campo-documento-solicitado"
+                                placeholder="Ex.: Relatório ou estudo técnico"
+                                value="{{ old('nome_documento_solicitado') }}"
+                                {{ $solicitaComplementacao || old('solicita_novo_documento') == '1' ? 'required' : '' }}
+                            >
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </details>
+    @else
+        <p class="acao-descricao">Este processo não possui transições disponíveis para o setor nesta etapa.</p>
+    @endif
 
     {{-- AÇÃO 3: ENCAMINHAR PARA OUTRO SETOR (Transferência ou Despacho) --}}
     <details class="acao-item" name="acao-requerimento" {{ old('acao') === 'encaminhar' ? 'open' : '' }}>

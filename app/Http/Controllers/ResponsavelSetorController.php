@@ -31,19 +31,19 @@ class ResponsavelSetorController extends Controller
             ->where('setor_id', $setor->id);
 
         $totalAnalise = (clone $baseQuery)
-            ->where('status', 'Em Análise')
+            ->where('status', Requerimento::STATUS_EM_ANALISE)
             ->count();
 
         $totalConcluidos = (clone $baseQuery)
-            ->where('status', 'Concluído')
+            ->whereIn('status', Requerimento::STATUS_TERMINAIS)
             ->count();
 
         $totalIndeferidos = (clone $baseQuery)
-            ->where('status', 'Indeferido')
+            ->where('status', Requerimento::STATUS_INDEFERIDO)
             ->count();
 
         $totalAberto = (clone $baseQuery)
-            ->where('status', 'Aberto')
+            ->where('status', Requerimento::STATUS_PROTOCOLADO)
             ->count();
 
         $query = (clone $baseQuery)->latest();
@@ -131,15 +131,28 @@ class ResponsavelSetorController extends Controller
         }
 
         $validated = $request->validate([
-            'status'     => 'required|in:Em Análise,Indeferido,Concluído',
-            'observacao' => 'required_if:status,Indeferido|nullable|string',
+            'status'     => ['required', 'string', Rule::in($requerimento->proximosStatusPossiveis())],
+            'observacao' => [
+                Rule::requiredIf(fn () => in_array($request->input('status'), [
+                    Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
+                    Requerimento::STATUS_INDEFERIDO,
+                ], true)),
+                'nullable',
+                'string',
+            ],
             'solicita_novo_documento' => 'nullable|boolean',
-            'nome_documento_solicitado' => 'required_if:solicita_novo_documento,1|nullable|string',
+            'nome_documento_solicitado' => [
+                Rule::requiredIf(fn () => $request->input('status') === Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO
+                    || $request->boolean('solicita_novo_documento')),
+                'nullable',
+                'string',
+            ],
             'arquivos'   => 'nullable|array',
             'arquivos.*' => 'nullable|file|max:51200',
         ]);
 
-        $solicitaNovoDocumento = $validated['status'] === 'Indeferido'
+        $solicitaNovoDocumento = $validated['status'] === Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO
+            || $validated['status'] === Requerimento::STATUS_INDEFERIDO
             || $request->boolean('solicita_novo_documento');
         $request->merge([
             'solicita_novo_documento' => $solicitaNovoDocumento,
@@ -150,7 +163,10 @@ class ResponsavelSetorController extends Controller
 
         $requerimento->update([
             'status' => $validated['status'],
-            'setor_retorno_id' => in_array($validated['status'], ['Concluído', 'Indeferido']) ? null : $requerimento->setor_retorno_id,
+            'data_devolucao' => $validated['status'] === Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO ? now() : null,
+            'setor_retorno_id' => in_array($validated['status'], Requerimento::STATUS_TERMINAIS, true)
+                ? null
+                : $requerimento->setor_retorno_id,
         ]);
 
         $novoHistorico = HistoricoRequerimento::create([
@@ -238,7 +254,7 @@ class ResponsavelSetorController extends Controller
                 $atual->update([
                     'setor_id' => $destino->id,
                     'setor_retorno_id' => $setor->id,
-                    'status' => 'Despacho',
+                    'status' => Requerimento::STATUS_EM_ANALISE,
                 ]);
                 $orientacaoTexto = "Despacho de {$setor->setor_sigla} para {$destino->setor_sigla}.";
             } else {
@@ -246,7 +262,7 @@ class ResponsavelSetorController extends Controller
                 $atual->update([
                     'setor_id' => $destino->id,
                     'setor_retorno_id' => null,
-                    'status' => 'Em Análise',
+                    'status' => Requerimento::STATUS_EM_ANALISE,
                 ]);
                 $orientacaoTexto = "Encaminhado de {$setor->setor_sigla} para {$destino->setor_sigla}.";
             }

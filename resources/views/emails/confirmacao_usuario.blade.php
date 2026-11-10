@@ -46,7 +46,7 @@
             </div>
             <div class="info-row">
                 <span class="info-label">Status:</span>
-                <span class="info-value">Aberto — aguardando análise</span>
+                <span class="info-value">Protocolado — aguardando análise</span>
             </div>
 
             <p style="margin-top: 24px;">Você pode acompanhar o andamento do seu requerimento acessando o sistema a qualquer momento.</p>

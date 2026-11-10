@@ -17,7 +17,7 @@ class HistoricoRequerimento extends Model
     protected $fillable = [
         'requerimento_id',
         'user_id',                     // Usuário autor do despacho (Servidor da Prefeitura ou Cidadão)
-        'status',                      // Novo, Em Atendimento, Devolvido, Finalizado, Indeferido
+        'status',                      // Etapa atual do processo no momento do registro
         'observacao',                  // Parecer técnico / Justificativa / Resposta do cidadão
         'solicita_novo_documento',     // Indica se foi devolvido para anexar documento complementar
         'nome_documento_solicitado',   // Nome da certidão/documento exigido pelo fiscal ambiental
