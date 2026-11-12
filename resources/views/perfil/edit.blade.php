@@ -206,7 +206,7 @@
                                     <input type="text" name="cnpj" id="cnpj"
                                         class="form-control has-icon {{ $errors->has('cnpj') ? 'is-invalid' : '' }}"
                                         value="{{ old('cnpj', $usuario->cnpj) }}"
-                                        placeholder="00.000.000/0000-00" maxlength="18"
+                                        placeholder="AA.AAA.AAA/AAAA-00" maxlength="18"
                                         oninput="mascaraCNPJ(this)">
                                 </div>
                                 @error('cnpj')
@@ -490,12 +490,13 @@
 
     // Máscara CNPJ
     function mascaraCNPJ(input) {
-        let v = input.value.replace(/\D/g, '').slice(0, 14);
-        v = v.replace(/^(\d{2})(\d)/, '$1.$2');
-        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-        v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
-        v = v.replace(/(\d{4})(\d)/, '$1-$2');
-        input.value = v;
+        let v = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 14);
+        v = v.slice(0, 12) + v.slice(12).replace(/\D/g, '').slice(0, 2);
+        input.value = v.slice(0, 2)
+            + (v.length > 2 ? '.' + v.slice(2, 5) : '')
+            + (v.length > 5 ? '.' + v.slice(5, 8) : '')
+            + (v.length > 8 ? '/' + v.slice(8, 12) : '')
+            + (v.length > 12 ? '-' + v.slice(12, 14) : '');
     }
 
     // Máscara Celular / WhatsApp

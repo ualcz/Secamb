@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empreendimento;
+use App\Rules\CnpjValido;
+use App\Support\DocumentoHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -50,10 +52,16 @@ class EmpreendimentoController extends Controller
     {
         $usuario = auth()->user();
 
+        if ($request->filled('cnpj')) {
+            $request->merge([
+                'cnpj' => DocumentoHelper::formatarCnpj($request->input('cnpj')),
+            ]);
+        }
+
         $validated = $request->validate([
             // Dados do Empreendimento (Figura 8 do manual)
             'nome'               => 'required|string|max:255',
-            'cnpj'               => 'nullable|string|max:20',
+            'cnpj'               => ['nullable', 'string', 'max:18', new CnpjValido],
             'bacia_hidrografica' => 'nullable|string|max:255',
             'recurso_hidrico'    => 'nullable|string|max:255',
             'fase_operacao'      => 'nullable|string|max:100',
@@ -161,9 +169,15 @@ class EmpreendimentoController extends Controller
             abort(403, 'Você não tem permissão para editar este empreendimento.');
         }
 
+        if ($request->filled('cnpj')) {
+            $request->merge([
+                'cnpj' => DocumentoHelper::formatarCnpj($request->input('cnpj')),
+            ]);
+        }
+
         $validated = $request->validate([
             'nome'               => 'required|string|max:255',
-            'cnpj'               => 'nullable|string|max:20',
+            'cnpj'               => ['nullable', 'string', 'max:18', new CnpjValido],
             'bacia_hidrografica' => 'nullable|string|max:255',
             'recurso_hidrico'    => 'nullable|string|max:255',
             'fase_operacao'      => 'nullable|string|max:100',
@@ -213,13 +227,12 @@ class EmpreendimentoController extends Controller
      */
     public function buscar(Request $request)
     {
-        $cnpjBusca = preg_replace('/\D/', '', (string) $request->input('cnpj'));
+        $cnpjBusca = DocumentoHelper::normalizarCnpj((string) $request->input('cnpj'));
         $empreendimento = null;
 
         if (!empty($cnpjBusca)) {
-            // Busca tanto pelo formato numérico limpo quanto pelo formatado
-            $empreendimento = Empreendimento::whereRaw("REGEXP_REPLACE(cnpj, '[^0-9]', '') = ?", [$cnpjBusca])
-                ->orWhere('cnpj', $request->input('cnpj'))
+            $cnpjFormatado = DocumentoHelper::formatarCnpj($cnpjBusca);
+            $empreendimento = Empreendimento::whereIn('cnpj', array_unique([$cnpjBusca, $cnpjFormatado]))
                 ->first();
         }
 

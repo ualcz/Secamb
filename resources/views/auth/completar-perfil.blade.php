@@ -198,7 +198,7 @@
                     <div class="input-icon">
                         <i class="fa-solid fa-file-contract icon-prefix"></i>
                         <input type="text" id="cnpj" name="cnpj"
-                            value="{{ old('cnpj', $usuario->cnpj) }}" placeholder="00.000.000/0000-00" maxlength="18">
+                            value="{{ old('cnpj', $usuario->cnpj) }}" placeholder="AA.AAA.AAA/AAAA-00" maxlength="18">
                     </div>
                 </div>
             </div>
@@ -278,12 +278,13 @@
     });
 
     document.getElementById('cnpj').addEventListener('input', function () {
-        let v = this.value.replace(/\D/g, '').slice(0, 14);
-        v = v.replace(/^(\d{2})(\d)/, '$1.$2')
-             .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-             .replace(/\.(\d{3})(\d)/, '.$1/$2')
-             .replace(/(\d{4})(\d)/, '$1-$2');
-        this.value = v;
+        let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 14);
+        v = v.slice(0, 12) + v.slice(12).replace(/\D/g, '').slice(0, 2);
+        this.value = v.slice(0, 2)
+            + (v.length > 2 ? '.' + v.slice(2, 5) : '')
+            + (v.length > 5 ? '.' + v.slice(5, 8) : '')
+            + (v.length > 8 ? '/' + v.slice(8, 12) : '')
+            + (v.length > 12 ? '-' + v.slice(12, 14) : '');
     });
 
     document.getElementById('celular').addEventListener('input', function () {

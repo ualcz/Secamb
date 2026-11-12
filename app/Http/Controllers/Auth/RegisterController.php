@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Endereco;
 use App\Models\Usuario;
+use App\Rules\CnpjValido;
+use App\Rules\CpfValido;
+use App\Support\DocumentoHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 /**
  * Controller de Cadastro de Usuário (Pessoa Física e Pessoa Jurídica)
@@ -24,6 +28,16 @@ class RegisterController extends Controller
     {
         $tipoRegistro = $request->input('tipo_registro', 'fisica');
 
+        if ($tipoRegistro === 'juridica' && $request->filled('cnpj')) {
+            $request->merge([
+                'cnpj' => DocumentoHelper::formatarCnpj($request->input('cnpj')),
+            ]);
+        } elseif ($tipoRegistro === 'fisica' && $request->filled('cpf')) {
+            $request->merge([
+                'cpf' => DocumentoHelper::formatarCpf($request->input('cpf')),
+            ]);
+        }
+
         $rules = [
             'tipo_registro' => 'required|in:fisica,juridica',
             'email'         => 'required|email|max:255|unique:usuarios,email',
@@ -35,10 +49,10 @@ class RegisterController extends Controller
 
         if ($tipoRegistro === 'juridica') {
             $rules['razao_social'] = 'required|string|max:255';
-            $rules['cnpj']         = 'required|string|max:25|unique:usuarios,cnpj';
+            $rules['cnpj'] = ['required', 'string', 'max:25', new CnpjValido, Rule::unique('usuarios', 'cnpj')];
         } else {
             $rules['nome'] = 'required|string|max:255';
-            $rules['cpf']  = 'required|string|max:20|unique:usuarios,cpf';
+            $rules['cpf']  = ['required', 'string', 'max:20', new CpfValido, Rule::unique('usuarios', 'cpf')];
         }
 
         $messages = [

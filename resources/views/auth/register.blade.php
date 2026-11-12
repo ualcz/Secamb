@@ -172,7 +172,7 @@
                         <label for="cnpj">CNPJ:*</label>
                         <div class="input-icon">
                             <i class="fa-solid fa-briefcase icon-prefix"></i>
-                            <input type="text" id="cnpj" name="cnpj" value="{{ old('cnpj') }}" placeholder="00.000.000/0001-00" maxlength="18" oninput="mascaraCNPJ(this)">
+                            <input type="text" id="cnpj" name="cnpj" value="{{ old('cnpj') }}" placeholder="AA.AAA.AAA/AAAA-00" maxlength="18" oninput="mascaraCNPJ(this)">
                         </div>
                     </div>
                 </div>
@@ -283,12 +283,13 @@
         }
 
         function mascaraCNPJ(i) {
-            let v = i.value.replace(/\D/g, "");
-            v = v.replace(/^(\d{2})(\d)/, "$1.$2");
-            v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-            v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
-            v = v.replace(/(\d{4})(\d)/, "$1-$2");
-            i.value = v;
+            let v = i.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 14);
+            v = v.slice(0, 12) + v.slice(12).replace(/\D/g, "").slice(0, 2);
+            i.value = v.slice(0, 2)
+                + (v.length > 2 ? "." + v.slice(2, 5) : "")
+                + (v.length > 5 ? "." + v.slice(5, 8) : "")
+                + (v.length > 8 ? "/" + v.slice(8, 12) : "")
+                + (v.length > 12 ? "-" + v.slice(12, 14) : "");
         }
 
         function mascaraCEP(i) {

@@ -59,7 +59,7 @@
 
                     <div class="emp-form-group emp-col-4">
                         <label for="cnpj">CNPJ</label>
-                        <input type="text" name="cnpj" id="cnpj" class="emp-input" value="{{ old('cnpj', $empreendimento->cnpj) }}">
+                        <input type="text" name="cnpj" id="cnpj" class="emp-input" value="{{ old('cnpj', $empreendimento->cnpj) }}" placeholder="AA.AAA.AAA/AAAA-00" maxlength="18">
                     </div>
 
                     <div class="emp-form-group emp-col-6">
@@ -305,13 +305,13 @@
         const cnpjInput = document.getElementById('cnpj');
         if (cnpjInput) {
             cnpjInput.addEventListener('input', function (e) {
-                let v = e.target.value.replace(/\D/g, '');
-                if (v.length > 14) v = v.substring(0, 14);
-                v = v.replace(/^(\d{2})(\d)/, '$1.$2');
-                v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-                v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
-                v = v.replace(/(\d{4})(\d)/, '$1-$2');
-                e.target.value = v;
+                let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 14);
+                v = v.slice(0, 12) + v.slice(12).replace(/\D/g, '').slice(0, 2);
+                e.target.value = v.slice(0, 2)
+                    + (v.length > 2 ? '.' + v.slice(2, 5) : '')
+                    + (v.length > 5 ? '.' + v.slice(5, 8) : '')
+                    + (v.length > 8 ? '/' + v.slice(8, 12) : '')
+                    + (v.length > 12 ? '-' + v.slice(12, 14) : '');
             });
         }
 

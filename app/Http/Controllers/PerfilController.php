@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Endereco;
 use App\Models\Usuario;
+use App\Rules\CnpjValido;
+use App\Rules\CpfValido;
+use App\Support\DocumentoHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +75,16 @@ class PerfilController extends Controller
         $isCidadao    = $usuario->isCidadao();
         $tipoRegistro = $request->input('tipo_registro', $usuario->tipo_registro ?? 'fisica');
 
+        if ($tipoRegistro === 'juridica' && $request->filled('cnpj')) {
+            $request->merge([
+                'cnpj' => DocumentoHelper::formatarCnpj($request->input('cnpj')),
+            ]);
+        } elseif ($request->filled('cpf')) {
+            $request->merge([
+                'cpf' => DocumentoHelper::formatarCpf($request->input('cpf')),
+            ]);
+        }
+
         $rules = [
             'email'   => ['required', 'email', 'max:255', Rule::unique('usuarios', 'email')->ignore($usuario->id)],
             'celular' => [$isCidadao ? 'required' : 'nullable', 'string', 'max:30'],
@@ -83,10 +96,10 @@ class PerfilController extends Controller
             if ($tipoRegistro === 'juridica') {
                 $rules['razao_social'] = 'required|string|max:255';
                 $rules['nome']         = 'nullable|string|max:255';
-                $rules['cnpj']         = ['required', 'string', 'max:25', Rule::unique('usuarios', 'cnpj')->ignore($usuario->id)];
+                $rules['cnpj'] = ['required', 'string', 'max:25', new CnpjValido, Rule::unique('usuarios', 'cnpj')->ignore($usuario->id)];
             } else {
                 $rules['nome'] = 'required|string|max:255';
-                $rules['cpf']  = ['required', 'string', 'max:20', Rule::unique('usuarios', 'cpf')->ignore($usuario->id)];
+                $rules['cpf']  = ['required', 'string', 'max:20', new CpfValido, Rule::unique('usuarios', 'cpf')->ignore($usuario->id)];
             }
 
             // Endereço residencial / empresarial do cidadão
@@ -101,7 +114,7 @@ class PerfilController extends Controller
             // Servidor ou Administrador
             $rules['nome'] = 'required|string|max:255';
             if ($request->filled('cpf')) {
-                $rules['cpf'] = ['nullable', 'string', 'max:20', Rule::unique('usuarios', 'cpf')->ignore($usuario->id)];
+                $rules['cpf'] = ['nullable', 'string', 'max:20', new CpfValido, Rule::unique('usuarios', 'cpf')->ignore($usuario->id)];
             }
             if ($request->filled('rua') || $request->filled('cep')) {
                 $rules['rua']    = 'required|string|max:255';
@@ -233,6 +246,16 @@ class PerfilController extends Controller
         $usuario      = Auth::user();
         $tipoRegistro = $request->input('tipo_registro', $usuario->tipo_registro ?? 'fisica');
 
+        if ($tipoRegistro === 'juridica' && $request->filled('cnpj')) {
+            $request->merge([
+                'cnpj' => DocumentoHelper::formatarCnpj($request->input('cnpj')),
+            ]);
+        } elseif ($tipoRegistro === 'fisica' && $request->filled('cpf')) {
+            $request->merge([
+                'cpf' => DocumentoHelper::formatarCpf($request->input('cpf')),
+            ]);
+        }
+
         $rules = [
             'tipo_registro' => 'required|in:fisica,juridica',
             'celular'       => 'nullable|string|max:30',
@@ -246,10 +269,16 @@ class PerfilController extends Controller
 
         if ($tipoRegistro === 'juridica') {
             $rules['razao_social'] = 'required|string|max:255';
-            $rules['cnpj']         = 'required|string|max:25|unique:usuarios,cnpj,' . $usuario->id;
+            $rules['cnpj'] = [
+                'required',
+                'string',
+                'max:25',
+                new CnpjValido,
+                Rule::unique('usuarios', 'cnpj')->ignore($usuario->id),
+            ];
         } else {
             $rules['nome'] = 'required|string|max:255';
-            $rules['cpf']  = 'required|string|max:20|unique:usuarios,cpf,' . $usuario->id;
+            $rules['cpf']  = ['required', 'string', 'max:20', new CpfValido, Rule::unique('usuarios', 'cpf')->ignore($usuario->id)];
         }
 
         $messages = [
