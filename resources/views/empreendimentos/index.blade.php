@@ -110,7 +110,7 @@
                             </td>
                             <td data-label="CNPJ">
                                 @if($emp->cnpj)
-                                    <span class="emp-badge-cnpj">{{ $emp->cnpj }}</span>
+                                    <span class="emp-badge-cnpj" style="white-space: nowrap; word-break: keep-all;">{{ $emp->cnpj }}</span>
                                 @else
                                     <span style="color: #94a3b8; font-size: 0.85rem;">Não informado</span>
                                 @endif
@@ -180,7 +180,7 @@
                                         @endif
                                     </div>
                                     @if($emp->cnpj)
-                                        <span class="text-sm p-2 bg-blue-100 h-9 text-center rounded-2xl text-blue-950">{{ $emp->cnpj }}</span>
+                                        <span class="text-sm p-2 bg-blue-100 h-9 text-center rounded-2xl text-blue-950" style="display: inline-block; max-width: 100%; overflow-x: auto; white-space: nowrap; word-break: keep-all; box-sizing: border-box; font-size: clamp(0.55rem, 2.1vw, 0.875rem);">{{ $emp->cnpj }}</span>
                                     @else
                                         <span style="color: #94a3b8; font-size: 0.85rem;">Não informado</span>
                                     @endif

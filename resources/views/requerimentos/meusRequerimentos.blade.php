@@ -86,13 +86,13 @@
                                 </td>
                                 @if($requerimento->status)
                                     <td class="req-col-status status-{{ Str::slug($requerimento->status) }}">
-                                        <span>
+                                        <span style="border-radius: 6px; white-space: nowrap;">
                                             {{ $requerimento->status }}
                                         </span>
                                     </td>
                                 @else
                                     <td class="req-col-status status-protocolado">
-                                        <span>Protocolado</span>
+                                        <span style="border-radius: 6px; white-space: nowrap;">Protocolado</span>
                                     </td>
                                 @endif
                                 <td class="req-col-acoes">
@@ -134,7 +134,7 @@
 
                     <div class="req-card-actions">
                         <div class="req-card-status status-{{ Str::slug($requerimento->status ?? 'protocolado') }}">
-                            <span>{{ $requerimento->status ?? 'Protocolado' }}</span>
+                            <span style="border-radius: 6px;">{{ $requerimento->status ?? 'Protocolado' }}</span>
                         </div>
                         <a href="{{ route('requerimentos.cidadao.visualizar', $requerimento->id) }}" class="req-btn-imprimir">Ver mais</a>
                     </div>
