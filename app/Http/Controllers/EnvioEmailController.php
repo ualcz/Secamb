@@ -6,12 +6,14 @@ use App\Mail\ConfirmacaoRequerimentoUsuarioMail;
 use App\Mail\NotificacaoSetorMail;
 use App\Models\AssuntoRequerimento;
 use App\Models\Requerimento;
+use App\Models\RequerimentoRascunho;
 use App\Models\Setor;
 use App\Services\DocumentoRequerimentoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class EnvioEmailController extends Controller
 {
@@ -193,6 +195,12 @@ class EnvioEmailController extends Controller
                 ->withInput();
         }
 
+        $this->limparRascunhoEnviado(
+            $cidadao->id,
+            $setor->id,
+            (string) $request->input('objetoDoRequerimento')
+        );
+
         // Envia notificações por e-mail em segundo plano (defer), liberando a resposta HTTP imediata ao usuário
         \Illuminate\Support\defer(function () use ($requerimento, $cidadao, $setor, $objeto) {
             $this->enviarNotificacoes($requerimento, $cidadao, $setor, $objeto);
@@ -264,5 +272,30 @@ class EnvioEmailController extends Controller
         $ano = $requerimento->created_at?->format('Y') ?? date('Y');
         $requerimento->numero_protocolo = $ano . '/' . $requerimento->id;
         $requerimento->save();
+    }
+
+    private function limparRascunhoEnviado(int $usuarioId, int $setorId, string $objeto): void
+    {
+        try {
+            $rascunho = RequerimentoRascunho::where('usuario_id', $usuarioId)
+                ->where('setor_id', $setorId)
+                ->where('objeto_chave', $objeto)
+                ->first();
+
+            if (!$rascunho) {
+                return;
+            }
+
+            $caminhos = $rascunho->arquivos()->pluck('caminho')->all();
+            $rascunho->delete();
+            Storage::disk('local')->delete($caminhos);
+        } catch (\Throwable $exception) {
+            Log::warning('Não foi possível remover o rascunho após o protocolo do requerimento.', [
+                'usuario_id' => $usuarioId,
+                'setor_id' => $setorId,
+                'objeto' => $objeto,
+                'erro' => $exception->getMessage(),
+            ]);
+        }
     }
 }

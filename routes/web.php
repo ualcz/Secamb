@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\EnvioEmailController;
 use App\Http\Controllers\RequerimentoController;
+use App\Http\Controllers\RequerimentoRascunhoController;
 use App\Http\Controllers\RequerimentoPdfController;
 use App\Http\Controllers\AdminConsultaController;
 use App\Http\Controllers\AdminSetorController;
@@ -157,6 +158,11 @@ Route::middleware(['auth', 'responsavel'])->group(function () {
 */
 Route::middleware(['auth', 'role:cidadao', 'perfil.completo'])->group(function () {
     Route::post('/requerimentos/cidadao/enviar-email', [EnvioEmailController::class, 'enviar'])->name('cidadao.enviar-email');
+    Route::get('/requerimentos/cidadao/rascunhos/{setor}', [RequerimentoRascunhoController::class, 'show'])->name('requerimentos.rascunhos.show');
+    Route::put('/requerimentos/cidadao/rascunhos/{setor}', [RequerimentoRascunhoController::class, 'salvar'])->name('requerimentos.rascunhos.salvar');
+    Route::delete('/requerimentos/cidadao/rascunhos/{setor}', [RequerimentoRascunhoController::class, 'destruir'])->name('requerimentos.rascunhos.destruir');
+    Route::post('/requerimentos/cidadao/rascunhos/{setor}/arquivos', [RequerimentoRascunhoController::class, 'salvarArquivos'])->name('requerimentos.rascunhos.arquivos.salvar');
+    Route::get('/requerimentos/cidadao/rascunhos/{setor}/arquivos/{arquivo}', [RequerimentoRascunhoController::class, 'baixarArquivo'])->name('requerimentos.rascunhos.arquivos.baixar');
     Route::get('/requerimentos/cidadao/novo', [RequerimentoController::class, 'create'])->name('requerimentos.cidadao.novo');
     Route::get('/requerimentos/cidadao/meusRequerimentos', [RequerimentoController::class, 'index'])->name('requerimentos.cidadao.meusRequerimentos');
     Route::get('/requerimentos/cidadao/visualizar/{requerimento}', [RequerimentoController::class, 'show'])
