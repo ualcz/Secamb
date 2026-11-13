@@ -1,5 +1,5 @@
-<!-- Etapa 2: Documentos Obrigatórios e Anexos Complementares -->
-<div class="form-step" data-step="2" style="display: none;">
+<!-- Etapa 3: Documentos Obrigatórios e Anexos Complementares -->
+<div class="form-step" data-step="3" style="display: none;">
     <!-- Documentos e Anexos -->
     <fieldset class="secao-anexos">
         <legend>Documentos e Anexos</legend>
@@ -97,15 +97,15 @@
                 <strong id="nome-assunto-outro-preview" style="font-size: 16px; color: #047857;">Outro Requerimento</strong>
             </div>
             <p style="color: #666; font-size: 14px; margin-bottom: 12px;">
-                Requerimento personalizado. Descreva os detalhes na justificativa do requerimento.
+                Requerimento personalizado. Descreva os detalhes na descrição da solicitação.
             </p>
         </div>
     </fieldset>
 
     <div class="step-nav">
-        <button type="button" class="btn-voltar" onclick="mudarPasso(1)">Anterior</button>
+        <button type="button" class="btn-voltar" onclick="mudarPasso(2)">Anterior</button>
         <button type="submit" class="btn-enviar" id="btn-enviar-requerimento">
-            Enviar Requerimento
+            Finalizar
         </button>
     </div>
 </div>

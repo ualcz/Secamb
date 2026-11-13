@@ -3,58 +3,16 @@
     <!-- 1. Identificação do Requerente -->
     <fieldset>
         <legend>Identificação do Requerente</legend>
-        <div class="form-linha">
-            <div class="campo">
-                <label>Nome Completo:</label>
+        <div class="form-linha identificacao-linha">
+            <div class="campo identificacao-nome">
+                <label>Nome:</label>
                 <input type="text" value="{{ auth()->user()->nome }}" readonly>
             </div>
-            <div class="campo">
+            <div class="campo identificacao-documento">
                 <label>{{ auth()->user()->isPessoaJuridica() ? 'CNPJ' : 'CPF' }}:</label>
                 <input type="text" value="{{ auth()->user()->documento_identificacao ?? '—' }}" readonly>
             </div>
         </div>
-
-        <div class="info-aluno">
-            <div class="form-linha">
-                <div class="campo">
-                    <label>E-mail Pessoal (editavel):</label>
-                    <input type="email" name="email" value="{{ old('email', auth()->user()->email ?? '') }}" placeholder="seu.email@exemplo.com">
-                </div>
-                <div class="campo">
-                    <label>Telefone / WhatsApp (editavel):</label>
-                    <input type="text" name="celular" value="{{ old('celular', auth()->user()->celular ?? '') }}" placeholder="(XX) XXXXX-XXXX">
-                </div>
-            </div>
-
-            <div class="form-linha">
-                <div class="campo" style="flex: 2; min-width: 240px;">
-                    <label>Rua e Numero (editavel):</label>
-                    <input type="text" name="rua" value="{{ old('rua', auth()->user()->endereco?->rua ?? '') }}" placeholder="Ex: Rua Antonio Francisco, 60">
-                </div>
-                <div class="campo" style="flex: 1.5; min-width: 150px;">
-                    <label>Bairro:</label>
-                    <input type="text" name="bairro" value="{{ old('bairro', auth()->user()->endereco?->bairro ?? '') }}" placeholder="Bairro">
-                </div>
-            </div>
-
-            <div class="form-linha">
-                <div class="campo" style="flex: 2; min-width: 180px;">
-                    <label>Cidade:</label>
-                    <input type="text" name="cidade" value="{{ old('cidade', auth()->user()->endereco?->cidade ?? '') }}" placeholder="Cidade">
-                </div>
-                <div class="campo" style="flex: 0.8; min-width: 80px;">
-                    <label>Estado (UF):</label>
-                    <input type="text" name="estado" maxlength="2" value="{{ old('estado', auth()->user()->endereco?->estado ?? '') }}" placeholder="BA" style="text-transform: uppercase;">
-                </div>
-                <div class="campo" style="flex: 1.2; min-width: 130px;">
-                    <label>CEP:</label>
-                    <input type="text" name="cep" value="{{ old('cep', auth()->user()->endereco?->cep ?? '') }}" placeholder="00000-000">
-                </div>
-            </div>
-        </div>
-        <button type="button" id="ver-info-aluno" onclick="verInfoAluno()" class="inline-flex justify-center items-center w-10 h-10">
-            <img src="{{ asset('img/icons/chevron-down.svg') }}" class="icon">
-        </button>
     </fieldset>
 
     <!-- 2. Empreendimento Vinculado ao Processo -->
@@ -113,14 +71,18 @@
                     $assuntoItem = $assuntosMap[$descricao] ?? null;
                     $obs = $assuntoItem['observacao'] ?? null;
                     $indexAssunto = $loop->index;
-                    $isChecked = old('objetoDoRequerimento') ? (old('objetoDoRequerimento') === $descricao) : $loop->first;
+                    $objetoAtual = old('objetoDoRequerimento', $objetoSelecionado);
+                    $isChecked = $objetoAtual !== null ? $objetoAtual === $descricao : $loop->first;
+                    $objetoTemRascunho = in_array($descricao, $objetosComRascunho ?? [], true);
                 @endphp
-                <label class="card-objeto-requerimento">
+                <div class="objeto-opcao">
+                    <label class="card-objeto-requerimento">
                     <div class="card-objeto-header">
                         <div class="card-objeto-radio-wrap">
                             <input type="radio"
                                    name="objetoDoRequerimento"
                                    value="{{ $descricao }}"
+                                   data-tem-rascunho="{{ $objetoTemRascunho ? 'true' : 'false' }}"
                                    onchange="alternarObjetoOutro(false); mostrarDocumentosAssunto({{ $indexAssunto }})"
                                    {{ $isChecked ? 'checked' : '' }}>
                             <span class="card-objeto-titulo">{{ $descricao }}</span>
@@ -137,6 +99,9 @@
                             </a>
                         @endif
                     </div>
+                    @if($objetoTemRascunho)
+                        <span class="objeto-rascunho-badge" role="status">Este objeto tem um rascunho</span>
+                    @endif
                     @if(!empty($obs))
                         <div class="card-objeto-obs">
                             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;">
@@ -145,29 +110,36 @@
                             <span class="card-objeto-obs-texto">{{ $obs }}</span>
                         </div>
                     @endif
-                </label>
+                    </label>
+                </div>
             @endforeach
 
             {{-- Opção Outro --}}
-            <label class="card-objeto-requerimento card-objeto-outro">
+            <div class="objeto-opcao">
+                <label class="card-objeto-requerimento card-objeto-outro">
                 <div class="card-objeto-header">
                     <div class="card-objeto-radio-wrap">
                         <input type="radio"
                                name="objetoDoRequerimento"
                                value="outro"
+                               data-tem-rascunho="{{ in_array('outro', $objetosComRascunho ?? [], true) ? 'true' : 'false' }}"
                                onchange="alternarObjetoOutro(true)"
-                               {{ old('objetoDoRequerimento') === 'outro' ? 'checked' : '' }}>
+                               {{ old('objetoDoRequerimento', $objetoSelecionado) === 'outro' ? 'checked' : '' }}>
                         <span class="card-objeto-titulo">Outro</span>
                     </div>
                     <span class="badge-outro">Personalizado</span>
                 </div>
+                @if(in_array('outro', $objetosComRascunho ?? [], true))
+                    <span class="objeto-rascunho-badge" role="status">Este objeto tem um rascunho</span>
+                @endif
                 <div class="card-objeto-obs">
                     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                     </svg>
                     <span class="card-objeto-obs-texto">Especifique uma finalidade ou modalidade ambiental não listada acima.</span>
                 </div>
-            </label>
+                </label>
+            </div>
         </div>
 
         <div class="campo" style="margin-top: 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 14px 16px;">
@@ -189,14 +161,6 @@
                    style="width: 100%; border-radius: 8px; padding: 10px 12px; font-size: 0.9rem; border: 1.5px solid; transition: all 0.2s ease; background-color: {{ old('objetoDoRequerimento') === 'outro' ? '#fff' : '#f1f5f9' }}; border-color: {{ old('objetoDoRequerimento') === 'outro' ? '#0284c7' : '#cbd5e1' }}; color: {{ old('objetoDoRequerimento') === 'outro' ? '#111827' : '#94a3b8' }}; cursor: {{ old('objetoDoRequerimento') === 'outro' ? 'text' : 'not-allowed' }};"
                    placeholder="Especifique a modalidade caso necessário..."
                    oninput="const el = document.getElementById('nome-assunto-outro-preview'); if(el) el.textContent = 'Outro: ' + this.value;">
-        </div>
-    </fieldset>
-
-    <!-- 4. Descrição da Solicitação / Observações -->
-    <fieldset>
-        <legend>Descrição da Solicitação / Observações (Opcional)</legend>
-        <div class="campo">
-            <textarea name="motivo" rows="3" placeholder="Ex: Solicito Licença Unificada para atividade de extração mineral conforme projetos em anexo...">{{ old('motivo') }}</textarea>
         </div>
     </fieldset>
 

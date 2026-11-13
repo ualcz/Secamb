@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Requerimento;
+use App\Models\RequerimentoRascunho;
 use Illuminate\Http\Request;
 use App\Models\Setor;
 use App\Services\DocumentoRequerimentoService;
@@ -78,14 +79,29 @@ class RequerimentoController extends Controller
         // Carrega os empreendimentos do usuário para vincular à solicitação
         $empreendimentos = $request->user()->todosEmpreendimentos()->get();
         $empreendimentoSelecionadoId = $request->query('empreendimento_id');
+        $objetosValidos = array_values($modeloAtivo['objetos'] ?? []);
+        $objetoSelecionado = $request->query('objeto');
+        if ($objetoSelecionado !== 'outro' && !in_array($objetoSelecionado, $objetosValidos, true)) {
+            $objetoSelecionado = null;
+        }
 
+        $objetosComRascunho = $modeloAtivo
+            ? RequerimentoRascunho::where('usuario_id', $request->user()->id)
+                ->where('setor_id', $modeloAtivo['id'])
+                ->pluck('objeto_chave')
+                ->filter(fn ($objeto) => $objeto === 'outro' || in_array($objeto, $objetosValidos, true))
+                ->values()
+                ->all()
+            : [];
         return view('requerimentos.form', compact(
             'modelos',
             'modeloChave',
             'modeloAtivo',
             'setorDestino',
             'empreendimentos',
-            'empreendimentoSelecionadoId'
+            'empreendimentoSelecionadoId',
+            'objetosComRascunho',
+            'objetoSelecionado'
         ));
     }
 

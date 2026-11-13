@@ -54,27 +54,36 @@
         </div>
     @endif
 
+    <p id="status-rascunho-requerimento" class="rascunho-status" role="status" aria-live="polite"></p>
+
         <form id="formRequerimento" action="{{ route('cidadao.enviar-email') }}" method="POST" enctype="multipart/form-data"
             data-draft-key="requerimento-{{ auth()->id() }}-{{ $modeloAtivo['id'] ?? 'geral' }}"
-            data-restore-draft="{{ $errors->any() ? 'false' : 'true' }}"
+            data-draft-url="{{ route('requerimentos.rascunhos.show', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
+            data-draft-files-url="{{ route('requerimentos.rascunhos.arquivos.salvar', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
+            data-form-url="{{ route('requerimentos.cidadao.novo', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
+            data-restore-draft="true"
             data-clear-draft="{{ session()->has('sucesso') ? 'true' : 'false' }}">
         @csrf
         <input type="hidden" name="setor_id" value="{{ $modeloAtivo['id'] ?? '' }}">
         <input type="hidden" name="setor" value="{{ $modeloAtivo['id'] ?? '' }}">
 
-        {{-- Etapa 1: Identificação, Objeto e Justificativa --}}
+        {{-- Etapa 1: Identificação e Objeto --}}
         @include('requerimentos.partials.dados-requerimento')
 
-        {{-- Etapa 2: Documentos e Anexos --}}
+        {{-- Etapa 2: Descrição da Solicitação --}}
+        @include('requerimentos.partials.descricao-requerimento')
+
+        {{-- Etapa 3: Documentos e Anexos --}}
         @include('requerimentos.partials.documentos-anexos')
     </form>
 
+    <script src="{{ asset('js/requerimento-rascunho.js') }}?v={{ filemtime(public_path('js/requerimento-rascunho.js')) }}"></script>
     <script src="{{ asset('js/form.js') }}?v={{ filemtime(public_path('js/form.js')) }}"></script>
 
     @if ($errors->any())
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                mudarPasso(2);
+                mudarPasso(3);
             });
         </script>
     @endif

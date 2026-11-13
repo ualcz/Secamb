@@ -227,22 +227,29 @@
                     }, 200);
                 }, 2000);
 
-                const formData = new FormData(form);
-
-                fetch(form.action, {
+                Promise.resolve(form.__draftSavePromise)
+                .then(() => fetch(form.action, {
                     method: 'POST',
-                    body: formData,
+                    body: new FormData(form),
                     headers: {
                         'Accept': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest'
                     }
-                })
+                }))
                 .then(async response => {
                     clearInterval(intervalId);
 
                     const data = await response.json().catch(() => null);
 
                     if (response.ok && data && data.success) {
+                        form.dataset.suspendDraft = 'true';
+                        let limpezaRascunho = Promise.resolve();
+                        if (typeof window.limparRascunhoRequerimento === 'function') {
+                            limpezaRascunho = window.limparRascunhoRequerimento(form).catch(error => {
+                                console.error('Não foi possível limpar o rascunho após o envio:', error);
+                            });
+                        }
+
                         // Transição suave para o estado de "Certo" (Sucesso visual)
                         loadingSpinnerState.style.display = 'none';
                         loadingSuccessState.style.display = 'block';
@@ -252,7 +259,8 @@
                         }
 
                         // Aguarda 1.8 segundos exibindo o check para o usuário e redireciona
-                        setTimeout(() => {
+                        setTimeout(async () => {
+                            await limpezaRascunho;
                             window.location.href = data.redirect || '{{ route("requerimentos.cidadao.meusRequerimentos") }}';
                         }, 1800);
                     } else {

@@ -1,8 +1,10 @@
 .form-box {
+    width: 100%;
     max-width: 1200px;
     margin: 20px auto;
     padding: 25px;
     border-radius: 8px;
+    box-sizing: border-box;
 }
 
 /* ── Cabeçalho do Requerimento & Destaque do Setor ───────────────── */
@@ -104,6 +106,39 @@
     margin-left: 2px;
 }
 
+.rascunho-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid #0284c7;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-size: 0.875rem;
+}
+
+.rascunho-status:empty {
+    display: none;
+}
+
+.rascunho-status.tem-rascunho {
+    border-color: #bbf7d0;
+    border-left-color: #16a34a;
+    background: #f0fdf4;
+    color: #166534;
+    font-weight: 600;
+}
+
+.rascunho-status.erro {
+    border-color: #fecaca;
+    border-left-color: #dc2626;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
 /* Compatibilidade com seletores legados */
 .setores-nav {
     display: inline-flex;
@@ -151,6 +186,17 @@
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
+}
+
+.identificacao-linha {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(170px, 0.55fr);
+    gap: 12px;
+}
+
+.identificacao-linha .campo {
+    min-width: 0;
+    margin-bottom: 0;
 }
 
 .campo {
@@ -220,6 +266,13 @@
     margin-top: 10px;
 }
 
+.objeto-opcao {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
 .card-objeto-requerimento {
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
@@ -253,6 +306,18 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+}
+
+.objeto-rascunho-badge {
+    align-self: flex-start;
+    padding: 4px 8px;
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.2;
 }
 
 .card-objeto-radio-wrap {
@@ -393,18 +458,6 @@
     margin-bottom: 15px;
 }
 
-.info-aluno {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
-}
-
-.info-aluno.active {
-    max-height: 500px;
-    opacity: 1;
-}
-
 /* ===== Navegação entre etapas ===== */
 .step-nav {
     display: flex;
@@ -432,8 +485,8 @@
     background: #4b5563;
 }
 
-form {
-    font-size: 1.5rem;
+.form-box form {
+    font-size: 1rem;
 }
 
 /* ===== Seção de Anexos e Documentos por Assunto ===== */
@@ -784,6 +837,9 @@ form {
     }
 
     .req-setor-wrap {
+        width: 100%;
+        box-sizing: border-box;
+        flex-wrap: wrap;
         padding: 4px 10px;
         gap: 8px;
         border-radius: 8px;
@@ -797,13 +853,13 @@ form {
     }
 
     .req-setor-badge {
-        padding: 5px 10px;
-        font-size: 0.8rem;
-        gap: 6px;
+        padding: 6px 9px;
+        font-size: 0.78rem;
+        gap: 5px;
     }
 
     .req-setor-nome-extenso {
-        display: none; /* Não polui o mobile: oculta texto longo mantendo a sigla e o dot limpos */
+        display: none;
     }
 
     .req-setores-nav {
@@ -839,11 +895,75 @@ form {
     }
 
     legend {
-        font-size: 1.25rem;
+        font-size: 1.05rem;
     }
 
     .form-box {
-        padding: 16px;
+        margin: 12px auto;
+        padding: 14px;
     }
 
+    .form-box fieldset {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .form-linha {
+        gap: 10px;
+    }
+
+    .identificacao-linha {
+        grid-template-columns: minmax(0, 1fr) minmax(145px, 0.65fr);
+    }
+
+    .campo {
+        min-width: 0;
+    }
+
+    .form-box .campo select,
+    .form-box select.form-control {
+        width: 100%;
+        min-width: 0 !important;
+        box-sizing: border-box;
+        font-size: 0.9rem;
+    }
+
+    .card-objeto-requerimento {
+        padding: 12px;
+    }
+
+    .step-nav {
+        gap: 8px;
+    }
+
+    .step-nav button,
+    .form-step > .btn-enviar {
+        min-height: 44px;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+
+    .custom-file-upload {
+        min-height: 72px;
+    }
+
+}
+
+@media (max-width: 420px) {
+    .form-box {
+        padding: 10px;
+    }
+
+    .req-header-titulo {
+        font-size: 1.15rem;
+    }
+
+    .identificacao-linha {
+        grid-template-columns: 1fr;
+    }
+
+    .objeto-rascunho-badge {
+        font-size: 0.66rem;
+        padding: 4px 7px;
+    }
 }

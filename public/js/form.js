@@ -1,16 +1,3 @@
-function verInfoAluno() {
-    const divInfoAluno = document.querySelector('.info-aluno');
-    divInfoAluno.classList.toggle('active');
-
-    const imgBotao = document.querySelector('#ver-info-aluno img');
-
-    if (divInfoAluno.classList.contains('active')) {
-        imgBotao.src = "/img/icons/chevron-up.svg";
-    } else {
-        imgBotao.src = "/img/icons/chevron-down.svg";
-    }
-}
-
 function alternarObjetoOutro(ativo) {
     const campoOutro = document.querySelector('input[name="objeto_outro"]');
     if (!campoOutro) return;
@@ -26,70 +13,15 @@ function alternarObjetoOutro(ativo) {
 
     if (ativo) {
         mostrarDocumentosAssunto('outro');
-    } else {
-        campoOutro.value = '';
     }
 }
 
-function salvarRascunhoRequerimento(form) {
-    const chave = form?.dataset.draftKey;
-    if (!chave || form.dataset.suspendDraft === 'true') return;
-
-    const campos = {};
-    Array.from(form.elements).forEach(campo => {
-        if (!campo.name || campo.name === '_token' || campo.disabled ||
-            ['file', 'submit', 'button', 'reset', 'password'].includes(campo.type)) return;
-
-        if (campo.type === 'radio') {
-            if (campo.checked) campos[campo.name] = campo.value;
-        } else if (campo.type === 'checkbox') {
-            campos[campo.name] ??= [];
-            if (campo.checked) campos[campo.name].push(campo.value);
-        } else {
-            campos[campo.name] = campo.value;
-        }
-    });
-
-    const etapaAtiva = Array.from(form.querySelectorAll('.form-step'))
-        .find(etapa => window.getComputedStyle(etapa).display !== 'none');
-
-    try {
-        sessionStorage.setItem(chave, JSON.stringify({
-            campos,
-            etapa: etapaAtiva?.dataset.step ?? '1',
-        }));
-    } catch (error) {
-        // O formulário continua funcionando mesmo se o armazenamento estiver indisponível.
-    }
+function salvarRascunhoRequerimento(form, ativarSePreenchido = false, objetoOverride = null) {
+    return window.rascunhoRequerimento.salvarCampos(form, objetoOverride, ativarSePreenchido);
 }
 
-function restaurarRascunhoRequerimento(form) {
-    const chave = form.dataset.draftKey;
-    if (!chave) return null;
-
-    try {
-        const rascunho = sessionStorage.getItem(chave);
-        if (!rascunho) return null;
-
-        const dados = JSON.parse(rascunho);
-        Object.entries(dados.campos ?? {}).forEach(([nome, valor]) => {
-            Array.from(form.elements)
-                .filter(campo => campo.name === nome)
-                .forEach(campo => {
-                    if (campo.type === 'radio') {
-                        campo.checked = campo.value === valor;
-                    } else if (campo.type === 'checkbox') {
-                        campo.checked = Array.isArray(valor) && valor.includes(campo.value);
-                    } else if (campo.type !== 'file') {
-                        campo.value = valor;
-                    }
-                });
-        });
-        return dados;
-    } catch (error) {
-        sessionStorage.removeItem(chave);
-        return null;
-    }
+function salvarArquivosRascunho(form, inputAlterado = null) {
+    return window.rascunhoRequerimento.salvarArquivos(form, inputAlterado);
 }
 
 function mudarPasso(passo) {
@@ -103,7 +35,10 @@ function mudarPasso(passo) {
         etapaAlvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    salvarRascunhoRequerimento(document.getElementById('formRequerimento'));
+    salvarRascunhoRequerimento(
+        document.getElementById('formRequerimento'),
+        Number(passo) >= 2
+    );
 }
 
 function mostrarDocumentosAssunto(index) {
@@ -116,24 +51,18 @@ function mostrarDocumentosAssunto(index) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const form = document.querySelector('form[action*="enviar-email"]');
     if (!form) return;
 
     form.dataset.suspendDraft = 'true';
     if (form.dataset.clearDraft === 'true') {
-        sessionStorage.removeItem(form.dataset.draftKey);
+        try {
+            await window.rascunhoRequerimento.limpar(form);
+        } catch (error) {
+            console.error('Falha ao remover o rascunho enviado:', error);
+        }
     }
-
-    const rascunho = form.dataset.restoreDraft === 'true' && form.dataset.clearDraft !== 'true'
-        ? restaurarRascunhoRequerimento(form)
-        : null;
-
-    const radioSelecionado = form.querySelector('input[name="objetoDoRequerimento"]:checked');
-    radioSelecionado?.dispatchEvent(new Event('change', { bubbles: true }));
-
-    mudarPasso(1);
-    form.dataset.suspendDraft = 'false';
 
     const btnEnviar = form.querySelector('button[type="submit"]');
 
@@ -174,6 +103,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let dadosRascunho = null;
+    let arquivosRascunho = [];
+    let falhaAoLerRascunho = false;
+    const objetoInicial = form.querySelector('input[name="objetoDoRequerimento"]:checked')?.value;
+    if (form.dataset.restoreDraft === 'true' && objetoInicial && form.dataset.clearDraft !== 'true') {
+        try {
+            const dados = await window.rascunhoRequerimento.ler(form, objetoInicial);
+            dadosRascunho = dados.rascunho;
+            arquivosRascunho = dados.arquivos;
+        } catch (error) {
+            falhaAoLerRascunho = true;
+            console.error('Falha ao recuperar o rascunho do requerimento:', error);
+        }
+    }
+
+    if (dadosRascunho) {
+        form.dataset.draftActive = 'true';
+        form.dataset.draftObject = dadosRascunho.objeto || objetoInicial;
+        window.rascunhoRequerimento.restaurarCampos(form, dadosRascunho.campos);
+        try {
+            await window.rascunhoRequerimento.restaurarArquivos(form, arquivosRascunho);
+        } catch (error) {
+            console.error('Falha ao restaurar anexos do rascunho:', error);
+        }
+    } else if (!falhaAoLerRascunho && form.dataset.clearDraft !== 'true') {
+        form.dataset.draftActive = 'false';
+        form.dataset.draftObject = '';
+    }
+
+    const radioSelecionado = form.querySelector('input[name="objetoDoRequerimento"]:checked');
+    radioSelecionado?.dispatchEvent(new Event('change', { bubbles: true }));
+    form.querySelector('#empreendimento_id')?.dispatchEvent(new Event('change', { bubbles: true }));
+
+    mudarPasso(dadosRascunho?.etapa ?? '1');
+    form.dataset.suspendDraft = 'false';
+
     function habilitarBotao(habilitar) {
         if (!btnEnviar) return;
         btnEnviar.disabled = !habilitar;
@@ -191,14 +156,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reage a qualquer mudança de arquivo no formulário
     form.addEventListener('change', (e) => {
+        if (form.dataset.suspendDraft === 'true') return;
+
+        if (e.target.name === 'objetoDoRequerimento') {
+            form.dataset.objetoEscolhidoUsuario = 'true';
+            const objeto = e.target.value;
+            const temRascunho = e.target.dataset.temRascunho === 'true';
+            if ((form.dataset.draftActive === 'true' && objeto !== form.dataset.draftObject) ||
+                (form.dataset.draftActive !== 'true' && temRascunho)) {
+                window.rascunhoRequerimento.mudarObjeto(form, objeto);
+                return;
+            }
+        }
+
         if (e.target.matches('input[type="file"]')) {
             verificarDocumentosObrigatorios();
+            salvarArquivosRascunho(form, e.target);
         }
+
+        const etapaDoFormulario = Array.from(form.querySelectorAll('.form-step'))
+            .find(etapa => window.getComputedStyle(etapa).display !== 'none')?.dataset.step;
+        salvarRascunhoRequerimento(form, Number(etapaDoFormulario) >= 2);
+    });
+    let temporizadorRascunho;
+    form.addEventListener('input', () => {
+        if (form.dataset.suspendDraft === 'true') return;
+        window.clearTimeout(temporizadorRascunho);
+        const etapaDoFormulario = Array.from(form.querySelectorAll('.form-step'))
+            .find(etapa => window.getComputedStyle(etapa).display !== 'none')?.dataset.step;
+        temporizadorRascunho = window.setTimeout(
+            () => salvarRascunhoRequerimento(form, Number(etapaDoFormulario) >= 2),
+            400
+        );
+    });
+    form.addEventListener('submit', () => {
+        salvarRascunhoRequerimento(form, true);
+    });
+    window.addEventListener('pagehide', () => {
         salvarRascunhoRequerimento(form);
     });
-    form.addEventListener('input', () => salvarRascunhoRequerimento(form));
-    window.addEventListener('pagehide', () => salvarRascunhoRequerimento(form));
-
     // Reage à mudança de assunto (troca de bloco visível)
     const observer = new MutationObserver(() => {
         verificarDocumentosObrigatorios();
