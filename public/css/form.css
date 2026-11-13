@@ -234,26 +234,6 @@
     color: #666;
 }
 
-.campo input[name="objeto_outro"]:disabled {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-    color: #64748b;
-    cursor: not-allowed;
-}
-
-.ajuda-campo-bloqueado {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 6px;
-    color: #64748b;
-    font-size: 12px;
-}
-
-.ajuda-campo-bloqueado[hidden] {
-    display: none;
-}
-
 .campo textarea {
     resize: vertical;
 }
@@ -372,19 +352,6 @@
     color: #ffffff;
     transform: scale(1.12);
     box-shadow: 0 2px 5px rgba(29, 78, 216, 0.25);
-}
-
-.badge-outro {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background-color: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    color: #475569;
-    font-size: 0.72rem;
-    font-weight: 600;
-    flex-shrink: 0;
 }
 
 /* Observação Destacada e Legível */

@@ -1,21 +1,3 @@
-function alternarObjetoOutro(ativo) {
-    const campoOutro = document.querySelector('input[name="objeto_outro"]');
-    if (!campoOutro) return;
-
-    campoOutro.disabled = !ativo;
-    campoOutro.style.backgroundColor = ativo ? '#fff' : '#f1f5f9';
-    campoOutro.style.borderColor = ativo ? '#ccc' : '#cbd5e1';
-    campoOutro.style.color = ativo ? '#111827' : '#64748b';
-    campoOutro.style.cursor = ativo ? 'text' : 'not-allowed';
-
-    const ajudaOutro = document.getElementById('objeto-outro-ajuda');
-    if (ajudaOutro) ajudaOutro.style.display = ativo ? 'none' : 'flex';
-
-    if (ativo) {
-        mostrarDocumentosAssunto('outro');
-    }
-}
-
 function salvarRascunhoRequerimento(form, ativarSePreenchido = false, objetoOverride = null) {
     return window.rascunhoRequerimento.salvarCampos(form, objetoOverride, ativarSePreenchido);
 }
@@ -25,6 +7,15 @@ function salvarArquivosRascunho(form, inputAlterado = null) {
 }
 
 function mudarPasso(passo) {
+    const form = document.getElementById('formRequerimento');
+    const descricao = form?.querySelector('textarea[name="motivo"]');
+    const descricaoInvalida = Number(passo) === 3 && descricao && !descricao.value.trim();
+
+    if (descricaoInvalida) {
+        passo = 2;
+        descricao.setCustomValidity('Preencha a descrição da solicitação para continuar.');
+    }
+
     document.querySelectorAll('.form-step').forEach(el => {
         el.style.display = 'none';
     });
@@ -35,19 +26,23 @@ function mudarPasso(passo) {
         etapaAlvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    if (descricao) {
+        descricao.required = Number(passo) === 2;
+        if (descricaoInvalida) {
+            descricao.reportValidity();
+            descricao.focus();
+        }
+    }
+
     salvarRascunhoRequerimento(
-        document.getElementById('formRequerimento'),
+        form,
         Number(passo) >= 2
     );
 }
 
 function mostrarDocumentosAssunto(index) {
     document.querySelectorAll('.bloco-documentos-assunto').forEach((el, i) => {
-        if (index === 'outro') {
-            el.style.display = (el.id === 'bloco-doc-outro') ? 'block' : 'none';
-        } else {
-            el.style.display = (el.id === `bloco-doc-${index}`) ? 'block' : 'none';
-        }
+        el.style.display = (el.id === `bloco-doc-${index}`) ? 'block' : 'none';
     });
 }
 
@@ -121,7 +116,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (dadosRascunho) {
         form.dataset.draftActive = 'true';
         form.dataset.draftObject = dadosRascunho.objeto || objetoInicial;
-        window.rascunhoRequerimento.restaurarCampos(form, dadosRascunho.campos);
+        const camposRestaurar = { ...dadosRascunho.campos };
+        if (form.dataset.motivoInvalido === 'true') delete camposRestaurar.motivo;
+        window.rascunhoRequerimento.restaurarCampos(form, camposRestaurar);
         try {
             await window.rascunhoRequerimento.restaurarArquivos(form, arquivosRascunho);
         } catch (error) {
@@ -136,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     radioSelecionado?.dispatchEvent(new Event('change', { bubbles: true }));
     form.querySelector('#empreendimento_id')?.dispatchEvent(new Event('change', { bubbles: true }));
 
-    mudarPasso(dadosRascunho?.etapa ?? '1');
+    mudarPasso(form.dataset.stepOnError || dadosRascunho?.etapa || '1');
     form.dataset.suspendDraft = 'false';
 
     function habilitarBotao(habilitar) {
@@ -179,8 +176,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         salvarRascunhoRequerimento(form, Number(etapaDoFormulario) >= 2);
     });
     let temporizadorRascunho;
-    form.addEventListener('input', () => {
+    form.addEventListener('input', (event) => {
         if (form.dataset.suspendDraft === 'true') return;
+        if (event.target.name === 'motivo') event.target.setCustomValidity('');
         window.clearTimeout(temporizadorRascunho);
         const etapaDoFormulario = Array.from(form.querySelectorAll('.form-step'))
             .find(etapa => window.getComputedStyle(etapa).display !== 'none')?.dataset.step;
@@ -189,7 +187,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             400
         );
     });
-    form.addEventListener('submit', () => {
+    form.addEventListener('submit', (event) => {
+        const descricao = form.querySelector('textarea[name="motivo"]');
+        if (descricao && !descricao.value.trim()) {
+            event.preventDefault();
+            mudarPasso(2);
+            descricao.reportValidity();
+            return;
+        }
         salvarRascunhoRequerimento(form, true);
     });
     window.addEventListener('pagehide', () => {

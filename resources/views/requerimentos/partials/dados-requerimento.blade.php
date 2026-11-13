@@ -83,7 +83,7 @@
                                    name="objetoDoRequerimento"
                                    value="{{ $descricao }}"
                                    data-tem-rascunho="{{ $objetoTemRascunho ? 'true' : 'false' }}"
-                                   onchange="alternarObjetoOutro(false); mostrarDocumentosAssunto({{ $indexAssunto }})"
+                                   onchange="mostrarDocumentosAssunto({{ $indexAssunto }})"
                                    {{ $isChecked ? 'checked' : '' }}>
                             <span class="card-objeto-titulo">{{ $descricao }}</span>
                         </div>
@@ -113,54 +113,6 @@
                     </label>
                 </div>
             @endforeach
-
-            {{-- Opção Outro --}}
-            <div class="objeto-opcao">
-                <label class="card-objeto-requerimento card-objeto-outro">
-                <div class="card-objeto-header">
-                    <div class="card-objeto-radio-wrap">
-                        <input type="radio"
-                               name="objetoDoRequerimento"
-                               value="outro"
-                               data-tem-rascunho="{{ in_array('outro', $objetosComRascunho ?? [], true) ? 'true' : 'false' }}"
-                               onchange="alternarObjetoOutro(true)"
-                               {{ old('objetoDoRequerimento', $objetoSelecionado) === 'outro' ? 'checked' : '' }}>
-                        <span class="card-objeto-titulo">Outro</span>
-                    </div>
-                    <span class="badge-outro">Personalizado</span>
-                </div>
-                @if(in_array('outro', $objetosComRascunho ?? [], true))
-                    <span class="objeto-rascunho-badge" role="status">Este objeto tem um rascunho</span>
-                @endif
-                <div class="card-objeto-obs">
-                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                    <span class="card-objeto-obs-texto">Especifique uma finalidade ou modalidade ambiental não listada acima.</span>
-                </div>
-                </label>
-            </div>
-        </div>
-
-        <div class="campo" style="margin-top: 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 14px 16px;">
-            <label style="font-weight: 600; color: #334155; font-size: 0.9rem; margin-bottom: 4px; display: block;">
-                Outro / Detalhe adicional (opcional):
-            </label>
-            <small id="objeto-outro-ajuda" class="ajuda-campo-bloqueado"
-                 style="display: {{ old('objetoDoRequerimento') === 'outro' ? 'none' : 'flex' }}; align-items: center; gap: 6px; margin-bottom: 8px; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
-                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                <span>Selecione a opção <strong>Outro</strong> acima para liberar este campo.</span>
-            </small>
-            <input type="text"
-                   name="objeto_outro"
-                   value="{{ old('objeto_outro') }}"
-                   @disabled(old('objetoDoRequerimento') !== 'outro')
-                   style="width: 100%; border-radius: 8px; padding: 10px 12px; font-size: 0.9rem; border: 1.5px solid; transition: all 0.2s ease; background-color: {{ old('objetoDoRequerimento') === 'outro' ? '#fff' : '#f1f5f9' }}; border-color: {{ old('objetoDoRequerimento') === 'outro' ? '#0284c7' : '#cbd5e1' }}; color: {{ old('objetoDoRequerimento') === 'outro' ? '#111827' : '#94a3b8' }}; cursor: {{ old('objetoDoRequerimento') === 'outro' ? 'text' : 'not-allowed' }};"
-                   placeholder="Especifique a modalidade caso necessário..."
-                   oninput="const el = document.getElementById('nome-assunto-outro-preview'); if(el) el.textContent = 'Outro: ' + this.value;">
         </div>
     </fieldset>
 

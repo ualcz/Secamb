@@ -31,7 +31,7 @@ class EnvioEmailController extends Controller
             'objeto'               => 'nullable|string|max:255',
             'objetoDoRequerimento' => 'nullable|string|max:255',
             'objeto_outro'         => 'nullable|string|max:255',
-            'motivo'               => 'nullable|string|max:3000',
+            'motivo'               => 'required|string|max:3000',
             'mensagem'             => 'nullable|string|max:3000',
             'celular'              => 'nullable|string|max:30',
             'rua'                  => 'nullable|string|max:255',

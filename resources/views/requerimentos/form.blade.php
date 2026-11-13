@@ -62,6 +62,8 @@
             data-draft-files-url="{{ route('requerimentos.rascunhos.arquivos.salvar', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
             data-form-url="{{ route('requerimentos.cidadao.novo', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
             data-restore-draft="true"
+            data-step-on-error="{{ $errors->has('motivo') ? 2 : ($errors->any() ? 3 : '') }}"
+            data-motivo-invalido="{{ $errors->has('motivo') ? 'true' : 'false' }}"
             data-clear-draft="{{ session()->has('sucesso') ? 'true' : 'false' }}">
         @csrf
         <input type="hidden" name="setor_id" value="{{ $modeloAtivo['id'] ?? '' }}">
@@ -80,12 +82,5 @@
     <script src="{{ asset('js/requerimento-rascunho.js') }}?v={{ filemtime(public_path('js/requerimento-rascunho.js')) }}"></script>
     <script src="{{ asset('js/form.js') }}?v={{ filemtime(public_path('js/form.js')) }}"></script>
 
-    @if ($errors->any())
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                mudarPasso(3);
-            });
-        </script>
-    @endif
 </div>
 @endsection

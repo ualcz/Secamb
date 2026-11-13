@@ -1,9 +1,9 @@
 <!-- Etapa 2: Descrição da Solicitação -->
 <div class="form-step" data-step="2" style="display: none;">
     <fieldset>
-        <legend>Descrição da Solicitação / Observações (Opcional)</legend>
+        <legend>Descrição da Solicitação / Observações <span aria-hidden="true">*</span></legend>
         <div class="campo">
-            <textarea name="motivo" rows="5" placeholder="Ex: Solicito Licença Unificada para atividade de extração mineral conforme projetos em anexo...">{{ old('motivo') }}</textarea>
+            <textarea name="motivo" rows="5" required placeholder="Ex: Solicito Licença Unificada para atividade de extração mineral conforme projetos em anexo...">{{ old('motivo') }}</textarea>
         </div>
     </fieldset>
 

@@ -51,12 +51,23 @@ test('a citizen can save and resume an online draft with its files', function ()
         ->assertOk()
         ->assertSee(route('requerimentos.rascunhos.show', $setor->id), false)
         ->assertSee('data-step="2"', false)
-        ->assertSee('name="motivo"', false)
+        ->assertSee('<textarea name="motivo" rows="5" required', false)
         ->assertSee('data-step="3"', false)
+        ->assertDontSee('value="outro"', false)
+        ->assertDontSee('name="objeto_outro"', false)
         ->assertSee('Finalizar')
         ->assertDontSee('name="email"', false)
         ->assertDontSee('name="celular"', false)
         ->assertDontSee('name="rua"', false);
+
+    $this->actingAs($cidadao)
+        ->from(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
+        ->post(route('cidadao.enviar-email'), [
+            'setor_id' => $setor->id,
+            'objetoDoRequerimento' => 'Licença de Operação',
+        ])
+        ->assertRedirect(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
+        ->assertSessionHasErrors('motivo');
 
     $this->actingAs($cidadao)
         ->getJson(route('requerimentos.rascunhos.show', [

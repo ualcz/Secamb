@@ -84,8 +84,7 @@
     function coletarCampos(form, objetoOverride = null) {
         const campos = {};
         Array.from(form.elements).forEach(campo => {
-            const salvarDetalheOutroDesabilitado = campo.name === 'objeto_outro' && objetoOverride === 'outro';
-            if (!campo.name || campo.name === '_token' || (campo.disabled && !salvarDetalheOutroDesabilitado) ||
+            if (!campo.name || campo.name === '_token' || campo.disabled ||
                 ['file', 'submit', 'button', 'reset', 'password'].includes(campo.type)) return;
 
             if (campo.type === 'radio') {
@@ -111,7 +110,7 @@
     }
 
     function temConteudoPreenchido(form, dados) {
-        const nomesComConteudo = ['empreendimento_id', 'objeto_outro', 'motivo'];
+        const nomesComConteudo = ['empreendimento_id', 'motivo'];
         const camposComConteudo = nomesComConteudo.some(nome => String(dados.campos[nome] || '').trim() !== '');
         const temArquivo = Array.from(form.querySelectorAll('input[type="file"]'))
             .some(input => input.files && input.files.length > 0);
@@ -140,7 +139,6 @@
         if (form.dataset.draftActive !== 'true') return Promise.resolve(false);
 
         return enfileirar(form, async () => {
-            exibirStatus(form, 'Salvando rascunho online...');
             try {
                 await requisicaoJson(
                     form,
@@ -201,7 +199,7 @@
 
                 form.dataset.draftObject = objeto;
                 marcarObjetoComRascunho(form, objeto);
-                exibirStatus(form, 'Anexos atualizados.');
+                exibirStatus(form, '');
                 return true;
             } catch (error) {
                 console.error('Falha ao salvar os anexos online:', error);
