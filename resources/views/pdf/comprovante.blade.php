@@ -8,50 +8,57 @@
     </style>
 </head>
 <body>
-    {{-- ====== CABEÃ‡ALHO INSTITUCIONAL ====== --}}
+    {{-- MARCA D'ÁGUA DA PREFEITURA --}}
+    <div class="marca-dagua">
+        <img src="{{ public_path('img/logo_prefeitura_seabra.png') }}">
+    </div>
+    {{-- CONTEÚDO DO DOCUMENTO --}}
+    <div class="conteudo-pdf">
+    {{-- ====== CABEÇALHO ====== --}}
     <table style="width: 100%;" class="cabecalho">
         <tr>
             <td>
-                <img src="{{ public_path('img/logoVertical.png') }}" alt="Logo IFBA" style="width: 60px;">
+                <img src="{{ public_path('img/logo_prefeitura_seabra.png') }}" alt="Logo da Prefeitura de Seabra" style="width: 60px;">
             </td>
             <td>
-                <strong>Instituto Federal de EducaÃ§Ã£o, CiÃªncia e Tecnologia da Bahia</strong><br>
-                Campus Seabra | CÃ³digo INEP: 29448743<br>
-                Estrada Vicinal para Tenda, Barro Vermelho, CEP 46.900-000, Seabra - BA
+                <strong>Prefeitura Municipal de Seabra</strong><br>
+                
+                Rua da Consolação, n° 113, Bairro da Boa Vista, CEP: 46.900-335 - Seabra-BA
             </td>
         </tr>
     </table>
 
     <p class="titulo"><strong>COMPROVANTE DE PROTOCOLO DE REQUERIMENTO - {{ date('Y') }}</strong></p>
     <div class="protocolo">
-        <p><strong>Data da SolicitaÃ§Ã£o:</strong> 
+        <p><strong>Data da Solicitação:</strong> 
             {{ $dataSolicitacao ? $dataSolicitacao->format('d/m/Y H:i') : date('d/m/Y') }}
         </p>
-        <p><strong>NÃºmero do protocolo:</strong> {{ $numeroProtocolo }}</p>
+        <p><strong>Número do protocolo:</strong> {{ date('Y') }}/{{ $numeroProtocolo }}</p>
     <div>
     <hr>
 
-    <h4>INFORMAÃ‡Ã•ES ADICIONAIS</h4>
+    <h4>INFORMAÇÕES ADICIONAIS</h4>
     <table border="1" cellpadding="5" cellspacing="0">
         <tr>
             <th><strong>Nome do requerente:</strong></th>
             <td>{{ $nomeRequerente->nome }}</td>
         </tr>
         <tr>
-            <th><strong>NÃºmero da turma:</strong></th>
-            <td>{{ $nomeRequerente->tipo_processo_formatado ?? 'NÃ£o informado' }}</td>
+            <th><strong>Descrição:</strong></th>
+            <td>{{ $descricao ?? 'Não informado' }}</td>
         </tr>
         <tr>
             <th><strong>Objeto do requerimento:</strong></th>
-            <td>{{ $objeto ?? 'NÃ£o informado' }}</td>
+            <td>{{ $objeto ?? 'Não informado' }}</td>
         </tr>
         <tr>
             <th><strong>Setor:</strong></th>
-            <td>{{ $setor ?? 'NÃ£o informado' }}</td>
+            <td>{{ $setor ?? 'Não informado' }}</td>
         </tr>
     </table>
     <hr>
-    <p><small>Documento gerado automaticamente pelo SDP - IFBA Campus Seabra | {{ date('d/m/Y H:i:s') }}</small></p>
+    <p><small>Documento gerado automaticamente pelo SECAMB - Prefeitura Municipal de Seabra | {{ date('d/m/Y H:i:s') }}</small></p>
+</div>
 </body>
 </html>
 

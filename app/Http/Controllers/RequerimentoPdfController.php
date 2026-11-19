@@ -16,19 +16,21 @@ class RequerimentoPdfController extends Controller
      * Transforma a view Blade em um documento PDF (instância do DomPDF).
      */
     public static function criarPdf(
-        Usuario $aluno,
+        Usuario $nomeRequerente,
         string $setorNome,
         ?string $setorChave = null,
         ?string $objeto = null,
+        ?string $descricao = null,
         ?string $mensagem = null,
         ?string $numeroProtocolo = null
     ): DomPDF {
         return Pdf::loadView('pdf.requerimento', [
-            'aluno' => $aluno,
+            'nomeRequerente' => $nomeRequerente,
             'requerimento' => null,
             'setorNome' => $setorNome,
             'setorChave' => $setorChave,
             'objeto' => $objeto,
+            'descricao' => $descricao,
             'mensagem' => $mensagem,
             'numeroProtocolo' => $numeroProtocolo,
         ])->setPaper('a4', 'portrait');
@@ -36,16 +38,16 @@ class RequerimentoPdfController extends Controller
 
     public static function criarComprovante(
         Usuario $nomeRequerente,
-        string $numeroTurma,
         string $setor,
         ?string $objeto = null,
+        ?string $descricao = null,
         string $numeroProtocolo,
         ?\Carbon\Carbon $dataSolicitacao = null,
     ): DomPDF {
         return Pdf::loadView('pdf.comprovante', [
             'nomeRequerente' => $nomeRequerente,
-            'numeroTurma' => $numeroTurma,
             'objeto' => $objeto,
+            'descricao' => $nomeRequerente->requerimentos()->latest()->first()?->descricao,
             'setor' => $setor,
             'numeroProtocolo' => $numeroProtocolo,
             'dataSolicitacao'=> $dataSolicitacao,
@@ -70,10 +72,11 @@ class RequerimentoPdfController extends Controller
         $dados = $this->resolverDados($request);
 
         $pdf = self::criarPdf(
-            aluno: $dados['aluno'],
+            nomeRequerente: $dados['nomeRequerente'],
             setorNome: $dados['setorNome'],
             setorChave: $dados['setorChave'],
             objeto: $dados['objeto'],
+            descricao: $dados['descricao'],
             mensagem: $dados['mensagem'],
             numeroProtocolo: $dados['numeroProtocolo']
         );
@@ -96,8 +99,8 @@ class RequerimentoPdfController extends Controller
 
         $pdf = self::criarComprovante(
             nomeRequerente: $requerimento->usuario,
-            numeroTurma: null,
             objeto: $tipoProcesso,
+            descricao: $requerimento->descricao,
             setor: $requerimento->setor?->setor_sigla ?? $requerimento->setor_sigla,
             dataSolicitacao: $requerimento->created_at,
             numeroProtocolo: $requerimento->id
@@ -145,7 +148,8 @@ class RequerimentoPdfController extends Controller
 
         return [
             'aluno' => $aluno,
-            'requerimento' => null,
+            'requerimento' => $requerimento,
+            'descricao' => $requerimento?->descricao ?? $request->query('descricao'),
             'setorNome' => $setorNome,
             'setorChave' => (string) ($modeloAtivo['id'] ?? $setorParam),
             'objeto' => $objeto,

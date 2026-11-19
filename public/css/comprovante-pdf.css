@@ -7,10 +7,41 @@
     box-sizing: border-box;
 }
 
+@page {
+    size: A4;
+    margin: 20mm;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    position: relative;
+    background: #ffffff;
+}
+
+.marca-dagua {
+    position: fixed;
+    top: -20mm;
+    left: -20mm;
+    width: 210mm;
+    height: 297mm;
+    z-index: 0;
+}
+
+.marca-dagua img {
+    width: 210mm;
+    height: 270mm;
+    opacity: 0.09;
+}
+
+.conteudo-pdf {
+    position: relative;
+    z-index: 1;
+}
+
 body {
     margin: 0;
     color: #111;
-    font-family: 'Times New Roman', sans-serif;
+    font-family: "Times New Roman", sans-serif;
     font-size: 10pt;
 }
 
@@ -19,19 +50,20 @@ table {
     border-collapse: collapse;
 }
 
-h4{
+h4 {
     font-size: 12pt;
 }
 
-.cabecalho{
+.cabecalho {
     margin-bottom: 20px;
 }
 
-.titulo{
+.titulo {
     text-align: center;
     font-size: 14pt;
 }
 
-.protocolo, table td{
+.protocolo,
+table td {
     font-size: 12pt;
 }
