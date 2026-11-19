@@ -79,7 +79,9 @@
     background: #ecfdf5;
     border-color: #10b981;
     color: #064e3b;
-    box-shadow: 0 2px 6px -1px rgba(16, 185, 129, 0.25), 0 1px 3px rgba(16, 185, 129, 0.1);
+    box-shadow:
+        0 2px 6px -1px rgba(16, 185, 129, 0.25),
+        0 1px 3px rgba(16, 185, 129, 0.1);
 }
 
 .req-setor-dot {
@@ -381,7 +383,9 @@
     color: #0c4a6e;
 }
 
-.card-objeto-requerimento:has(input[type="radio"]:checked) .card-objeto-obs svg {
+.card-objeto-requerimento:has(input[type="radio"]:checked)
+    .card-objeto-obs
+    svg {
     color: #0369a1;
 }
 
@@ -395,7 +399,10 @@
     cursor: pointer;
     width: 100%;
     font-weight: bold;
-    transition: background 0.2s, opacity 0.25s, transform 0.15s;
+    transition:
+        background 0.2s,
+        opacity 0.25s,
+        transform 0.15s;
 }
 
 .btn-enviar:hover:not(:disabled) {
@@ -632,7 +639,9 @@
     font-weight: 600;
     text-decoration: none;
     width: fit-content;
-    transition: background 0.15s, border-color 0.15s;
+    transition:
+        background 0.15s,
+        border-color 0.15s;
 }
 
 .doc-link-modelo:hover {
@@ -784,11 +793,7 @@
     font-weight: normal;
 }
 
-
-
-
 /* Responsividade */
-
 
 @media (max-width: 768px) {
     .req-header {
@@ -913,7 +918,6 @@
     .custom-file-upload {
         min-height: 72px;
     }
-
 }
 
 @media (max-width: 420px) {
@@ -932,5 +936,251 @@
     .objeto-rascunho-badge {
         font-size: 0.66rem;
         padding: 4px 7px;
+    }
+}
+
+/* BOTÃO VER DOCUMENTAÇÃO */
+.btn-ver-documentacao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin: 10px 0 0 20px;
+    padding: 8px 13px;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-color: #166534;
+}
+
+.btn-ver-documentacao:hover {
+    background: #e1f8e8;
+    border-color: #166534;
+}
+
+/* FUNDO DA MODAL */
+.modal-documentacao {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(3px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-documentacao.ativa {
+    display: flex;
+}
+
+/* CONTEÚDO */
+.modal-documentacao-conteudo {
+    width: 100%;
+    max-width: 650px;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    animation: aparecerModalDoc 0.2s ease;
+}
+
+@keyframes aparecerModalDoc {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* CABEÇALHO */
+.modal-documentacao-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 22px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-documentacao-subtitulo {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: #15803d;
+}
+
+.modal-documentacao-header h2 {
+    margin: 5px 0;
+    font-size: 21px;
+    color: #1f2937;
+}
+
+.modal-documentacao-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.modal-documentacao-fechar {
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-documentacao-fechar:hover {
+    color: red;
+}
+
+/* CORPO */
+.modal-documentacao-body {
+    padding: 22px 24px;
+}
+
+.modal-documentacao-aviso {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid #bfdbfe;
+    border-radius: 7px;
+    background: #eff6ff;
+    color: #1e40af;
+    font-size: 12px;
+}
+
+/* LISTA DE DOCUMENTOS */
+.lista-documentos-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.item-documento-modal {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.item-documento-modal h4 {
+    margin: 0 0 5px;
+    color: #1f2937;
+    font-size: 14px;
+}
+
+.item-documento-modal p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.documento-status-modal {
+    flex-shrink: 0;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.documento-status-modal.obrigatorio {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.documento-status-modal.opcional {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.documento-modelo-modal {
+    display: inline-block;
+    margin-top: 8px;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.documento-modelo-modal:hover {
+    text-decoration: underline;
+}
+
+/* ESTADO VAZIO */
+.modal-doc-vazio {
+    padding: 25px;
+    text-align: center;
+    border: 1px dashed #86efac;
+    border-radius: 8px;
+    background: #f0fdf4;
+    color: #15803d;
+    font-size: 13px;
+}
+
+/* RODAPÉ */
+.modal-documentacao-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn-modal-documentacao-fechar {
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    background: #15803d;
+    color: #fff;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.btn-modal-documentacao-fechar:hover {
+    background: #166534;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 600px) {
+    .modal-documentacao {
+        padding: 10px;
+    }
+
+    .modal-documentacao-conteudo {
+        max-height: 90vh;
+    }
+
+    .modal-documentacao-header,
+    .modal-documentacao-body {
+        padding: 17px;
+    }
+
+    .modal-documentacao-header h2 {
+        font-size: 18px;
+    }
+
+    .item-documento-modal {
+        flex-direction: column;
+    }
+
+    .btn-ver-documentacao {
+        margin-left: 0;
     }
 }
