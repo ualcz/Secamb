@@ -70,7 +70,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Licença Prévia (LP)',
                 'observacao' => 'Exige estudo de viabilidade locacional e certidão de uso do solo emitida pelo município.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 1,
                 'documentos' => [
                     ['nome' => 'Requerimento Padrão Assinado', 'obrigatorio' => true],
@@ -82,7 +82,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Licença de Instalação (LI)',
                 'observacao' => 'Apresentar comprovação do cumprimento de condicionantes da Licença Prévia.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 2,
                 'documentos' => [
                     ['nome' => 'Projeto Executivo das Obras com ART/RRT', 'obrigatorio' => true],
@@ -93,7 +93,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Licença de Operação (LO)',
                 'observacao' => 'Apresentar comprovação de que as medidas de controle e sistemas de tratamento foram instalados.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 3,
                 'documentos' => [
                     ['nome' => 'Relatório de Cumprimento das Condicionantes da LI', 'obrigatorio' => true],
@@ -104,7 +104,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Licença de Regularização Ambiental (LRA)',
                 'observacao' => 'Para atividades já em funcionamento sem licença ambiental prévia.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 4,
                 'documentos' => [
                     ['nome' => 'Relatório Ambiental de Conformidade (RAC)', 'obrigatorio' => true],
@@ -115,7 +115,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Autorização Ambiental / Supressão Vegetal',
                 'observacao' => 'Necessária para intervenções pontuais, podas ou supressão em área urbana e rural.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 5,
                 'documentos' => [
                     ['nome' => 'Inventário Florestal / Laudo de Vistoria', 'obrigatorio' => true],
@@ -126,7 +126,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Dispensa de Licenciamento Ambiental (DLA)',
                 'observacao' => 'Para atividades com impacto local insignificante ou não passíveis de licenciamento formal.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 6,
                 'documentos' => [
                     ['nome' => 'Formulário de Caracterização do Empreendimento', 'obrigatorio' => true],
@@ -136,7 +136,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Licença Unificada (LU) - Mineração',
                 'observacao' => 'Tipologia B4.1 - Extração de Minérios (Argilas, Caulinite, Diatomita, etc.). Conforme Resolução CONAMA 237/97, prazo de análise de 6 meses (ou 12 meses havendo EIA/RIMA). Apresentar estudos técnicos acompanhados de ART.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 7,
                 'documentos' => [
                     ['nome' => '1. Requerimento Ambiental (modelo da SEMMA)', 'obrigatorio' => true],
@@ -168,7 +168,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Renovação de Licença de Operação (RLO)',
                 'observacao' => 'Deve ser requerida com antecedência mínima de 120 dias da expiração do prazo de validade.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 8,
                 'documentos' => [
                     ['nome' => 'Cópia da Licença de Operação Anterior', 'obrigatorio' => true],
@@ -179,7 +179,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Licença de Alteração (LA)',
                 'observacao' => 'Para modificação de processos, ampliação de área ou alteração de capacidade produtiva.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 9,
                 'documentos' => [
                     ['nome' => 'Memorial Descritivo das Alterações Propostas com ART', 'obrigatorio' => true],
@@ -190,7 +190,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Revisão de Condicionantes (RC)',
                 'observacao' => 'Solicitação formal fundamentada para revisão, exclusão ou prorrogação de prazo de condicionante.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 10,
                 'documentos' => [
                     ['nome' => 'Justificativa Técnica Fundamentada com ART', 'obrigatorio' => true],
@@ -200,7 +200,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Transferência de Licença Ambiental (TLA)',
                 'observacao' => 'Transferência de titularidade mantendo-se inalteradas as atividades e condições do licenciamento.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 11,
                 'documentos' => [
                     ['nome' => 'Instrumento Jurídico de Transferência / Cessão', 'obrigatorio' => true],
@@ -211,7 +211,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Prorrogação de Prazo de Validade (PPV)',
                 'observacao' => 'Solicitação de prorrogação de prazo para início ou conclusão de obras/instalações.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 12,
                 'documentos' => [
                     ['nome' => 'Justificativa Técnica e Cronograma Atualizado com ART', 'obrigatorio' => true],
@@ -253,7 +253,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Vistoria Técnica de Campo / In Loco',
                 'observacao' => 'Realização de inspeção técnica presencial para verificação de impacto, limites do imóvel e conformidade ambiental.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 1,
                 'documentos' => [
                     ['nome' => 'Relatório / Laudo Fotográfico de Vistoria', 'obrigatorio' => true],
@@ -263,7 +263,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Parecer Técnico de Fiscalização',
                 'observacao' => 'Emissão de parecer técnico fundamentado para subsidiar a decisão da equipe de licenciamento.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 2,
                 'documentos' => [
                     ['nome' => 'Parecer Técnico de Fiscalização Assinado', 'obrigatorio' => true],
@@ -272,7 +272,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Verificação de Cumprimento de Condicionantes',
                 'observacao' => 'Inspeção e checagem de cumprimento das medidas mitigadoras e condicionantes de licenças anteriores.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 3,
                 'documentos' => [
                     ['nome' => 'Checklist de Verificação de Condicionantes', 'obrigatorio' => true],
@@ -281,7 +281,7 @@ class SecambSeeder extends Seeder
             [
                 'descricao'  => 'Auto de Constatação / Notificação Ambiental',
                 'observacao' => 'Registro de não conformidades ou necessidade de adequação técnica pelo empreendedor.',
-                'link_norma' => 'https://seabra.ba.gov.br/legislacao-ambiental',
+                'link_norma' => 'https://seabra.ba.gov.br/licenciamento-ambiental',
                 'ordem'      => 4,
                 'documentos' => [
                     ['nome' => 'Auto de Constatação / Notificação', 'obrigatorio' => true],
