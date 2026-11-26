@@ -106,17 +106,8 @@
 
                     <div class="emp-form-group emp-col-4">
                         <label for="cep">CEP</label>
-                        <input type="text" name="cep" id="cep" class="emp-input" value="{{ old('cep', $empreendimento->cep) }}">
-                    </div>
-
-                    <div class="emp-form-group emp-col-4">
-                        <label for="cidade">Município</label>
-                        <input type="text" name="cidade" id="cidade" class="emp-input" value="{{ old('cidade', $empreendimento->cidade ?? 'Seabra') }}">
-                    </div>
-
-                    <div class="emp-form-group emp-col-4">
-                        <label for="estado">UF</label>
-                        <input type="text" name="estado" id="estado" class="emp-input" value="{{ old('estado', $empreendimento->estado ?? 'BA') }}" maxlength="2" style="text-transform: uppercase;">
+                        <input type="text" name="cep" id="cep" class="emp-input" value="{{ old('cep', $empreendimento->cep) }}" placeholder="46900-000" maxlength="9" inputmode="numeric">
+                        <small id="cepFeedback" aria-live="polite"></small>
                     </div>
 
                     <div class="emp-form-group emp-col-6">
@@ -326,4 +317,5 @@
         }
     });
 </script>
+<script src="{{ asset('js/endereco.js') }}"></script>
 @endsection

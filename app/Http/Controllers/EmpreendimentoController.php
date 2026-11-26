@@ -214,7 +214,10 @@ class EmpreendimentoController extends Controller
             'contato_email'      => 'nullable|email|max:255',
         ]);
 
-        $empreendimento->update($validated);
+        $empreendimento->update(array_merge($validated, [
+            'cidade' => 'Seabra',
+            'estado' => 'BA',
+        ]));
 
         return redirect()
             ->route('empreendimentos.index')
