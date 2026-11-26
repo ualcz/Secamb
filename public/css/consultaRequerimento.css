@@ -330,3 +330,134 @@
     text-align: center;
 }
 
+.consulta-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.consulta-heading h1 {
+    margin: 2px 0 4px;
+    color: #172033;
+    font-size: clamp(1.45rem, 2vw, 2rem);
+    line-height: 1.15;
+}
+
+.consulta-heading p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.consulta-eyebrow {
+    color: #1d4ed8 !important;
+    font-size: 0.75rem !important;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.consulta-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.consulta-metrics article {
+    display: flex;
+    min-height: 108px;
+    flex-direction: column;
+    justify-content: center;
+    padding: 16px 18px;
+    border: 1px solid #e4e9f1;
+    border-radius: 9px;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(28, 49, 88, 0.055);
+}
+
+.consulta-metrics article.metric-alert {
+    border-left: 4px solid #f59e0b;
+}
+
+.consulta-metrics span {
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.consulta-metrics strong {
+    margin: 4px 0 2px;
+    color: #172033;
+    font-size: 1.75rem;
+    line-height: 1;
+}
+
+.consulta-metrics small {
+    color: #64748b;
+    font-size: 0.74rem;
+}
+
+.consulta-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.consulta-section-heading .dash-section-title {
+    margin: 0;
+}
+
+.consulta-section-heading > span {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.dash-section {
+    overflow: hidden;
+}
+
+.dash-table td strong {
+    color: #1e293b;
+}
+
+.dash-table tbody tr {
+    transition: background-color 0.12s ease;
+}
+
+@media (max-width: 1100px) {
+    .consulta-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .consulta-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions {
+        padding-top: 0;
+    }
+
+    .dash-section {
+        padding: 16px 12px;
+    }
+}
+
