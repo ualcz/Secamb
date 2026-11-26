@@ -5,6 +5,9 @@
     $statusSelecionado = in_array($statusAntigo, $statusPossiveis, true)
         ? $statusAntigo
         : ($statusPossiveis[0] ?? '');
+    $statusAtual = $requerimento->status ?: \App\Models\Requerimento::STATUS_PROTOCOLADO;
+    $podeAnexarDocumento = !$processoFinalizado
+        && $statusAtual !== \App\Models\Requerimento::STATUS_PROTOCOLADO;
     $solicitaComplementacao = $statusSelecionado === \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO;
     $statusExigeJustificativa = in_array($statusSelecionado, [
         \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
@@ -15,7 +18,7 @@
         \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO => 'Orientação para complementação',
         \App\Models\Requerimento::STATUS_INDEFERIDO => 'Justificativa do indeferimento',
         \App\Models\Requerimento::STATUS_ENCERRADO => 'Motivo do encerramento',
-        default => 'Mensagem para o histórico (opcional)',
+        default => 'Observação (opcional)',
     };
 @endphp
 
@@ -49,6 +52,19 @@
             </button>
         @endif
 
+        @if($podeAnexarDocumento)
+            <button type="button" class="acao-botao acao-botao-atender" data-modal-target="modal-anexar-documento" aria-haspopup="dialog" aria-controls="modal-anexar-documento">
+                <span class="acao-botao-icone" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.82-2.83l8.48-8.48"/></svg>
+                </span>
+                <span class="acao-botao-texto">
+                    <strong>Anexar documento</strong>
+                    <span>Registrar juntada sem alterar o status</span>
+                </span>
+                <span class="acao-botao-seta" aria-hidden="true">→</span>
+            </button>
+        @endif
+
         @if(!$processoFinalizado)
             <button type="button" class="acao-botao acao-botao-encaminhar" data-modal-target="modal-encaminhar" aria-haspopup="dialog" aria-controls="modal-encaminhar">
                 <span class="acao-botao-icone" aria-hidden="true">
@@ -72,6 +88,9 @@
     @endif
     @if($statusPossiveis)
         @include('setor.requerimentos.partials.modals.atender')
+    @endif
+    @if($podeAnexarDocumento)
+        @include('setor.requerimentos.partials.modals.anexar-documento')
     @endif
     @if(!$processoFinalizado)
         @include('setor.requerimentos.partials.modals.encaminhar')
