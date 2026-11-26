@@ -213,7 +213,7 @@ test('a sector status update saves the attachment in history and identifies its 
     $documento = $historico->documentos()->firstOrFail();
 
     expect($historico->setor_id)->toBe($setor->id)
-        ->and($historico->observacao)->toBe('Status alterado para Análise concluída pelo setor.')
+        ->and($historico->observacao)->toBeNull()
         ->and($documento->historico_requerimento_id)->toBe($historico->id);
 
     Storage::disk('local')->assertExists($documento->caminho);
@@ -226,9 +226,265 @@ test('a sector status update saves the attachment in history and identifies its 
         ->assertSee('data-modal-target="modal-encaminhar"', false)
         ->assertSee('id="acao-loading-overlay"', false)
         ->assertSee('Registrando atendimento...')
-        ->assertSee('Documento anexado pelo setor')
-        ->assertSee('SEMA')
+        ->assertSee('Documentos (1)')
+        ->assertDontSee('Status alterado para Análise concluída pelo setor.')
         ->assertSee('parecer.pdf');
+});
+
+test('a sector can attach documents without changing status or emailing the citizen', function () {
+    Mail::fake();
+    Storage::fake('local');
+
+    $cidadao = Usuario::create([
+        'nome' => 'Maria de Souza',
+        'email' => 'maria@example.com',
+        'password' => Hash::make('password'),
+        'role' => 'cidadao',
+        'ativo' => true,
+    ]);
+    $servidor = Usuario::create([
+        'nome' => 'Servidor Ambiental',
+        'email' => 'servidor@example.com',
+        'password' => Hash::make('password'),
+        'role' => 'servidor',
+        'ativo' => true,
+    ]);
+    $setor = Setor::create([
+        'setor_sigla' => 'SEMA',
+        'setor_nome' => 'Secretaria de Meio Ambiente',
+        'ativo' => true,
+        'is_interno' => false,
+    ]);
+    $servidor->setoresSobResponsabilidade()->attach($setor->id);
+    $requerimento = Requerimento::create([
+        'usuario_id' => $cidadao->id,
+        'setor_id' => $setor->id,
+        'status' => Requerimento::STATUS_EM_ANALISE_TECNICA,
+        'objetoDoRequerimento' => 'Licença de Instalação',
+    ]);
+    $statusOriginal = $requerimento->status;
+    $historicoStatusAtual = $requerimento->historicos()->firstOrFail();
+    $historicoLegado = \App\Models\HistoricoRequerimento::create([
+        'requerimento_id' => $requerimento->id,
+        'user_id' => $servidor->id,
+        'setor_id' => $setor->id,
+        'status' => $statusOriginal,
+        'observacao' => 'Documento anexado pelo setor.',
+    ]);
+    $historicoLegado->forceFill([
+        'created_at' => now()->addSecond(),
+        'updated_at' => now()->addSecond(),
+    ])->save();
+    app(\App\Services\DocumentoRequerimentoService::class)->salvarArquivos(
+        requerimento: $requerimento,
+        historico: $historicoLegado,
+        arquivos: [UploadedFile::fake()->createWithContent('legado.pdf', 'Documento legado')],
+        usuario: $servidor,
+        titulo: 'Documento legado'
+    );
+    $historicosAntes = $requerimento->historicos()->count();
+
+    $this->actingAs($servidor)
+        ->post(route('setor.requerimentos.anexarDocumento', [$setor->id, $requerimento->id]), [
+            'titulo_documento' => 'Parecer técnico',
+            'observacao' => 'Parecer complementar.',
+            'arquivos' => [UploadedFile::fake()->createWithContent('parecer.pdf', 'Parecer técnico')],
+        ])
+        ->assertRedirect(route('setor.requerimentos.show', [$setor->id, $requerimento->id]))
+        ->assertSessionHasNoErrors();
+
+    $this->post(route('setor.requerimentos.anexarDocumento', [$setor->id, $requerimento->id]), [
+        'titulo_documento' => 'Anexo complementar',
+        'arquivos' => [UploadedFile::fake()->createWithContent('anexo.pdf', 'Anexo')],
+    ])->assertRedirect(route('setor.requerimentos.show', [$setor->id, $requerimento->id]))
+        ->assertSessionHasNoErrors();
+
+    $requerimento->refresh();
+    $historico = $historicoStatusAtual->fresh();
+    $eventosDocumento = $requerimento->historicos()
+        ->where('tipo_evento', \App\Models\HistoricoRequerimento::TIPO_EVENTO_DOCUMENTO_ANEXADO)
+        ->orderBy('id')
+        ->get();
+    $documentos = $eventosDocumento->flatMap(fn ($evento) => $evento->documentos()->orderBy('id')->get());
+
+    expect($requerimento->status)->toBe($statusOriginal)
+        ->and($requerimento->historicos()->count())->toBe($historicosAntes + 2)
+        ->and($historico->id)->toBe($historicoStatusAtual->id)
+        ->and($historico->status)->toBe($statusOriginal)
+        ->and($historico->setor_id)->toBeNull()
+        ->and($historico->observacao)->toBeNull()
+        ->and($eventosDocumento)->toHaveCount(2)
+        ->and($eventosDocumento->every(fn ($evento) => $evento->status === $statusOriginal && $evento->setor_id === $setor->id))->toBeTrue()
+        ->and($eventosDocumento->first()->observacao)->toBe('Parecer complementar.')
+        ->and($documentos)->toHaveCount(2)
+        ->and($documentos->pluck('nome_documento')->all())->toBe(['Parecer técnico', 'Anexo complementar']);
+
+    foreach ($documentos as $documento) {
+        Storage::disk('local')->assertExists($documento->caminho);
+    }
+    Mail::assertNothingSent();
+
+    $resposta = $this->get(route('setor.requerimentos.show', [$setor->id, $requerimento->id]))
+        ->assertOk()
+        ->assertSee('Anexar documento')
+        ->assertSee('Parecer técnico')
+        ->assertSee('Anexo complementar')
+        ->assertSee('Documento legado')
+        ->assertSee('Parecer complementar')
+        ->assertSee('Documentos anexados')
+        ->assertDontSee('Documento anexado pelo setor')
+        ->assertSee('Documento juntado ao processo. O status foi mantido.');
+
+    expect(substr_count($resposta->getContent(), 'class="badge-status"'))->toBe(1)
+        ->and(substr_count($resposta->getContent(), 'class="timeline-anexo-item"'))->toBe(3);
+});
+
+test('protocol documents use the same compact timeline group as sector attachments', function () {
+    Storage::fake('local');
+
+    $cidadao = Usuario::create([
+        'nome' => 'Maria de Souza',
+        'email' => 'maria@example.com',
+        'password' => Hash::make('password'),
+        'role' => 'cidadao',
+        'ativo' => true,
+    ]);
+    $servidor = Usuario::create([
+        'nome' => 'Servidor Ambiental',
+        'email' => 'servidor@example.com',
+        'password' => Hash::make('password'),
+        'role' => 'servidor',
+        'ativo' => true,
+    ]);
+    $setor = Setor::create([
+        'setor_sigla' => 'SEMA',
+        'setor_nome' => 'Secretaria de Meio Ambiente',
+        'ativo' => true,
+        'is_interno' => false,
+    ]);
+    $servidor->setoresSobResponsabilidade()->attach($setor->id);
+    $requerimento = Requerimento::create([
+        'usuario_id' => $cidadao->id,
+        'setor_id' => $setor->id,
+        'objetoDoRequerimento' => 'Licença de Instalação',
+    ]);
+    $historico = $requerimento->historicos()->firstOrFail();
+    $caminhoDocumento = 'documentos_requerimentos/' . $requerimento->id . '/comprovante.pdf';
+    Storage::disk('local')->put($caminhoDocumento, 'documento de teste');
+    \App\Models\DocumentoRequerimento::create([
+        'requerimento_id' => $requerimento->id,
+        'historico_requerimento_id' => $historico->id,
+        'user_id' => $cidadao->id,
+        'nome_documento' => 'Comprovante de endereço',
+        'nome_original' => 'comprovante.pdf',
+        'caminho' => $caminhoDocumento,
+        'extensao' => 'pdf',
+        'mime_type' => 'application/pdf',
+        'tamanho' => 100,
+    ]);
+
+    $resposta = $this->actingAs($servidor)
+        ->get(route('setor.requerimentos.show', [$setor->id, $requerimento->id]))
+        ->assertOk()
+        ->assertSee('Documentos anexados')
+        ->assertSee('1 arquivo')
+        ->assertSee('comprovante.pdf')
+        ->assertDontSee('Documentos (1)');
+
+    expect(substr_count($resposta->getContent(), 'class="timeline-anexo-item"'))->toBe(1);
+});
+
+test('a sector cannot attach documents to a finalized process', function () {
+    Storage::fake('local');
+
+    $cidadao = Usuario::create([
+        'nome' => 'Maria de Souza',
+        'email' => 'maria@example.com',
+        'password' => Hash::make('password'),
+        'role' => 'cidadao',
+        'ativo' => true,
+    ]);
+    $servidor = Usuario::create([
+        'nome' => 'Servidor Ambiental',
+        'email' => 'servidor@example.com',
+        'password' => Hash::make('password'),
+        'role' => 'servidor',
+        'ativo' => true,
+    ]);
+    $setor = Setor::create([
+        'setor_sigla' => 'SEMA',
+        'setor_nome' => 'Secretaria de Meio Ambiente',
+        'ativo' => true,
+        'is_interno' => false,
+    ]);
+    $servidor->setoresSobResponsabilidade()->attach($setor->id);
+    $requerimento = Requerimento::create([
+        'usuario_id' => $cidadao->id,
+        'setor_id' => $setor->id,
+        'status' => Requerimento::STATUS_LICENCA_EMITIDA,
+    ]);
+    $historicosAntes = $requerimento->historicos()->count();
+
+    $this->actingAs($servidor)
+        ->post(route('setor.requerimentos.anexarDocumento', [$setor->id, $requerimento->id]), [
+            'arquivos' => [UploadedFile::fake()->createWithContent('documento.pdf', 'Documento')],
+        ])
+        ->assertStatus(409);
+
+    expect($requerimento->fresh()->status)->toBe(Requerimento::STATUS_LICENCA_EMITIDA)
+        ->and($requerimento->fresh()->historicos()->count())->toBe($historicosAntes)
+        ->and($requerimento->fresh()->documentos()->count())->toBe(0);
+});
+
+test('document attachment becomes available after protocolado enters analysis', function () {
+    Mail::fake();
+    Storage::fake('local');
+
+    $cidadao = Usuario::create([
+        'nome' => 'Maria de Souza',
+        'email' => 'maria@example.com',
+        'password' => Hash::make('password'),
+        'role' => 'cidadao',
+        'ativo' => true,
+    ]);
+    $servidor = Usuario::create([
+        'nome' => 'Servidor Ambiental',
+        'email' => 'servidor@example.com',
+        'password' => Hash::make('password'),
+        'role' => 'servidor',
+        'ativo' => true,
+    ]);
+    $setor = Setor::create([
+        'setor_sigla' => 'SEMA',
+        'setor_nome' => 'Secretaria de Meio Ambiente',
+        'ativo' => true,
+        'is_interno' => false,
+    ]);
+    $servidor->setoresSobResponsabilidade()->attach($setor->id);
+    $requerimento = Requerimento::create([
+        'usuario_id' => $cidadao->id,
+        'setor_id' => $setor->id,
+        'status' => Requerimento::STATUS_PROTOCOLADO,
+    ]);
+    $this->actingAs($servidor);
+
+    $this->get(route('setor.requerimentos.show', [$setor->id, $requerimento->id]))
+        ->assertOk()
+        ->assertDontSee('data-modal-target="modal-anexar-documento"', false);
+
+    $this->post(route('setor.requerimentos.anexarDocumento', [$setor->id, $requerimento->id]), [
+        'arquivos' => [UploadedFile::fake()->createWithContent('parecer.pdf', 'Parecer')],
+    ])->assertStatus(409);
+
+    $this->patch(route('setor.requerimentos.atualizarStatus', [$setor->id, $requerimento->id]), [
+        'status' => Requerimento::STATUS_EM_ANALISE,
+    ])->assertSessionDoesntHaveErrors();
+
+    $this->get(route('setor.requerimentos.show', [$setor->id, $requerimento->id]))
+        ->assertOk()
+        ->assertSee('data-modal-target="modal-anexar-documento"', false);
+
+    expect($requerimento->fresh()->status)->toBe(Requerimento::STATUS_EM_ANALISE);
 });
 
 test('processes awaiting a response for 120 days are archived and receive a history entry', function () {
