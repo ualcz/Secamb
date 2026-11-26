@@ -2,142 +2,123 @@
 
 @section('title', 'SECAMB - Secretaria Municipal de Meio Ambiente de Seabra')
 @section('tag', 'Início')
+@section('page-class', 'home-main')
 
 @section('content')
 
 <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 
-<section id="inicio" class="fade-up">    
-    <div class="container">
-        <div class="hero-wrapper">
-            <div class="hero-text">
-                <div class="title">
-                    <h1>Sistema de Gestão Ambiental e Licenciamento</h1>
-                    <h2>Prefeitura Municipal de Seabra - SECAMB</h2>
+<div class="home-page">
+    <section id="inicio" class="home-hero">
+        <div class="home-container hero-layout">
+            <div class="hero-copy">
+                <div class="official-label">
+                    <img src="{{ asset('img/logo_prefeitura_seabra.png') }}" alt="" aria-hidden="true">
+                    <span>Prefeitura Municipal de Seabra <span aria-hidden="true">·</span> Bahia</span>
                 </div>
-                <p>
-                    O SECAMB Digital foi desenvolvido para facilitar a emissão de licenças, autorizações e o acompanhamento de processos ambientais municipais, garantindo transparência, sustentabilidade e agilidade ao cidadão e empreendedor.
+                <p class="eyebrow">Secretaria Municipal de Meio Ambiente</p>
+                <h1>Licenciamento ambiental com mais facilidade e transparência.</h1>
+                <p class="hero-description">
+                    Acesse os serviços ambientais do município, envie solicitações e acompanhe seus processos em um só lugar.
                 </p>
                 <div class="hero-actions">
                     @auth
-                        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                            <a href="{{ route('requerimentos.cidadao.novo') }}" class="btn-primary">
-                                Novo Requerimento →
-                            </a>
-                            <a href="{{ route('empreendimentos.index') }}" class="btn-primary" style="background:#0284c7; border-color:#0284c7;">
-                                Meus Empreendimentos
-                            </a>
-                        </div>
+                        <a href="{{ route('requerimentos.cidadao.novo') }}" class="button button-primary">
+                            Iniciar requerimento
+                            <span aria-hidden="true">→</span>
+                        </a>
+                        <a href="{{ route('requerimentos.cidadao.meusRequerimentos') }}" class="button button-secondary">
+                            Acompanhar solicitações
+                        </a>
                     @else
-                        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                            <a href="{{ route('login') }}" class="btn-primary">
-                                Acessar Sistema →
-                            </a>
-                            <a href="{{ route('register') }}" class="btn-primary" style="background:#0284c7; border-color:#0284c7;">
-                                Cadastre-se
-                            </a>
-                        </div>
+                        <a href="{{ route('login') }}" class="button button-primary">
+                            Acessar serviços
+                            <span aria-hidden="true">→</span>
+                        </a>
+                        <a href="{{ route('register') }}" class="button button-secondary">
+                            Criar cadastro
+                        </a>
                     @endauth
                 </div>
+                <div class="hero-assurance">
+                    <span class="assurance-icon" aria-hidden="true">✓</span>
+                    <span>Atendimento digital oficial da Prefeitura de Seabra</span>
+                </div>
             </div>
-            <div class="hero-image">
-                <img src="{{ asset('img/home.webp') }}" alt="Página Inicial SECAMB">
+            <div class="hero-visual">
+                <div class="visual-frame">
+                    <img src="{{ asset('img/home.webp') }}" alt="Ilustração de serviços públicos ambientais digitais">
+                </div>
+                <div class="visual-caption">
+                    <span class="caption-dot" aria-hidden="true"></span>
+                    <span>Serviços ambientais municipais</span>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section id="funcionalidades" class="fade-up">
-    <div class="container">
-        <h2>Funcionalidades do SECAMB Digital</h2>
-        <div class="cards-grid">
-            <div class="card">
-                <h3>Abertura de Processos</h3>
-                <p>Solicite Licenças Ambientais (LP, LI, LO), Autorizações de Supressão e Dispensa de forma 100% digital.</p>
+    <section id="servicos" class="services-section">
+        <div class="home-container">
+            <div class="section-heading">
+                <p class="eyebrow">Serviços ao cidadão</p>
+                <h2>Resolva suas solicitações ambientais online</h2>
+                <p>Consulte os principais serviços oferecidos pela Secretaria Municipal de Meio Ambiente.</p>
             </div>
-
-            <div class="card">
-                <h3>Acompanhamento em Tempo Real</h3>
-                <p>Monitore o parecer técnico, parecer jurídico e despachos dos analistas ambientais do município.</p>
-            </div>
-
-            <div class="card">
-                <h3>Emissão de Documentos</h3>
-                <p>Gere requerimentos oficiais e comprovantes de protocolo com autenticação e validação eletrônica.</p>
+            <div class="services-grid">
+                <article class="service-card">
+                    <div class="service-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 3.75h7l4.25 4.5v11A1.75 1.75 0 0116.5 21h-9A1.75 1.75 0 015.75 19.25v-13A2.5 2.5 0 018.25 3.75M14 4v5h4M9 13h6m-6 4h6"/></svg>
+                    </div>
+                    <h3>Licenciamento ambiental</h3>
+                    <p>Solicite licenças e serviços relacionados às atividades e empreendimentos no município.</p>
+                </article>
+                <article class="service-card">
+                    <div class="service-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3.5l7 3v5.25c0 4.45-2.95 7.65-7 8.75-4.05-1.1-7-4.3-7-8.75V6.5l7-3zM9 12l2 2 4-4"/></svg>
+                    </div>
+                    <h3>Autorizações ambientais</h3>
+                    <p>Encaminhe pedidos de autorização e demais requerimentos ambientais de forma digital.</p>
+                </article>
+                <article class="service-card">
+                    <div class="service-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 016.5 3H20v16H6.5A2.5 2.5 0 014 16.5v-11zM4 16.5A2.5 2.5 0 016.5 14H20M8 7h8m-8 3h5"/></svg>
+                    </div>
+                    <h3>Acompanhamento de processos</h3>
+                    <p>Consulte o andamento das solicitações e acesse as atualizações do seu protocolo.</p>
+                </article>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section id="sobre" class="fade-up">
-    <div class="container">
-        <div class="sobre-wrapper">
-            <div class="sobre-text">
-                <span class="subtitle">Sobre o sistema</span>
-                <h2>Como funciona a tramitação</h2>
-
-                <p>
-                    O sistema conecta cidadãos e empreendedores aos setores responsáveis da Secretaria de Meio Ambiente de Seabra. Cada processo é protocolado com numeração única e passa por análise técnica, vistorias e deliberação com total segurança e conformidade legal.
-                </p>
-
-                <div class="secamb-notice"><span class="notice-title">Sistema Municipal de Licenciamento</span><p>Seus dados são preenchidos automaticamente ao fazer login com seu e-mail e senha cadastrados. Mantenha seu cadastro sempre atualizado.</p></div>
+    <section id="como-funciona" class="process-section">
+        <div class="home-container process-layout">
+            <div class="process-copy">
+                <p class="eyebrow">Simples e digital</p>
+                <h2>Como fazer sua solicitação</h2>
+                <p>Use sua conta para enviar documentos e acompanhar cada etapa do atendimento.</p>
+                @auth
+                    <a class="text-link" href="{{ route('requerimentos.cidadao.meusRequerimentos') }}">Acompanhar minhas solicitações <span aria-hidden="true">→</span></a>
+                @else
+                    <a class="text-link" href="{{ route('login') }}">Acessar minha conta <span aria-hidden="true">→</span></a>
+                @endauth
             </div>
-
-            <div class="sobre-image">
-                <img loading="lazy" src="{{ asset('img/home_sistema.webp') }}" alt="Ilustração do sistema SECAMB" class="fade-right">
-            </div>
+            <ol class="process-steps">
+                <li>
+                    <span class="step-number">01</span>
+                    <div><h3>Acesse ou crie sua conta</h3><p>Entre no sistema com seus dados ou faça seu cadastro.</p></div>
+                </li>
+                <li>
+                    <span class="step-number">02</span>
+                    <div><h3>Preencha o requerimento</h3><p>Escolha o serviço e informe os dados e documentos solicitados.</p></div>
+                </li>
+                <li>
+                    <span class="step-number">03</span>
+                    <div><h3>Acompanhe o protocolo</h3><p>Consulte atualizações e movimentações da sua solicitação online.</p></div>
+                </li>
+            </ol>
         </div>
-    </div>
-</section>
-
-<section id="devs" class="fade-up">
-    <div class="container">
-        <h2>Desenvolvedores</h2>
-        <div class="devs-grid">
-            <div class="card-dev">
-                <div class="avatar">
-                    <img loading="lazy" src="{{ asset('img/perfil/caio.webp') }}" alt="Caio Souza dos Anjos">
-                </div>
-                <h3>Caio Souza dos Anjos</h3>
-                <p class="role">Discente IFBA</p>
-                <p class="desc">Desenvolvedor do projeto em parceria com o IFBA Seabra.</p>
-            </div>
-            <div class="card-dev">
-                <div class="avatar">
-                    <img loading="lazy" src="{{ asset('img/perfil/Clau.jpg') }}" alt="Claudeilson Souza Assunção">
-                </div>
-                <h3>Claudeilson Souza Assunção</h3>
-                <p class="role">Discente IFBA</p>
-                <p class="desc">Desenvolvedor do projeto em parceria com o IFBA Seabra.</p>
-            </div>
-            <div class="card-dev">
-                <div class="avatar">
-                    <img loading="lazy" src="{{ asset('img/perfil/graziele.webp') }}" alt="Graziele Brandão Silva">
-                </div>
-                <h3>Graziele Brandão Silva</h3>
-                <p class="role">Discente IFBA</p>
-                <p class="desc">Desenvolvedora do projeto em parceria com o IFBA Seabra.</p>
-            </div>
-            <div class="card-dev">
-                <div class="avatar">
-                    <img loading="lazy" src="{{ asset('img/perfil/larissa.jpg') }}" alt="Larissa Souza Rocha">
-                </div>
-                <h3>Larissa Souza Rocha</h3>
-                <p class="role">Discente IFBA</p>
-                <p class="desc">Desenvolvedora do projeto em parceria com o IFBA Seabra.</p>
-            </div>
-
-            <div class="card-dev">
-                <div class="avatar">
-                    <img loading="lazy" src="{{ asset('img/perfil/perfil_Charles.webp') }}" alt="Monck Charles Albuquerque">
-                </div>
-                <h3>Monck Charles Albuquerque</h3>
-                <p class="role">Docente / Orientador</p>
-                <p class="desc">Docente no IFBA - Campus Seabra e orientador do projeto.</p>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
+</div>
 
 @if (session('error'))
     <div id="modal-error" class="modal" onclick="closeModal('modal-error')">

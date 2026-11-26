@@ -185,10 +185,9 @@
 
             {{-- Links centrais na landing page --}}
             <ul class="hidden md:flex space-x-6 md:space-x-4 xl:space-x-8 text-sm md:text-xs xl:text-base font-medium absolute left-1/2 transform -translate-x-1/2">
-                <li><a href="#inicio" class="nav-link scroll-link text-gray-700 hover:text-emerald-600 transition">Início</a></li>
-                <li><a href="#funcionalidades" class="nav-link scroll-link text-gray-700 hover:text-emerald-600 transition ml-[-15px]">Funcionalidades</a></li>
-                <li><a href="#sobre" class="nav-link scroll-link text-gray-700 hover:text-emerald-600 transition ml-[-15px]">Sobre</a></li>
-                <li><a href="#devs" class="nav-link scroll-link text-gray-700 hover:text-emerald-600 transition ml-[-15px]">Desenvolvedores</a></li>
+                <li><a href="{{ route('home') }}#inicio" class="nav-link scroll-link text-gray-700 hover:text-emerald-600 transition">Início</a></li>
+                <li><a href="{{ route('home') }}#servicos" class="nav-link scroll-link text-gray-700 hover:text-emerald-600 transition ml-[-15px]">Serviços</a></li>
+                <li><a href="{{ route('home') }}#como-funciona" class="nav-link scroll-link text-gray-700 hover:text-emerald-600 transition ml-[-15px]">Como funciona</a></li>
             </ul>
 
             {{-- Navegação da direita --}}

@@ -21,7 +21,7 @@
         @include('layouts.partials.headerMobile')
     </div>
 
-    <main class="main-content flex-1 container" style="padding-top: 32px;">
+    <main class="main-content flex-1 container @yield('page-class')" style="padding-top: 32px;">
         @yield('content')
     </main>
 

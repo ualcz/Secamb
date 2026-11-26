@@ -16,13 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll("a[href^='#'], .scroll-link");
     links.forEach(link => {
         link.addEventListener("click", e => {
-            const targetId = link.getAttribute("href");
-            if (targetId && targetId !== '#') {
-                const target = document.querySelector(targetId);
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({ behavior: "smooth", block: "start" });
-                }
+            const targetUrl = new URL(link.href, window.location.href);
+            const target = targetUrl.hash ? document.querySelector(targetUrl.hash) : null;
+            if (target && targetUrl.pathname === window.location.pathname) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: "smooth", block: "start" });
             }
         });
     });
@@ -31,10 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function activateLinkOnScroll() {
         let scrollY = window.scrollY;
         links.forEach(link => {
-            const targetId = link.getAttribute("href");
-            if (!targetId || targetId === '#') return;
+            const targetUrl = new URL(link.href, window.location.href);
+            if (!targetUrl.hash || targetUrl.pathname !== window.location.pathname) return;
 
-            const section = document.querySelector(targetId);
+            const section = document.querySelector(targetUrl.hash);
             if (!section) return;
 
             if (

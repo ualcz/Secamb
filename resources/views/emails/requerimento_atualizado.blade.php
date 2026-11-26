@@ -56,7 +56,7 @@ Corrigir e Reenviar Documento
 
 Olá, **{{ $requerimento->usuario?->nome ?? 'Cidadão(ã)' }}**.
 
-O setor solicitou complementações para o requerimento referente a **{{ $requerimento->objetoDoRequerimento }}**. Envie as informações e documentos solicitados em até 90 dias.
+O setor solicitou complementações para o requerimento referente a **{{ $requerimento->objetoDoRequerimento }}**. Envie as informações e documentos solicitados em até {{ \App\Models\Requerimento::DIAS_LIMITE_COMPLEMENTACAO }} dias corridos.
 
 @if(!empty(trim($mensagem)) && !in_array($mensagem, ['Status atualizado pelo setor.', 'Despacho registrado pelo setor.']))
 <x-mail::panel>
@@ -85,7 +85,7 @@ Visualizar licença e requerimento
 
 @elseif(in_array($requerimento->status, [
     \App\Models\Requerimento::STATUS_ENCERRADO,
-    \App\Models\Requerimento::STATUS_EXPIRADO,
+    \App\Models\Requerimento::STATUS_ARQUIVADO_COMPLEMENTACAO,
 ], true))
 # Requerimento encerrado #{{ $requerimento->numero_protocolo }}
 

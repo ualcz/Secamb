@@ -211,21 +211,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('home') }}#funcionalidades" class="nav-link scroll-link">
-                            <div class="nav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
-                            <span>Funcionalidades</span>
+                        <a href="{{ route('home') }}#servicos" class="nav-link scroll-link">
+                            <div class="nav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5h16M4 12h16M4 19h16"/></svg></div>
+                            <span>Serviços</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('home') }}#sobre" class="nav-link scroll-link">
-                            <div class="nav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                            <span>Sobre</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('home') }}#devs" class="nav-link scroll-link">
-                            <div class="nav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg></div>
-                            <span>Desenvolvedores</span>
+                        <a href="{{ route('home') }}#como-funciona" class="nav-link scroll-link">
+                            <div class="nav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01"/></svg></div>
+                            <span>Como funciona</span>
                         </a>
                     </li>
                 </ul>

@@ -19,14 +19,18 @@
                 </div>
                 @php
                     $statusClass = match($requerimento->status) {
-                        'Protocolado' => 'badge-protocolado',
-                        'Em análise' => 'badge-em-analise',
-                        'Aguardando complementação' => 'badge-aguardando-complementacao',
-                        'Deferido' => 'badge-deferido',
-                        'Licença emitida' => 'badge-licenca-emitida',
-                        'Indeferido' => 'badge-indeferido',
-                        'Encerrado' => 'badge-encerrado',
-                        'Expirado' => 'badge-expirado',
+                        \App\Models\Requerimento::STATUS_PROTOCOLADO => 'badge-protocolado',
+                        \App\Models\Requerimento::STATUS_EM_ANALISE => 'badge-em-analise',
+                        \App\Models\Requerimento::STATUS_EM_ANALISE_TECNICA => 'badge-em-analise-tecnica',
+                        \App\Models\Requerimento::STATUS_ANALISE_CONCLUIDA => 'badge-analise-concluida',
+                        \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO => 'badge-aguardando-complementacao',
+                        \App\Models\Requerimento::STATUS_AGUARDANDO_VISTORIA => 'badge-aguardando-vistoria',
+                        \App\Models\Requerimento::STATUS_VISTORIA_CONCLUIDA => 'badge-vistoria-concluida',
+                        \App\Models\Requerimento::STATUS_DEFERIDO => 'badge-deferido',
+                        \App\Models\Requerimento::STATUS_LICENCA_EMITIDA => 'badge-licenca-emitida',
+                        \App\Models\Requerimento::STATUS_INDEFERIDO => 'badge-indeferido',
+                        \App\Models\Requerimento::STATUS_ENCERRADO,
+                        \App\Models\Requerimento::STATUS_ARQUIVADO_COMPLEMENTACAO => 'badge-encerrado',
                         default => 'badge-protocolado'
                     };
                 @endphp

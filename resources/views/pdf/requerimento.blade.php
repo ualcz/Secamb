@@ -86,51 +86,17 @@
         <div class="secao-titulo">1. Identificação do Requerente</div>
         <table class="campos">
             <colgroup>
-                <col style="width:40%">
-                <col style="width:20%">
-                <col style="width:20%">
-                <col style="width:20%">
+                <col style="width:50%">
+                <col style="width:50%">
             </colgroup>
             <tr>
-                <td colspan="2">
-                    <span class="rotulo">Nome Completo / Razão Social</span>
+                <td>
+                    <span class="rotulo">Nome</span>
                     <span class="valor">{{ $aluno->nome }}</span>
                 </td>
                 <td>
-                    <span class="rotulo">CPF / CNPJ</span>
-                    <span class="valor">{{ $aluno->cpf ?? $aluno->cnpj ?? '—' }}</span>
-                </td>
-                <td>
-                    <span class="rotulo">RG / Inscrição Estadual</span>
-                    <span class="valor">{{ $aluno->rg ?? '—' }}</span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <span class="rotulo">Endereço (Logradouro / Número)</span>
-                    <span class="valor">{{ $endereco?->rua ?? '—' }}</span>
-                </td>
-                <td>
-                    <span class="rotulo">Bairro</span>
-                    <span class="valor">{{ $endereco?->bairro ?? '—' }}</span>
-                </td>
-                <td>
-                    <span class="rotulo">CEP</span>
-                    <span class="valor">{{ $endereco?->cep ?? '—' }}</span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <span class="rotulo">Município / UF</span>
-                    <span class="valor">{{ $cidadeUf ?: 'Seabra - BA' }}</span>
-                </td>
-                <td>
-                    <span class="rotulo">Telefone / WhatsApp</span>
-                    <span class="valor">{{ $aluno->celular ?? '—' }}</span>
-                </td>
-                <td colspan="2">
-                    <span class="rotulo">E-mail</span>
-                    <span class="valor">{{ $aluno->email }}</span>
+                    <span class="rotulo">CPF</span>
+                    <span class="valor">{{ $aluno->cpf ?? '—' }}</span>
                 </td>
             </tr>
         </table>
