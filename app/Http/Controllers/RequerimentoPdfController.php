@@ -22,11 +22,13 @@ class RequerimentoPdfController extends Controller
         ?string $objeto = null,
         ?string $descricao = null,
         ?string $mensagem = null,
-        ?string $numeroProtocolo = null
+        ?string $numeroProtocolo = null,
+        ?Requerimento $requerimento = null
     ): DomPDF {
         return Pdf::loadView('pdf.requerimento', [
+            'aluno' => $nomeRequerente,
             'nomeRequerente' => $nomeRequerente,
-            'requerimento' => null,
+            'requerimento' => $requerimento,
             'setorNome' => $setorNome,
             'setorChave' => $setorChave,
             'objeto' => $objeto,
@@ -72,13 +74,14 @@ class RequerimentoPdfController extends Controller
         $dados = $this->resolverDados($request);
 
         $pdf = self::criarPdf(
-            nomeRequerente: $dados['nomeRequerente'],
+            nomeRequerente: $dados['aluno'],
             setorNome: $dados['setorNome'],
             setorChave: $dados['setorChave'],
             objeto: $dados['objeto'],
             descricao: $dados['descricao'],
             mensagem: $dados['mensagem'],
-            numeroProtocolo: $dados['numeroProtocolo']
+            numeroProtocolo: $dados['numeroProtocolo'],
+            requerimento: $dados['requerimento']
         );
 
         $nomeArquivo = 'Requerimento_' . Str::slug($dados['aluno']->nome) . '_' . date('Ymd_His') . '.pdf';
@@ -121,6 +124,7 @@ class RequerimentoPdfController extends Controller
     private function resolverDados(Request $request): array
     {
         $aluno = auth()->user();
+        $requerimento = null;
 
         // 2. Modelo e setor
         $setorParam = $request->query('setor', $request->query('modelo'));

@@ -30,49 +30,56 @@ class DocumentoRequerimentoService
 
         try {
             $pdf = RequerimentoPdfController::criarPdf(
-                aluno: $aluno,
+                nomeRequerente: $aluno,
                 setorNome: $setorNome,
                 setorChave: $setorChave,
                 objeto: $objeto,
                 mensagem: $mensagem,
-                numeroProtocolo: $requerimento?->numero_protocolo
+                numeroProtocolo: $requerimento?->numero_protocolo,
+                requerimento: $requerimento
             );
             $conteudo = $pdf->output();
+        } catch (\Throwable $e) {
+            logger()->error('Erro ao gerar PDF do requerimento: ' . $e->getMessage());
+            throw new \RuntimeException('Não foi possível gerar o PDF do requerimento.', 0, $e);
+        }
 
-            if (!empty($arquivos)) {
+        if (!empty($arquivos)) {
+            try {
                 $conteudo = app(PdfMergerService::class)->mesclarComAnexos(
                     $conteudo,
                     $arquivos,
                     $arquivosNaoMesclados
                 );
+            } catch (\Throwable $e) {
+                logger()->warning('Não foi possível incluir todos os anexos no PDF do requerimento; os documentos originais foram mantidos.', [
+                    'requerimento_id' => $requerimento?->id,
+                    'error' => $e->getMessage(),
+                ]);
             }
-        } catch (\Throwable $e) {
-            logger()->error('Erro ao gerar/mesclar PDF do requerimento: ' . $e->getMessage());
+        }
 
-            return [
-                'pdf' => null,
-                'arquivos_nao_mesclados' => $arquivos,
-            ];
+        if (!empty($arquivosNaoMesclados)) {
+            logger()->warning('Alguns documentos não puderam ser incluídos no PDF unificado; os originais foram mantidos.', [
+                'requerimento_id' => $requerimento?->id,
+                'quantidade' => count($arquivosNaoMesclados),
+            ]);
         }
 
         $nomePdf = 'Requerimento_' . Str::slug($aluno->nome) . '_' . date('Ymd_His') . '.pdf';
 
         if ($requerimento) {
-            try {
-                $documentoSalvo = $this->salvarConteudo(
-                    conteudo: $conteudo,
-                    nomeOriginal: $nomePdf,
-                    requerimento: $requerimento,
-                    historico: $historico,
-                    usuario: $usuario,
-                    nomeDocumento: 'Requerimento enviado'
-                );
+            $documentoSalvo = $this->salvarConteudo(
+                conteudo: $conteudo,
+                nomeOriginal: $nomePdf,
+                requerimento: $requerimento,
+                historico: $historico,
+                usuario: $usuario,
+                nomeDocumento: 'Requerimento enviado'
+            );
 
-                if (!$documentoSalvo) {
-                    logger()->warning('Não foi possível salvar o PDF do requerimento no histórico.');
-                }
-            } catch (\Throwable $e) {
-                logger()->warning('Não foi possível salvar o PDF do requerimento no histórico: ' . $e->getMessage());
+            if (!$documentoSalvo) {
+                throw new \RuntimeException('Não foi possível salvar o PDF do requerimento no histórico.');
             }
         }
 

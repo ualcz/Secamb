@@ -168,12 +168,25 @@ class EnvioEmailController extends Controller
             $historico = $requerimento->historicos()->latest()->first();
 
             // Salva arquivos no storage
+            $documentosInput = $request->file('documentos', []);
+            $arquivosComplementares = $request->file('arquivos', []);
             app(DocumentoRequerimentoService::class)->salvarDocumentosIniciais(
                 requerimento: $requerimento,
                 historico: $historico,
-                documentosInput: $request->file('documentos', []),
-                arquivosComplementares: $request->file('arquivos', []),
+                documentosInput: is_array($documentosInput) ? $documentosInput : [],
+                arquivosComplementares: is_array($arquivosComplementares) ? $arquivosComplementares : [],
                 usuario: $cidadao
+            );
+
+            app(DocumentoRequerimentoService::class)->gerarESalvarPdfRequerimento(
+                requerimento: $requerimento,
+                aluno: $cidadao,
+                setorNome: $setor->setor_nome,
+                historico: $historico,
+                usuario: $cidadao,
+                setorChave: $setor->setor_sigla,
+                objeto: $objeto,
+                mensagem: $motivo
             );
 
             DB::commit();
