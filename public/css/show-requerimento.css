@@ -489,6 +489,131 @@ body.acao-processando {
     font-weight: 750;
 }
 
+.timeline-anexos-status {
+    margin-top: 5px;
+}
+
+.timeline-anexos-resumo {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    padding: 4px 6px;
+    border-radius: 5px;
+    color: #475569;
+    cursor: pointer;
+    list-style: none;
+    transition: background-color 0.15s ease;
+}
+
+.timeline-anexos-resumo:hover,
+.timeline-anexos-status[open] .timeline-anexos-resumo {
+    background: #f8fafc;
+}
+
+.timeline-anexos-resumo::-webkit-details-marker {
+    display: none;
+}
+
+.timeline-anexos-resumo svg:first-child {
+    color: #2563eb;
+}
+
+.timeline-anexos-resumo strong,
+.timeline-anexos-resumo span {
+    color: #334155;
+    font-size: 0.76rem;
+}
+
+.timeline-anexos-resumo span {
+    color: #64748b;
+}
+
+.timeline-anexos-chevron {
+    margin-left: auto;
+    color: #64748b;
+    transition: transform 0.15s ease;
+}
+
+.timeline-anexos-status[open] .timeline-anexos-chevron {
+    transform: rotate(180deg);
+}
+
+.timeline-anexos-lista {
+    margin: 3px 0 4px 27px;
+}
+
+.timeline-anexo-item + .timeline-anexo-item {
+    margin-top: 6px;
+}
+
+.timeline-anexo-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    color: #64748b;
+    font-size: 0.7rem;
+}
+
+.timeline-anexo-contexto {
+    margin: 2px 0 3px;
+    color: #64748b;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+
+.timeline-anexo-arquivo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 2px 10px;
+    padding: 4px 0;
+    color: #475569;
+    font-size: 0.72rem;
+}
+
+.timeline-anexo-arquivo + .timeline-anexo-arquivo {
+    border-top: 1px solid #e8edf4;
+}
+
+.timeline-anexo-arquivo > div:first-child {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.timeline-anexo-arquivo small {
+    overflow-wrap: anywhere;
+    color: #94a3b8;
+    font-size: 0.68rem;
+}
+
+.timeline-anexo-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.timeline-anexo-links a {
+    color: #2563eb;
+    font-size: 0.7rem;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.timeline-anexo-links a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .timeline-anexos-lista {
+        margin-left: 6px;
+    }
+}
+
 /* =========================================================
    TÍTULOS E CABEÇALHOS
    ========================================================= */
