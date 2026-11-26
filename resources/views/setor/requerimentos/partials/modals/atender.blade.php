@@ -37,10 +37,10 @@
                     id="observacao"
                     class="form-control"
                     rows="3"
-                    placeholder="Escreva uma atualização para o cidadão e para o histórico do processo."
+                    placeholder="Adicione uma observação se necessário."
                     {{ $statusExigeJustificativa ? 'required' : '' }}
                 >{{ old('observacao') }}</textarea>
-                <p class="acao-modal-ajuda">A mensagem ficará no histórico. Use-a também para registrar vistoria, parecer ou outras atualizações sem criar novos status.</p>
+                <p class="acao-modal-ajuda">A observação só será registrada se preenchida. Informe o motivo nas solicitações de complementação, indeferimentos e encerramentos.</p>
 
                 <div id="box-nome-documento" style="display: {{ $solicitaComplementacao ? 'block' : 'none' }};">
                     <label for="nome_documento_solicitado" class="info-label">Documento solicitado</label>
