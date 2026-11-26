@@ -31,7 +31,7 @@ class ResponsavelSetorController extends Controller
             ->where('setor_id', $setor->id);
 
         $totalAnalise = (clone $baseQuery)
-            ->where('status', Requerimento::STATUS_EM_ANALISE)
+            ->whereIn('status', Requerimento::STATUS_ANALISE_ATIVA)
             ->count();
 
         $totalConcluidos = (clone $baseQuery)
@@ -96,7 +96,7 @@ class ResponsavelSetorController extends Controller
         }
 
         // Carrega o usuário, endereço, assunto, empreendimento e os históricos (linha do tempo com documentos)
-        $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.documentos', 'setorRetorno', 'empreendimento']);
+        $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.setor', 'historicos.documentos', 'setorRetorno', 'empreendimento']);
         $setoresDestino = Setor::query()
             ->with(['assuntosAtivos' => function ($q) {
                 $q->orderBy('ordem');
@@ -136,63 +136,92 @@ class ResponsavelSetorController extends Controller
                 Rule::requiredIf(fn () => in_array($request->input('status'), [
                     Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
                     Requerimento::STATUS_INDEFERIDO,
+                    Requerimento::STATUS_ENCERRADO,
                 ], true)),
                 'nullable',
                 'string',
+                'max:10000',
             ],
-            'solicita_novo_documento' => 'nullable|boolean',
             'nome_documento_solicitado' => [
-                Rule::requiredIf(fn () => $request->input('status') === Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO
-                    || $request->boolean('solicita_novo_documento')),
+                Rule::requiredIf(fn () => $request->input('status') === Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO),
                 'nullable',
                 'string',
+                'max:255',
             ],
-            'arquivos'   => 'nullable|array',
-            'arquivos.*' => 'nullable|file|max:51200',
+            'arquivos'   => [
+                Rule::requiredIf(fn () => $request->input('status') === Requerimento::STATUS_LICENCA_EMITIDA),
+                'nullable',
+                'array',
+                'min:1',
+            ],
+            'arquivos.*' => 'required|file|max:51200',
         ]);
 
-        $solicitaNovoDocumento = $validated['status'] === Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO
-            || $validated['status'] === Requerimento::STATUS_INDEFERIDO
-            || $request->boolean('solicita_novo_documento');
-        $request->merge([
-            'solicita_novo_documento' => $solicitaNovoDocumento,
-            'nome_documento_solicitado' => $solicitaNovoDocumento
-                ? ($validated['nome_documento_solicitado'] ?? 'Documento indeferido')
-                : null,
-        ]);
+        $solicitaNovoDocumento = $validated['status'] === Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO;
+        $nomeDocumentoSolicitado = $solicitaNovoDocumento
+            ? $validated['nome_documento_solicitado']
+            : null;
+        $mensagemHistorico = trim((string) ($validated['observacao'] ?? ''));
+        if ($mensagemHistorico === '') {
+            $mensagemHistorico = "Status alterado para {$validated['status']} pelo setor.";
+        }
 
-        $requerimento->update([
-            'status' => $validated['status'],
-            'data_devolucao' => $validated['status'] === Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO ? now() : null,
-            'setor_retorno_id' => in_array($validated['status'], Requerimento::STATUS_TERMINAIS, true)
-                ? null
-                : $requerimento->setor_retorno_id,
-        ]);
+        $novoHistorico = DB::transaction(function () use (
+            $requerimento,
+            $setor,
+            $validated,
+            $mensagemHistorico,
+            $solicitaNovoDocumento,
+            $nomeDocumentoSolicitado
+        ) {
+            $atual = Requerimento::query()->lockForUpdate()->findOrFail($requerimento->id);
 
-        $novoHistorico = HistoricoRequerimento::create([
-            'requerimento_id'           => $requerimento->id,
-            'user_id'                   => Auth::id() ?? $requerimento->usuario_id,
-            'status'                    => $requerimento->status,
-            'observacao'                => $validated['observacao'] ?? 'Despacho registrado pelo setor.',
-            'solicita_novo_documento'   => $solicitaNovoDocumento,
-            'nome_documento_solicitado' => $solicitaNovoDocumento ? ($validated['nome_documento_solicitado'] ?? 'Documento indeferido') : null,
-        ]);
+            if ((int) $atual->setor_id !== (int) $setor->id) {
+                abort(404);
+            }
+            if (!in_array($validated['status'], $atual->proximosStatusPossiveis(), true)) {
+                abort(409, 'O status do processo mudou. Atualize a página e tente novamente.');
+            }
+
+            $atual->update([
+                'status' => $validated['status'],
+                'data_devolucao' => $validated['status'] === Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO ? now() : null,
+                'setor_retorno_id' => in_array($validated['status'], Requerimento::STATUS_TERMINAIS, true)
+                    ? null
+                    : $atual->setor_retorno_id,
+            ]);
+
+            return HistoricoRequerimento::create([
+                'requerimento_id'           => $atual->id,
+                'user_id'                   => Auth::id() ?? $atual->usuario_id,
+                'setor_id'                  => $setor->id,
+                'status'                    => $atual->status,
+                'observacao'                => $mensagemHistorico,
+                'solicita_novo_documento'   => $solicitaNovoDocumento,
+                'nome_documento_solicitado' => $nomeDocumentoSolicitado,
+            ]);
+        });
+        $requerimento->refresh();
 
         // Salva arquivos anexados pelo servidor vinculados ao histórico
         $arquivos = $request->file('arquivos', []);
         if (!empty($arquivos) && $novoHistorico) {
+            $tituloDocumento = $validated['status'] === Requerimento::STATUS_LICENCA_EMITIDA
+                ? 'Licença ambiental emitida'
+                : 'Documento do setor';
+
             app(DocumentoRequerimentoService::class)->salvarArquivos(
                 requerimento: $requerimento,
                 historico: $novoHistorico,
                 arquivos: is_array($arquivos) ? $arquivos : [$arquivos],
                 usuario: auth()->user(),
-                titulo: 'Despacho / Documento do Setor'
+                titulo: $tituloDocumento
             );
         }
 
         // Envia e-mail de notificação para o aluno (com cópia para o setor)
         $requerimento->notificarPartes(
-            mensagem: $validated['observacao'] ?? '',
+            mensagem: $mensagemHistorico,
             remetente: 'setor',
             arquivos: is_array($arquivos) ? $arquivos : [],
             solicitaNovoDocumento: $solicitaNovoDocumento
@@ -218,6 +247,9 @@ class ResponsavelSetorController extends Controller
 
         if ((int) $requerimento->setor_id !== (int) $setor->id) {
             abort(404);
+        }
+        if ($requerimento->isTerminal()) {
+            abort(409, 'Processos encerrados não podem ser encaminhados.');
         }
 
         $validated = $request->validate([
@@ -249,12 +281,16 @@ class ResponsavelSetorController extends Controller
             if ((int) $atual->setor_id !== (int) $setor->id) {
                 abort(409, 'Este requerimento já foi encaminhado ou mudou de setor.');
             }
+            if ($atual->isTerminal()) {
+                abort(409, 'Processos encerrados não podem ser encaminhados.');
+            }
 
             if ($tipoEncaminhamento === 'despacho') {
                 $atual->update([
                     'setor_id' => $destino->id,
                     'setor_retorno_id' => $setor->id,
                     'status' => Requerimento::STATUS_EM_ANALISE,
+                    'data_devolucao' => null,
                 ]);
                 $orientacaoTexto = "Despacho de {$setor->setor_sigla} para {$destino->setor_sigla}.";
             } else {
@@ -263,6 +299,7 @@ class ResponsavelSetorController extends Controller
                     'setor_id' => $destino->id,
                     'setor_retorno_id' => null,
                     'status' => Requerimento::STATUS_EM_ANALISE,
+                    'data_devolucao' => null,
                 ]);
                 $orientacaoTexto = "Encaminhado de {$setor->setor_sigla} para {$destino->setor_sigla}.";
             }
@@ -275,6 +312,7 @@ class ResponsavelSetorController extends Controller
             return HistoricoRequerimento::create([
                 'requerimento_id' => $atual->id,
                 'user_id' => Auth::id(),
+                'setor_id' => $setor->id,
                 'status' => $atual->status,
                 'observacao' => $orientacaoTexto,
             ]);
@@ -307,6 +345,9 @@ class ResponsavelSetorController extends Controller
         if ((int) $requerimento->setor_id !== (int) $setor->id || !$requerimento->setor_retorno_id) {
             abort(404);
         }
+        if ($requerimento->isTerminal()) {
+            abort(409, 'Processos encerrados não podem receber respostas de encaminhamento.');
+        }
 
         $validated = $request->validate([
             'observacao' => 'required|string|max:10000',
@@ -319,6 +360,9 @@ class ResponsavelSetorController extends Controller
             if ((int) $atual->setor_id !== (int) $setor->id || !$atual->setor_retorno_id) {
                 abort(409, 'Este requerimento já foi devolvido ou mudou de setor.');
             }
+            if ($atual->isTerminal()) {
+                abort(409, 'Processos encerrados não podem receber respostas de encaminhamento.');
+            }
 
             $setorOrigem = Setor::findOrFail($atual->setor_retorno_id);
             $atual->update([
@@ -329,6 +373,7 @@ class ResponsavelSetorController extends Controller
             $historico = HistoricoRequerimento::create([
                 'requerimento_id' => $atual->id,
                 'user_id' => Auth::id(),
+                'setor_id' => $setor->id,
                 'status' => $atual->status,
                 'observacao' => "Resposta de {$setor->setor_sigla} para {$setorOrigem->setor_sigla}.\n{$validated['observacao']}",
             ]);

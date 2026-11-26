@@ -147,7 +147,7 @@ class RequerimentoController extends Controller
         if ((int) $donoId !== (int) auth()->id()) {
             abort(403, 'Acesso não autorizado.');
         }
-        $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.documentos', 'empreendimento']);
+        $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.setor', 'historicos.documentos', 'empreendimento']);
         return view('requerimentos.show', compact('requerimento'));
     }
 
@@ -155,6 +155,7 @@ class RequerimentoController extends Controller
     {
         $requerimento = Requerimento::with([
             'historicos.usuario',
+            'historicos.setor',
             'historicos.documentos',
             'usuario.endereco',
             'setor',
@@ -177,24 +178,14 @@ class RequerimentoController extends Controller
             abort(403, 'Acesso não autorizado.');
         }
 
-        $ultimoHistorico = $requerimento->historicos()->reorder()->latest('created_at')->first();
-        if (!in_array($requerimento->status, [
-            Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
-            Requerimento::STATUS_INDEFERIDO,
-        ], true)) {
-            abort(409, 'Este processo não está aguardando correção ou complementação.');
+        if ($requerimento->status !== Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO) {
+            abort(409, 'Este processo não está aguardando complementação.');
         }
-
-        $exigeDocumentos = in_array($requerimento->status, [
-            Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
-            Requerimento::STATUS_INDEFERIDO,
-        ], true)
-            || (bool) $ultimoHistorico?->solicita_novo_documento;
 
         $validated = $request->validate([
             'motivo_correcao' => 'required|string|max:3000',
-            'arquivos'        => [$exigeDocumentos ? 'required' : 'nullable', 'array', 'min:1'],
-            'arquivos.*'      => [$exigeDocumentos ? 'required' : 'nullable', 'file', 'max:51200'],
+            'arquivos'        => 'required|array|min:1',
+            'arquivos.*'      => 'required|file|max:51200',
         ]);
         $requerimento->update([
             'status' => Requerimento::STATUS_EM_ANALISE,
@@ -214,7 +205,8 @@ class RequerimentoController extends Controller
 
         // Salva os documentos enviados vinculados ao histórico
         if (!empty($arquivos)) {
-            $titulo = $ultimoHistorico?->nome_documento_solicitado ?? 'Documento de Correção';
+            $ultimoHistorico = $requerimento->historicos()->reorder()->latest('created_at')->first();
+            $titulo = $ultimoHistorico?->nome_documento_solicitado ?? 'Documento de Complementação';
             app(DocumentoRequerimentoService::class)->salvarArquivos(
                 requerimento: $requerimento,
                 historico: $novoHistorico,

@@ -11,46 +11,46 @@ class ExpirarRequerimentos extends Command
 {
     protected $signature = 'requerimentos:expirar';
 
-    protected $description = 'Expira processos sem resposta há pelo menos 90 dias';
+    protected $description = 'Arquiva processos sem resposta à complementação há pelo menos 120 dias';
 
     public function handle(): int
     {
-        $limite = now()->subDays(90);
-        $expirados = 0;
+        $limite = now()->subDays(Requerimento::DIAS_LIMITE_COMPLEMENTACAO);
+        $arquivados = 0;
 
         Requerimento::query()
             ->where('status', Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO)
             ->whereNotNull('data_devolucao')
             ->where('data_devolucao', '<=', $limite)
             ->orderBy('id')
-            ->chunkById(100, function ($requerimentos) use (&$expirados) {
+            ->chunkById(100, function ($requerimentos) use (&$arquivados) {
                 foreach ($requerimentos as $requerimento) {
-                    $foiExpirado = DB::transaction(function () use ($requerimento) {
+                    $foiArquivado = DB::transaction(function () use ($requerimento) {
                         $atual = Requerimento::query()
                             ->lockForUpdate()
                             ->findOrFail($requerimento->id);
 
-                        if (!$atual->verificarExpiracao()) {
+                        if (!$atual->arquivarSeComplementacaoVencida()) {
                             return false;
                         }
 
                         HistoricoRequerimento::create([
                             'requerimento_id' => $atual->id,
                             'user_id' => $atual->usuario_id,
-                            'status' => Requerimento::STATUS_EXPIRADO,
-                            'observacao' => 'Processo expirado após 90 dias sem resposta à solicitação de complementação.',
+                            'status' => Requerimento::STATUS_ARQUIVADO_COMPLEMENTACAO,
+                            'observacao' => 'Processo arquivado após 120 dias sem resposta à solicitação de complementação.',
                         ]);
 
                         return true;
                     });
 
-                    if ($foiExpirado) {
-                        $expirados++;
+                    if ($foiArquivado) {
+                        $arquivados++;
                     }
                 }
             });
 
-        $this->info("Processos expirados: {$expirados}.");
+        $this->info("Processos arquivados: {$arquivados}.");
 
         return self::SUCCESS;
     }
