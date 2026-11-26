@@ -9,6 +9,21 @@ class DocumentoRequerimento extends Model
 {
     protected $table = 'documentos_requerimentos';
 
+    public const EXTENSOES_VISUALIZAVEIS = [
+        'pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tif', 'tiff',
+        'doc', 'docx', 'odt', 'rtf', 'txt',
+        'xls', 'xlsx', 'ods', 'csv',
+        'ppt', 'pptx', 'odp',
+    ];
+
+    public const EXTENSOES_IMAGEM = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+
+    public const EXTENSOES_OFFICE = [
+        'tif', 'tiff', 'doc', 'docx', 'odt', 'rtf', 'txt',
+        'xls', 'xlsx', 'ods', 'csv',
+        'ppt', 'pptx', 'odp',
+    ];
+
     protected $fillable = [
         'requerimento_id',
         'historico_requerimento_id',
@@ -87,6 +102,8 @@ class DocumentoRequerimento extends Model
      */
     public function isVisualizavel(): bool
     {
-        return $this->isPdf() || $this->isImagem() || str_contains(strtolower((string) $this->mime_type), 'text/');
+        $extensao = strtolower($this->extensao ?: pathinfo($this->nome_original, PATHINFO_EXTENSION));
+
+        return in_array($extensao, self::EXTENSOES_VISUALIZAVEIS, true);
     }
 }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\DocumentoRequerimento;
+use App\Services\DocumentoPreviewService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class DocumentoRequerimentoController extends Controller
@@ -45,7 +47,7 @@ class DocumentoRequerimentoController extends Controller
     /**
      * Visualização inline do arquivo (para iframes, imagens ou nova aba).
      */
-    public function visualizar(DocumentoRequerimento $documento)
+    public function visualizar(DocumentoRequerimento $documento, DocumentoPreviewService $previewService)
     {
         $this->autorizarAcesso($documento);
 
@@ -53,12 +55,13 @@ class DocumentoRequerimentoController extends Controller
             abort(404, 'O arquivo solicitado não foi encontrado no servidor.');
         }
 
-        $caminhoFisico = Storage::disk('local')->path($documento->caminho);
-        $mime = $documento->mime_type ?: (mime_content_type($caminhoFisico) ?: 'application/octet-stream');
+        $caminhoPdf = $previewService->obterCaminhoPdf($documento);
+        $nomeBase = pathinfo($documento->nome_original, PATHINFO_FILENAME);
+        $nomePdf = Str::slug($nomeBase ?: 'documento') . '.pdf';
 
-        return response()->file($caminhoFisico, [
-            'Content-Type'        => $mime,
-            'Content-Disposition' => 'inline; filename="' . rawurlencode($documento->nome_original) . '"',
+        return response()->file($caminhoPdf, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . rawurlencode($nomePdf) . '"',
             'Cache-Control'       => 'private, max-age=3600',
         ]);
     }
