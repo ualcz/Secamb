@@ -296,11 +296,15 @@
     <div class="secao">
         <div class="secao-titulo">5. Declaração</div>
         <div class="declaracao">
-            Declaro, para os devidos fins, que as informações prestadas neste requerimento são verdadeiras e de minha inteira responsabilidade,
-            estando ciente de que a prestação de informações falsas poderá acarretar as sanções previstas na
-            Lei Federal nº 9.605/1998 (Lei de Crimes Ambientais), no Decreto Estadual nº 14.024/2012 e na Lei Municipal nº 498/2013 de Seabra-BA,
-            bem como a nulidade deste ato e a cassação de eventuais licenças concedidas com base nas informações aqui declaradas.
+            {{ \App\Models\Requerimento::DECLARACAO_RESPONSABILIDADE }}
         </div>
+        @if($declaracaoAceita)
+            <div class="declaracao-aceite-registro">
+                Aceite eletrônico registrado no protocolo
+                <strong>{{ $numeroProtocolo }}</strong>
+                em <strong>{{ $dataAceite?->format('d/m/Y H:i') ?? date('d/m/Y H:i') }}</strong>.
+            </div>
+        @endif
     </div>
 
     {{-- ══════════════════════════════════════════════════════

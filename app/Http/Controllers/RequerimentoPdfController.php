@@ -23,7 +23,9 @@ class RequerimentoPdfController extends Controller
         ?string $descricao = null,
         ?string $mensagem = null,
         ?string $numeroProtocolo = null,
-        ?Requerimento $requerimento = null
+        ?Requerimento $requerimento = null,
+        bool $declaracaoAceita = false,
+        ?\DateTimeInterface $dataAceite = null
     ): DomPDF {
         return Pdf::loadView('pdf.requerimento', [
             'aluno' => $nomeRequerente,
@@ -35,6 +37,8 @@ class RequerimentoPdfController extends Controller
             'descricao' => $descricao,
             'mensagem' => $mensagem,
             'numeroProtocolo' => $numeroProtocolo,
+            'declaracaoAceita' => $declaracaoAceita,
+            'dataAceite' => $dataAceite,
         ])->setPaper('a4', 'portrait');
     }
 
@@ -159,6 +163,8 @@ class RequerimentoPdfController extends Controller
             'objeto' => $objeto,
             'mensagem' => $mensagem,
             'numeroProtocolo' => $request->query('numero_protocolo'),
+            'declaracaoAceita' => false,
+            'dataAceite' => null,
         ];
     }
 

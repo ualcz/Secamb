@@ -415,6 +415,38 @@
     opacity: 0.55;
 }
 
+.declaracao-aceite {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 1px solid #dbe3ec;
+    border-radius: 8px;
+}
+
+.declaracao-aceite-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #334155;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    cursor: pointer;
+}
+
+.declaracao-aceite-label input {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    margin: 2px 0 0;
+    accent-color: #059669;
+}
+
+.declaracao-aceite-erro {
+    margin: 8px 0 0 28px;
+    color: #b91c1c;
+    font-size: 0.84rem;
+}
+
 .sucesso {
     background: #d1fae5;
     color: #065f46;

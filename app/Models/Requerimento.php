@@ -30,6 +30,11 @@ class Requerimento extends Model
 {
     protected $table = 'requerimentos';
 
+    public const DECLARACAO_RESPONSABILIDADE = 'Declaro, para os devidos fins, que as informações prestadas neste requerimento são verdadeiras e de minha inteira responsabilidade, '
+        . 'estando ciente de que a prestação de informações falsas poderá acarretar as sanções previstas na Lei Federal nº 9.605/1998 (Lei de Crimes Ambientais), '
+        . 'no Decreto Estadual nº 14.024/2012 e na Lei Municipal nº 498/2013 de Seabra-BA, bem como a nulidade deste ato e a cassação de eventuais licenças '
+        . 'concedidas com base nas informações aqui declaradas.';
+
     // ─── Status do processo ───────────────────────────────────────────────────
     public const STATUS_PROTOCOLADO                 = 'Protocolado';
     public const STATUS_EM_ANALISE                  = 'Em análise';

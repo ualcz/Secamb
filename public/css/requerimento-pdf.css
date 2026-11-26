@@ -181,6 +181,13 @@ table {
     line-height: 1.5;
 }
 
+.declaracao-aceite-registro {
+    margin-top: 1.5mm;
+    color: #334155;
+    font-size: 6.5pt;
+    text-align: right;
+}
+
 /* ── Rodapé ── */
 .rodape {
     margin-top: 4mm;

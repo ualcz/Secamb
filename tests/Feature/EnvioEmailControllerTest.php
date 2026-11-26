@@ -30,10 +30,23 @@ test('protocol stores and displays the generated request pdf in the initial hist
     ]);
 
     $this->actingAs($cidadao)
+        ->from(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
         ->post(route('cidadao.enviar-email'), [
             'setor_id' => $setor->id,
             'objeto' => 'Licença de Instalação',
             'motivo' => 'Solicitação de licença ambiental.',
+        ])
+        ->assertRedirect(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
+        ->assertSessionHasErrors('aceite_declaracao');
+
+    expect(Requerimento::count())->toBe(0);
+
+    $this->actingAs($cidadao)
+        ->post(route('cidadao.enviar-email'), [
+            'setor_id' => $setor->id,
+            'objeto' => 'Licença de Instalação',
+            'motivo' => 'Solicitação de licença ambiental.',
+            'aceite_declaracao' => '1',
         ])
         ->assertRedirect(route('requerimentos.cidadao.meusRequerimentos'));
 

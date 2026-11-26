@@ -32,6 +32,7 @@ class EnvioEmailController extends Controller
             'objetoDoRequerimento' => 'nullable|string|max:255',
             'objeto_outro'         => 'nullable|string|max:255',
             'motivo'               => 'required|string|max:3000',
+            'aceite_declaracao'    => ['required', 'accepted'],
             'mensagem'             => 'nullable|string|max:3000',
             'celular'              => 'nullable|string|max:30',
             'rua'                  => 'nullable|string|max:255',
@@ -44,6 +45,9 @@ class EnvioEmailController extends Controller
             'endereco'             => 'nullable|string|max:255',
             'arquivos.*'           => 'nullable|file|max:51200',
             'documentos.*'         => 'nullable|file|max:51200',
+        ], [
+            'aceite_declaracao.required' => 'Marque a caixa para confirmar sua concordância com a declaração.',
+            'aceite_declaracao.accepted' => 'É necessário aceitar a declaração para protocolar o requerimento.',
         ]);
 
         // 1. Identifica o setor de destino

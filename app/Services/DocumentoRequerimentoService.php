@@ -36,7 +36,9 @@ class DocumentoRequerimentoService
                 objeto: $objeto,
                 mensagem: $mensagem,
                 numeroProtocolo: $requerimento?->numero_protocolo,
-                requerimento: $requerimento
+                requerimento: $requerimento,
+                declaracaoAceita: $requerimento !== null,
+                dataAceite: $requerimento?->created_at
             );
             $conteudo = $pdf->output();
         } catch (\Throwable $e) {

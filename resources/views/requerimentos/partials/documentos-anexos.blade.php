@@ -90,6 +90,23 @@
             </div>
         @endforeach
 
+        <div class="declaracao-aceite">
+            <label class="declaracao-aceite-label" for="aceite-declaracao">
+                <input
+                    id="aceite-declaracao"
+                    type="checkbox"
+                    name="aceite_declaracao"
+                    value="1"
+                    required
+                    @checked(old('aceite_declaracao'))
+                >
+                <span>{{ \App\Models\Requerimento::DECLARACAO_RESPONSABILIDADE }}</span>
+            </label>
+            @error('aceite_declaracao')
+                <p class="declaracao-aceite-erro" role="alert">{{ $message }}</p>
+            @enderror
+        </div>
+
     </fieldset>
 
     <div class="step-nav">
