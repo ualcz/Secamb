@@ -10,33 +10,38 @@
     @include('requerimentos.partials.timeline')
 
     <div class="protocolo-info">
-        @if(session('sucesso'))
+        @if(session('success') || session('sucesso'))
             <div class="alert-sucesso">
-                {{ session('sucesso') }}
+                {{ session('success') ?? session('sucesso') }}
             </div>
         @endif
 
-        <x-loading-overlay
-            form-id="formCorrecao"
-            :mensagens="[
-                'Atualizando status...',
-                'Enviando email de notificação...',
-                'Atualizando sistema...',
-                'Só mais um instante...'
-            ]"
-        />
+        {{-- Ações disponíveis para o setor --}}
+        @include('setor.requerimentos.partials.acoes')
 
-        {{-- 2. Informações Cadastrais do Solicitante (Accordion) --}}
+        {{-- Informações Cadastrais do Solicitante (Accordion) --}}
         @include('setor.requerimentos.partials.info-usuario')
 
-        {{-- 3. Dados do Requerimento e Empreendimento Vinculado --}}
+        {{-- Dados do Requerimento e Empreendimento Vinculado --}}
         @include('setor.requerimentos.partials.dados-requerimento')
-
-        {{-- 4. Painel de Ações do Setor (Status, Despacho, Encaminhamento) --}}
-        @include('setor.requerimentos.partials.acoes')
     </div>
 </div>
 
+<div
+    id="acao-loading-overlay"
+    class="acao-loading-overlay"
+    role="status"
+    aria-live="polite"
+    aria-hidden="true"
+    tabindex="-1"
+    hidden
+>
+    <div class="acao-loading-card">
+        <span class="acao-loading-spinner" aria-hidden="true"></span>
+        <p class="acao-loading-titulo" data-loading-message>Processando solicitação...</p>
+        <p class="acao-loading-ajuda">Aguarde enquanto o sistema registra a ação.</p>
+    </div>
+</div>
 
 <script src="{{ asset('js/show-requerimento.js') }}?v={{ filemtime(public_path('js/show-requerimento.js')) }}"></script>
 @endsection

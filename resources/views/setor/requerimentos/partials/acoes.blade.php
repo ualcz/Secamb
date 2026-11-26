@@ -1,177 +1,79 @@
+@php
+    $statusPossiveis = $requerimento->proximosStatusPossiveis();
+    $processoFinalizado = $requerimento->isTerminal();
+    $statusAntigo = old('status');
+    $statusSelecionado = in_array($statusAntigo, $statusPossiveis, true)
+        ? $statusAntigo
+        : ($statusPossiveis[0] ?? '');
+    $solicitaComplementacao = $statusSelecionado === \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO;
+    $statusExigeJustificativa = in_array($statusSelecionado, [
+        \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
+        \App\Models\Requerimento::STATUS_INDEFERIDO,
+        \App\Models\Requerimento::STATUS_ENCERRADO,
+    ], true);
+    $rotuloObservacao = match ($statusSelecionado) {
+        \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO => 'Orientação para complementação',
+        \App\Models\Requerimento::STATUS_INDEFERIDO => 'Justificativa do indeferimento',
+        \App\Models\Requerimento::STATUS_ENCERRADO => 'Motivo do encerramento',
+        default => 'Mensagem para o histórico (opcional)',
+    };
+@endphp
+
 <section class="card-painel painel-acoes" aria-labelledby="titulo-acoes-requerimento">
     <h2 id="titulo-acoes-requerimento" class="painel-acoes-titulo">Ações do requerimento</h2>
 
-    {{-- AÇÃO 1: DEVOLVER ENCAMINHAMENTO (Se o processo foi recebido sob despacho de outro setor) --}}
-    @if($requerimento->setor_retorno_id)
-        <details class="acao-item" name="acao-requerimento" open>
-            <summary class="acao-resumo">
-                <span class="acao-textos">
-                    <span class="acao-titulo">Responder encaminhamento</span>
-                    <span class="acao-descricao">Devolver para {{ $requerimento->setorRetorno?->setor_sigla }}</span>
+    <div class="acao-botoes">
+        @if(!$processoFinalizado && $requerimento->setor_retorno_id)
+            <button type="button" class="acao-botao acao-botao-responder" data-modal-target="modal-responder-encaminhamento" aria-haspopup="dialog" aria-controls="modal-responder-encaminhamento">
+                <span class="acao-botao-icone" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 016 6v1"/></svg>
                 </span>
-            </summary>
-            <div class="acao-conteudo">
-                <form action="{{ route('setor.requerimentos.responderEncaminhamento', [$setor->id, $requerimento->id]) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="acao" value="responder_encaminhamento">
-                    <label for="resposta_encaminhamento" class="info-label">Resposta / Despacho</label>
-                    <textarea name="observacao" id="resposta_encaminhamento" class="form-control" rows="4" placeholder="Informe a resposta técnica ou parecer para o setor de origem..." required>{{ old('observacao') }}</textarea>
-                    <div class="acao-arquivos">
-                        <label for="arquivos_resposta" class="info-label">Anexar documentos (opcional)</label>
-                        <input type="file" name="arquivos[]" id="arquivos_resposta" class="form-control file-input" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                    </div>
-                    <button type="submit" class="btn-atualizar">Enviar resposta e devolver</button>
-                </form>
-            </div>
-        </details>
+                <span class="acao-botao-texto">
+                    <strong>Responder encaminhamento</strong>
+                    <span>Devolver para {{ $requerimento->setorRetorno?->setor_sigla }}</span>
+                </span>
+                <span class="acao-botao-seta" aria-hidden="true">→</span>
+            </button>
+        @endif
+
+        @if($statusPossiveis)
+            <button type="button" class="acao-botao acao-botao-atender" data-modal-target="modal-atender" aria-haspopup="dialog" aria-controls="modal-atender">
+                <span class="acao-botao-icone" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/><circle cx="12" cy="12" r="10"/></svg>
+                </span>
+                <span class="acao-botao-texto">
+                    <strong>Atender requerimento</strong>
+                    <span>Atualizar status e anexar documento</span>
+                </span>
+                <span class="acao-botao-seta" aria-hidden="true">→</span>
+            </button>
+        @endif
+
+        @if(!$processoFinalizado)
+            <button type="button" class="acao-botao acao-botao-encaminhar" data-modal-target="modal-encaminhar" aria-haspopup="dialog" aria-controls="modal-encaminhar">
+                <span class="acao-botao-icone" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+                </span>
+                <span class="acao-botao-texto">
+                    <strong>Encaminhar</strong>
+                    <span>Enviar para outro setor ou solicitar despacho</span>
+                </span>
+                <span class="acao-botao-seta" aria-hidden="true">→</span>
+            </button>
+        @endif
+    </div>
+
+    @if(!$statusPossiveis)
+        <p class="acao-sem-transicao">Este processo não possui transições de status disponíveis nesta etapa.</p>
     @endif
 
-    {{-- AÇÃO 2: ATUALIZAR STATUS --}}
-    @php
-        $statusPossiveis = $requerimento->proximosStatusPossiveis();
-        $statusSelecionado = old('status', $statusPossiveis[0] ?? '');
-        $solicitaComplementacao = $statusSelecionado === \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO;
-        $statusExigeJustificativa = in_array($statusSelecionado, [
-            \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
-            \App\Models\Requerimento::STATUS_INDEFERIDO,
-        ], true);
-    @endphp
+    @if(!$processoFinalizado && $requerimento->setor_retorno_id)
+        @include('setor.requerimentos.partials.modals.responder-encaminhamento')
+    @endif
     @if($statusPossiveis)
-        <details class="acao-item" name="acao-requerimento" {{ old('acao') === 'atualizar_status' ? 'open' : '' }}>
-            <summary class="acao-resumo">
-                <span class="acao-textos">
-                    <span class="acao-titulo">Atualizar status</span>
-                    <span class="acao-descricao">Avance o processo para uma etapa permitida do fluxo</span>
-                </span>
-            </summary>
-            <div class="acao-conteudo">
-                <form action="{{ route('setor.requerimentos.atualizarStatus', [$setor->id, $requerimento->id]) }}" method="POST" enctype="multipart/form-data" id="formCorrecao">
-                    @csrf
-                    @method('PATCH')
-                    <input type="hidden" name="acao" value="atualizar_status">
-
-                    <label for="status" class="info-label">Novo status</label>
-                    <div class="form-status">
-                        <select name="status" id="status" class="select-status" required onchange="toggleMensagemIndeferido()">
-                            @foreach($statusPossiveis as $status)
-                                <option value="{{ $status }}" {{ $statusSelecionado === $status ? 'selected' : '' }}>{{ $status }}</option>
-                            @endforeach
-                        </select>
-
-                        <button type="submit" class="btn-atualizar">Salvar status</button>
-                    </div>
-
-                    <div class="acao-arquivos">
-                        <label for="arquivos_servidor" class="info-label">Anexar documento ou parecer (opcional)</label>
-                        <input type="file" name="arquivos[]" id="arquivos_servidor" class="form-control file-input" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                    </div>
-
-                    <div id="campo-mensagem" style="display: {{ $statusExigeJustificativa ? 'block' : 'none' }};">
-                        <label for="observacao" class="info-label" id="label-observacao">
-                            {{ $solicitaComplementacao ? 'Orientação para complementação' : 'Motivo do indeferimento' }}
-                        </label>
-                        <textarea
-                            name="observacao"
-                            id="observacao"
-                            class="form-control"
-                            rows="3"
-                            placeholder="Informe a justificativa e as orientações necessárias."
-                            {{ $statusExigeJustificativa ? 'required' : '' }}
-                        >{{ old('observacao') }}</textarea>
-                        <div class="acao-campo-secundario">
-                            <label for="solicita_novo_documento" class="info-label">Solicitar documento ao cidadão?</label>
-                            <select name="solicita_novo_documento" id="solicita_novo_documento" class="select-status" onchange="toggleCampoNomeDocumento()">
-                                <option value="0" {{ old('solicita_novo_documento', $solicitaComplementacao ? '1' : '0') == '0' ? 'selected' : '' }}>Não</option>
-                                <option value="1" {{ old('solicita_novo_documento', $solicitaComplementacao ? '1' : '0') == '1' ? 'selected' : '' }}>Sim</option>
-                            </select>
-                        </div>
-                        <div id="box-nome-documento" style="display: {{ old('solicita_novo_documento', $solicitaComplementacao ? '1' : '0') == '1' ? 'block' : 'none' }};">
-                            <label for="nome_documento_solicitado" class="info-label">Documento solicitado</label>
-                            <input
-                                type="text"
-                                name="nome_documento_solicitado"
-                                id="nome_documento_solicitado"
-                                class="select-status campo-documento-solicitado"
-                                placeholder="Ex.: Relatório ou estudo técnico"
-                                value="{{ old('nome_documento_solicitado') }}"
-                                {{ $solicitaComplementacao || old('solicita_novo_documento') == '1' ? 'required' : '' }}
-                            >
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </details>
-    @else
-        <p class="acao-descricao">Este processo não possui transições disponíveis para o setor nesta etapa.</p>
+        @include('setor.requerimentos.partials.modals.atender')
     @endif
-
-    {{-- AÇÃO 3: ENCAMINHAR PARA OUTRO SETOR (Transferência ou Despacho) --}}
-    <details class="acao-item" name="acao-requerimento" {{ old('acao') === 'encaminhar' ? 'open' : '' }}>
-        <summary class="acao-resumo">
-            <span class="acao-textos">
-                <span class="acao-titulo">Encaminhar para outro setor</span>
-                <span class="acao-descricao">Transferir processo ou solicitar despacho</span>
-            </span>
-        </summary>
-        <div class="acao-conteudo">
-            <form action="{{ route('setor.requerimentos.encaminhar', [$setor->id, $requerimento->id]) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="acao" value="encaminhar">
-
-                <div style="margin-bottom: 14px; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
-                    <label class="info-label" style="margin-bottom: 6px;">Tipo de Tramitação *</label>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 0.85rem; color: #334155;">
-                            <input type="radio" name="tipo_encaminhamento" value="transferencia" {{ old('tipo_encaminhamento', 'transferencia') === 'transferencia' ? 'checked' : '' }} style="margin-top: 3px;">
-                            <span>
-                                <strong style="color: #0f172a;">Transferência de setor</strong>
-                                <span style="display: block; font-size: 0.775rem; color: #64748b;">Transfere a responsabilidade do processo em definitivo para o novo setor.</span>
-                            </span>
-                        </label>
-                        <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 0.85rem; color: #334155;">
-                            <input type="radio" name="tipo_encaminhamento" value="despacho" {{ old('tipo_encaminhamento') === 'despacho' ? 'checked' : '' }} style="margin-top: 3px;">
-                            <span>
-                                <strong style="color: #0f172a;">Solicitar despacho / parecer técnico</strong>
-                                <span style="display: block; font-size: 0.775rem; color: #64748b;">Encaminha para manifestação com opção de devolução ao seu setor.</span>
-                            </span>
-                        </label>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 12px;">
-                    <label for="setor_destino_id" class="info-label">Setor de destino *</label>
-                    <select name="setor_destino_id" id="setor_destino_id" class="select-status" required onchange="atualizarAssuntosDestino()">
-                        <option value="">Selecione um setor</option>
-                        @foreach($setoresDestino as $setorDestino)
-                            <option value="{{ $setorDestino->id }}" {{ old('setor_destino_id') == $setorDestino->id ? 'selected' : '' }}>
-                                {{ $setorDestino->setor_nome }} ({{ $setorDestino->setor_sigla }}){{ $setorDestino->is_interno ? ' — [Setor Interno]' : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div id="box_assunto_destino" style="margin-bottom: 12px; display: none;">
-                    <label for="assunto_destino_id" class="info-label">Tipo de Serviço / Demanda a Realizar</label>
-                    <select name="assunto_destino_id" id="assunto_destino_id" class="select-status" onchange="atualizarInstrucaoAssunto()">
-                        <option value="">Selecione o tipo de serviço (opcional)</option>
-                    </select>
-                    <div id="info_assunto_destino" style="display: none; margin-top: 6px; padding: 8px 12px; background: #f8fafc; border-left: 3px solid #7c3aed; border-radius: 4px; font-size: 0.8125rem; color: #475569;">
-                        <strong style="color: #1e293b;">Orientações deste serviço:</strong> <span id="texto_instrucao_assunto"></span>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 12px;">
-                    <label for="observacao_encaminhamento" class="info-label acao-label-secundario">Motivo / Orientação do encaminhamento *</label>
-                    <textarea name="observacao" id="observacao_encaminhamento" class="form-control" rows="4" placeholder="Descreva as orientações ou motivos para o setor de destino..." required>{{ old('observacao') }}</textarea>
-                </div>
-
-                <div class="acao-arquivos" style="margin-bottom: 14px;">
-                    <label for="arquivos_encaminhamento" class="info-label">Anexar documentos (opcional)</label>
-                    <input type="file" name="arquivos[]" id="arquivos_encaminhamento" class="form-control file-input" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                </div>
-
-                <button type="submit" class="btn-atualizar">Encaminhar processo</button>
-            </form>
-        </div>
-    </details>
+    @if(!$processoFinalizado)
+        @include('setor.requerimentos.partials.modals.encaminhar')
+    @endif
 </section>
