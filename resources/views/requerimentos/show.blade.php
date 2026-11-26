@@ -37,10 +37,7 @@
                 $ultimoHistorico = $requerimento->historicos->sortByDesc('created_at')->first();
             @endphp
 
-            @if(in_array($requerimento->status, [
-                \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
-                \App\Models\Requerimento::STATUS_INDEFERIDO,
-            ], true) || ($ultimoHistorico && $ultimoHistorico->solicita_novo_documento))
+            @if($requerimento->status === \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO)
                 <div class="alert-acao-necessaria card-painel">
                     <div class="alert-header">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -48,14 +45,14 @@
                             <line x1="12" y1="9" x2="12" y2="13"/>
                             <line x1="12" y1="17" x2="12.01" y2="17"/>
                         </svg>
-                        <h4 class="alert-titulo">Ação Necessária: Documento Solicitado</h4>
+                        <h4 class="alert-titulo">Ação necessária: complementação solicitada</h4>
                     </div>
 
                     <div class="alert-detalhes">
                         <div class="info-grupo">
                             <span class="info-label">OBSERVAÇÃO DO SETOR</span>
                             <div class="box-motivo">
-                                <span class="info-valor">{{ $ultimoHistorico->observacao }}</span>
+                                <span class="info-valor">{{ $ultimoHistorico?->observacao ?? 'O setor solicitou informações complementares.' }}</span>
                             </div>
                         </div>
                     </div>
@@ -64,12 +61,12 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label for="motivo_correcao" class="info-label">DESCRIÇÃO DAS CORREÇÕES / JUSTIFICATIVA</label>
-                            <textarea name="motivo_correcao" id="motivo_correcao" class="form-control" rows="4" placeholder="Informe aqui os detalhes da correção..." required></textarea>
+                            <label for="motivo_correcao" class="info-label">RESPOSTA À SOLICITAÇÃO DE COMPLEMENTAÇÃO</label>
+                            <textarea name="motivo_correcao" id="motivo_correcao" class="form-control" rows="4" placeholder="Descreva as informações e documentos enviados..." required></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="arquivos" class="info-label">{{ $ultimoHistorico->nome_documento_solicitado ?? 'Documento indeferido' }} / DOCUMENTOS CORRIGIDOS</label>
+                            <label for="arquivos" class="info-label">{{ $ultimoHistorico?->nome_documento_solicitado ?? 'Documentos de complementação' }}</label>
                             <input type="file" name="arquivos[]" id="arquivos" class="form-control file-input" multiple required>
                         </div>
 
@@ -78,7 +75,7 @@
                                 <path d="m5 12 7-7 7 7"/>
                                 <path d="M12 19V5"/>
                             </svg>
-                            Enviar Correção
+                            Enviar complementação
                         </button>
                     </form>
                 </div>
@@ -97,14 +94,18 @@
                 <div>
                     @php
                         $statusClass = match($requerimento->status) {
-                            'Protocolado' => 'badge-protocolado',
-                            'Em análise' => 'badge-em-analise',
-                            'Aguardando complementação' => 'badge-aguardando-complementacao',
-                            'Deferido' => 'badge-deferido',
-                            'Licença emitida' => 'badge-licenca-emitida',
-                            'Indeferido' => 'badge-indeferido',
-                            'Encerrado' => 'badge-encerrado',
-                            'Expirado' => 'badge-expirado',
+                            \App\Models\Requerimento::STATUS_PROTOCOLADO => 'badge-protocolado',
+                            \App\Models\Requerimento::STATUS_EM_ANALISE => 'badge-em-analise',
+                            \App\Models\Requerimento::STATUS_EM_ANALISE_TECNICA => 'badge-em-analise-tecnica',
+                            \App\Models\Requerimento::STATUS_ANALISE_CONCLUIDA => 'badge-analise-concluida',
+                            \App\Models\Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO => 'badge-aguardando-complementacao',
+                            \App\Models\Requerimento::STATUS_AGUARDANDO_VISTORIA => 'badge-aguardando-vistoria',
+                            \App\Models\Requerimento::STATUS_VISTORIA_CONCLUIDA => 'badge-vistoria-concluida',
+                            \App\Models\Requerimento::STATUS_DEFERIDO => 'badge-deferido',
+                            \App\Models\Requerimento::STATUS_LICENCA_EMITIDA => 'badge-licenca-emitida',
+                            \App\Models\Requerimento::STATUS_INDEFERIDO => 'badge-indeferido',
+                            \App\Models\Requerimento::STATUS_ENCERRADO,
+                            \App\Models\Requerimento::STATUS_ARQUIVADO_COMPLEMENTACAO => 'badge-encerrado',
                             default => 'badge-protocolado'
                         };
                     @endphp

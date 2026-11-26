@@ -7,7 +7,7 @@
 
     // Exibe todos os documentos quando:
     // - status é terminal, ou o requerimento foi encerrado
-    // - histórico de análise com solicitação de novo documento
+    // - histórico de resposta do cidadão ou de análise com solicitação de documento
     // - histórico inicial do próprio cidadão (Protocolado)
     $deveExibirTodosDocumentos = $documentos->isNotEmpty() && (
         in_array(($historico?->status ?? null), \App\Models\Requerimento::STATUS_TERMINAIS, true)
@@ -16,6 +16,7 @@
         || (($historico?->status ?? null) === \App\Models\Requerimento::STATUS_EM_ANALISE && !empty($historico?->solicita_novo_documento))
         || (($historico?->status ?? null) === \App\Models\Requerimento::STATUS_PROTOCOLADO && $historicoDoProprioUsuario)
         || $respostaDoAluno
+        || !empty($historico?->setor_id)
     );
 
     $documentosExibidos = $documentos->filter(function ($doc) use ($respostaDoAluno, $deveExibirTodosDocumentos) {

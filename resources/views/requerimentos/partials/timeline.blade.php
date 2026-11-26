@@ -49,6 +49,9 @@
                 $temDetalhes = !empty(trim($textoObservacao ?? ''))
                     || !empty($historico->nome_documento_solicitado)
                     || ($historico->documentos && $historico->documentos->isNotEmpty());
+                $documentoAnexadoPeloSetor = $historico->setor_id
+                    && $historico->documentos
+                    && $historico->documentos->isNotEmpty();
             @endphp
             <li class="timeline-item status-{{ Str::slug($historico->status) }}">
                 <div class="timeline-badge"></div>
@@ -75,6 +78,15 @@
                             </button>
                         @endif
                     </div>
+
+                    @if($documentoAnexadoPeloSetor)
+                        <div class="timeline-documento-setor">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15.5 6.5l-7.8 7.8a2.1 2.1 0 003 3l8-8a4.2 4.2 0 00-6-6l-8 8a6.3 6.3 0 009 9l7-7"/>
+                            </svg>
+                            <span>Documento anexado pelo setor <strong>{{ $historico->setor?->setor_sigla ?: $historico->setor?->setor_nome }}</strong></span>
+                        </div>
+                    @endif
 
                     {{-- Informação de tramitação entre setores: dentro do card, visível antes de expandir --}}
                     @if($rotaSetores)

@@ -310,6 +310,30 @@
     font-weight: 600;
 }
 
+.status-em-analise-tecnica span {
+    color: #4338ca;
+    background-color: #e0e7ff;
+    border: 1px solid #c7d2fe;
+}
+
+.status-analise-concluida span {
+    color: #0369a1;
+    background-color: #e0f2fe;
+    border: 1px solid #bae6fd;
+}
+
+.status-aguardando-vistoria span {
+    color: #a16207;
+    background-color: #fef9c3;
+    border: 1px solid #fde68a;
+}
+
+.status-vistoria-concluida span {
+    color: #0f766e;
+    background-color: #ccfbf1;
+    border: 1px solid #99f6e4;
+}
+
 .status-licenca-emitida span {
     color: #15803d;
     background-color: #dcfce7;

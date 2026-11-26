@@ -206,6 +206,30 @@
     border-color: #ddd6fe;
 }
 
+.dash-table td.status-em-analise-tecnica span {
+    color: #4338ca;
+    background: #e0e7ff;
+    border-color: #c7d2fe;
+}
+
+.dash-table td.status-analise-concluida span {
+    color: #0369a1;
+    background: #e0f2fe;
+    border-color: #bae6fd;
+}
+
+.dash-table td.status-aguardando-vistoria span {
+    color: #a16207;
+    background: #fef9c3;
+    border-color: #fde68a;
+}
+
+.dash-table td.status-vistoria-concluida span {
+    color: #0f766e;
+    background: #ccfbf1;
+    border-color: #99f6e4;
+}
+
 .dash-table td.status-aguardando-complementacao span {
     color: #c2410c;
     background: #ffedd5;

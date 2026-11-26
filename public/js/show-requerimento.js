@@ -1,49 +1,64 @@
 function toggleMensagemIndeferido() {
     const selectStatus = document.getElementById('status');
-    const campoMensagem = document.getElementById('campo-mensagem');
     const textareaMensagem = document.getElementById('observacao');
 
-    if (!selectStatus || !campoMensagem) return;
+    if (!selectStatus) return;
 
-    const exigeJustificativa = ['Aguardando complementação', 'Indeferido'].includes(selectStatus.value);
+    const exigeJustificativa = [
+        'Aguardando complementação',
+        'Indeferido',
+        'Encerrado',
+    ].includes(selectStatus.value);
+    const exigeDocumento = selectStatus.value === 'Aguardando complementação';
+    const boxNomeDocumento = document.getElementById('box-nome-documento');
+    const inputNomeDocumento = document.getElementById('nome_documento_solicitado');
+    const inputArquivos = document.getElementById('arquivos_servidor');
+    const rotuloArquivos = document.getElementById('rotulo-arquivos');
+    const obrigatoriedadeArquivos = document.getElementById('obrigatoriedade-arquivos');
+    const ajudaArquivos = document.getElementById('ajuda-arquivos');
+    const exigeLicenca = selectStatus.value === 'Licença emitida';
 
-    if (exigeJustificativa) {
-        campoMensagem.style.display = 'block';
-        if (textareaMensagem) textareaMensagem.setAttribute('required', 'required');
-    } else {
-        campoMensagem.style.display = 'none';
-        if (textareaMensagem) textareaMensagem.removeAttribute('required');
+    if (textareaMensagem) {
+        if (exigeJustificativa) {
+            textareaMensagem.setAttribute('required', 'required');
+        } else {
+            textareaMensagem.removeAttribute('required');
+        }
     }
 
-    if (selectStatus.value === 'Aguardando complementação') {
-        const solicitaSelect = document.getElementById('solicita_novo_documento');
-        if (solicitaSelect) {
-            solicitaSelect.value = '1';
-            toggleCampoNomeDocumento();
+    if (boxNomeDocumento) {
+        boxNomeDocumento.style.display = exigeDocumento ? 'block' : 'none';
+    }
+    if (inputNomeDocumento) {
+        if (exigeDocumento) {
+            inputNomeDocumento.setAttribute('required', 'required');
+        } else {
+            inputNomeDocumento.removeAttribute('required');
         }
+    }
+    if (inputArquivos) {
+        inputArquivos.required = exigeLicenca;
+    }
+    if (rotuloArquivos) {
+        rotuloArquivos.textContent = exigeLicenca ? 'Licença ambiental emitida' : 'Documento ou parecer';
+    }
+    if (obrigatoriedadeArquivos) {
+        obrigatoriedadeArquivos.textContent = exigeLicenca ? '(obrigatório)' : '(opcional)';
+    }
+    if (ajudaArquivos) {
+        ajudaArquivos.textContent = exigeLicenca
+            ? 'Anexe o arquivo da licença para concluir a emissão.'
+            : 'Os arquivos enviados serão registrados no histórico com a identificação do setor.';
     }
 
     const labelObservacao = document.getElementById('label-observacao');
     if (labelObservacao) {
-        labelObservacao.textContent = selectStatus.value === 'Aguardando complementação'
-            ? 'Orientação para complementação'
-            : 'Motivo do indeferimento';
-    }
-}
-
-function toggleCampoNomeDocumento() {
-    const solicitaSelect = document.getElementById('solicita_novo_documento');
-    const boxNomeDocumento = document.getElementById('box-nome-documento');
-    const inputNomeDocumento = document.getElementById('nome_documento_solicitado');
-
-    if (solicitaSelect && boxNomeDocumento) {
-        if (solicitaSelect.value === '1') {
-            boxNomeDocumento.style.display = 'block';
-            if (inputNomeDocumento) inputNomeDocumento.setAttribute('required', 'required');
-        } else {
-            boxNomeDocumento.style.display = 'none';
-            if (inputNomeDocumento) inputNomeDocumento.removeAttribute('required');
-        }
+        const rotulos = {
+            'Aguardando complementação': 'Orientação para complementação',
+            'Indeferido': 'Justificativa do indeferimento',
+            'Encerrado': 'Motivo do encerramento',
+        };
+        labelObservacao.textContent = rotulos[selectStatus.value] || 'Mensagem para o histórico (opcional)';
     }
 }
 
@@ -121,6 +136,66 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Inicializa catálogo de serviços do setor de destino se existir
     atualizarAssuntosDestino();
+
+    const dialogs = document.querySelectorAll('.acao-modal');
+    document.querySelectorAll('[data-modal-target]').forEach(button => {
+        button.addEventListener('click', () => {
+            const dialog = document.getElementById(button.dataset.modalTarget);
+            if (dialog && !dialog.open) {
+                dialog.showModal();
+            }
+        });
+    });
+
+    dialogs.forEach(dialog => {
+        if (dialog.dataset.openOnLoad === 'true') {
+            dialog.showModal();
+        }
+
+        dialog.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', event => {
+                if (form.dataset.submitting === 'true') {
+                    event.preventDefault();
+                    return;
+                }
+
+                form.dataset.submitting = 'true';
+                form.setAttribute('aria-busy', 'true');
+
+                const submitButton = event.submitter || form.querySelector('[type="submit"]');
+                if (submitButton) {
+                    submitButton.disabled = true;
+                }
+
+                if (dialog.open) {
+                    dialog.close();
+                }
+
+                const loadingOverlay = document.getElementById('acao-loading-overlay');
+                if (loadingOverlay) {
+                    const loadingMessage = loadingOverlay.querySelector('[data-loading-message]');
+                    if (loadingMessage) {
+                        loadingMessage.textContent = form.dataset.loadingMessage || 'Processando solicitação...';
+                    }
+
+                    loadingOverlay.hidden = false;
+                    loadingOverlay.setAttribute('aria-hidden', 'false');
+                    loadingOverlay.focus();
+                    document.body.classList.add('acao-processando');
+                }
+            });
+        });
+
+        dialog.querySelectorAll('[data-modal-close]').forEach(button => {
+            button.addEventListener('click', () => dialog.close());
+        });
+
+        dialog.addEventListener('click', event => {
+            if (event.target === dialog) {
+                dialog.close();
+            }
+        });
+    });
 });
 
 function toggleTimelineDetalhes(btn) {
