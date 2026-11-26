@@ -145,6 +145,8 @@ Route::middleware(['auth', 'responsavel'])->group(function () {
     ->name('setor.requerimentos.show');
     Route::patch('/setor/{setor}/requerimentos/{requerimento}/atualizarStatus', [ResponsavelSetorController::class, 'atualizarStatus'])
     ->name('setor.requerimentos.atualizarStatus');
+    Route::post('/setor/{setor}/requerimentos/{requerimento}/anexar-documento', [ResponsavelSetorController::class, 'anexarDocumento'])
+    ->name('setor.requerimentos.anexarDocumento');
     Route::post('/setor/{setor}/requerimentos/{requerimento}/encaminhar', [ResponsavelSetorController::class, 'encaminhar'])
     ->name('setor.requerimentos.encaminhar');
     Route::post('/setor/{setor}/requerimentos/{requerimento}/responder-encaminhamento', [ResponsavelSetorController::class, 'responderEncaminhamento'])

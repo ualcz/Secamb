@@ -76,6 +76,17 @@ class ResponsavelSetorController extends Controller
         }
 
         $requerimentos = $query->paginate(15)->appends($request->query());
+        $statusBanco = Requerimento::query()
+            ->whereNotNull('status')
+            ->distinct()
+            ->pluck('status');
+        $statusPresentes = $statusBanco->all();
+        $statusFiltro = collect(Requerimento::STATUS_DISPONIVEIS)
+            ->filter(fn ($status) => in_array($status, $statusPresentes, true))
+            ->merge($statusBanco->reject(
+                fn ($status) => in_array($status, Requerimento::STATUS_DISPONIVEIS, true)
+            ))
+            ->values();
 
         return view('setor.responsavel.dashboard', compact(
             'setor',
@@ -83,7 +94,8 @@ class ResponsavelSetorController extends Controller
             'totalConcluidos',
             'totalIndeferidos',
             'totalAberto',
-            'requerimentos'
+            'requerimentos',
+            'statusFiltro'
         ));
     }
 
@@ -161,16 +173,15 @@ class ResponsavelSetorController extends Controller
         $nomeDocumentoSolicitado = $solicitaNovoDocumento
             ? $validated['nome_documento_solicitado']
             : null;
-        $mensagemHistorico = trim((string) ($validated['observacao'] ?? ''));
-        if ($mensagemHistorico === '') {
-            $mensagemHistorico = "Status alterado para {$validated['status']} pelo setor.";
-        }
+        $observacaoHistorico = trim((string) ($validated['observacao'] ?? '')) ?: null;
+        $mensagemNotificacao = $observacaoHistorico
+            ?? "O status do requerimento foi atualizado para {$validated['status']}.";
 
         $novoHistorico = DB::transaction(function () use (
             $requerimento,
             $setor,
             $validated,
-            $mensagemHistorico,
+            $observacaoHistorico,
             $solicitaNovoDocumento,
             $nomeDocumentoSolicitado
         ) {
@@ -196,7 +207,7 @@ class ResponsavelSetorController extends Controller
                 'user_id'                   => Auth::id() ?? $atual->usuario_id,
                 'setor_id'                  => $setor->id,
                 'status'                    => $atual->status,
-                'observacao'                => $mensagemHistorico,
+                'observacao'                => $observacaoHistorico,
                 'solicita_novo_documento'   => $solicitaNovoDocumento,
                 'nome_documento_solicitado' => $nomeDocumentoSolicitado,
             ]);
@@ -221,7 +232,7 @@ class ResponsavelSetorController extends Controller
 
         // Envia e-mail de notificação para o aluno (com cópia para o setor)
         $requerimento->notificarPartes(
-            mensagem: $mensagemHistorico,
+            mensagem: $mensagemNotificacao,
             remetente: 'setor',
             arquivos: is_array($arquivos) ? $arquivos : [],
             solicitaNovoDocumento: $solicitaNovoDocumento
@@ -239,6 +250,68 @@ class ResponsavelSetorController extends Controller
         return redirect()
             ->back()
             ->with('success', 'Status do requerimento atualizado para "' . $requerimento->status . '" com sucesso!');
+    }
+
+    public function anexarDocumento(Request $request, Setor $setor, Requerimento $requerimento)
+    {
+        $this->autorizarSetor($setor);
+
+        if ((int) $requerimento->setor_id !== (int) $setor->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'titulo_documento' => 'nullable|string|max:255',
+            'observacao' => 'nullable|string|max:10000',
+            'arquivos' => 'required|array|min:1|max:10',
+            'arquivos.*' => 'required|file|max:51200',
+        ]);
+
+        $historico = DB::transaction(function () use ($setor, $requerimento, $validated) {
+            $atual = Requerimento::query()->lockForUpdate()->findOrFail($requerimento->id);
+
+            if ((int) $atual->setor_id !== (int) $setor->id) {
+                abort(409, 'Este requerimento mudou de setor.');
+            }
+            if ($atual->isTerminal()) {
+                abort(409, 'Não é possível anexar documentos a processos finalizados.');
+            }
+
+            if (($atual->status ?: Requerimento::STATUS_PROTOCOLADO) === Requerimento::STATUS_PROTOCOLADO) {
+                abort(409, 'Documentos podem ser anexados após o início da análise do processo.');
+            }
+
+            return HistoricoRequerimento::create([
+                'requerimento_id' => $atual->id,
+                'user_id' => Auth::id(),
+                'setor_id' => $setor->id,
+                'status' => $atual->status ?: Requerimento::STATUS_PROTOCOLADO,
+                'tipo_evento' => HistoricoRequerimento::TIPO_EVENTO_DOCUMENTO_ANEXADO,
+                'observacao' => trim((string) ($validated['observacao'] ?? '')) ?: null,
+            ]);
+        });
+
+        app(DocumentoRequerimentoService::class)->salvarArquivos(
+            requerimento: $requerimento,
+            historico: $historico,
+            arquivos: $request->file('arquivos'),
+            usuario: Auth::user(),
+            titulo: $validated['titulo_documento'] ?? 'Documento do setor'
+        );
+
+        activity()
+            ->performedOn($requerimento)
+            ->causedBy(Auth::user())
+            ->withProperties([
+                'status' => $historico->status,
+                'setor' => $setor->setor_sigla,
+                'documentos' => count($request->file('arquivos')),
+            ])
+            ->log('Documento juntado ao processo');
+
+        return redirect()
+            ->route('setor.requerimentos.show', [$setor->id, $requerimento->id])
+            ->with('success', 'Documento juntado ao processo. O status foi mantido.');
     }
 
     public function encaminhar(Request $request, Setor $setor, Requerimento $requerimento)
