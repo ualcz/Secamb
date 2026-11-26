@@ -15,7 +15,7 @@ class RequerimentoObserver
             [
                 'user_id'    => Auth::id() ?? $requerimento->usuario_id,
                 'status'     => $requerimento->status ?? Requerimento::STATUS_PROTOCOLADO,
-                'observacao' => 'Requerimento cadastrado no sistema.',
+                'observacao' => null,
             ]
         );
     }
