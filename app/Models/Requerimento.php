@@ -19,10 +19,11 @@ use Illuminate\Support\Facades\Mail;
  * Prefeitura Municipal de Seabra / Secretaria Municipal de Meio Ambiente
  *
  * Ciclo de vida do status:
- *   Protocolado → Em análise ↔ Aguardando complementação → Deferido → Licença emitida
- *                                                            ↘ Encerrado
- *   Em análise → Indeferido / Encerrado
- *   Aguardando complementação sem resposta em 90 dias → Expirado
+ *   Protocolado → Em análise → Em análise técnica → Análise concluída
+ *   Análise concluída → vistoria opcional → Deferido → Licença emitida
+ *                                      ↘ Indeferido / Encerrado
+ *   Aguardando complementação → Em análise após resposta do cidadão
+ *   Sem resposta à complementação em 120 dias → Arquivado
  */
 #[ObservedBy([RequerimentoObserver::class])]
 class Requerimento extends Model
@@ -32,29 +33,45 @@ class Requerimento extends Model
     // ─── Status do processo ───────────────────────────────────────────────────
     public const STATUS_PROTOCOLADO                 = 'Protocolado';
     public const STATUS_EM_ANALISE                  = 'Em análise';
+    public const STATUS_EM_ANALISE_TECNICA          = 'Em análise técnica';
+    public const STATUS_ANALISE_CONCLUIDA           = 'Análise concluída';
     public const STATUS_AGUARDANDO_COMPLEMENTACAO   = 'Aguardando complementação';
+    public const STATUS_AGUARDANDO_VISTORIA         = 'Aguardando vistoria';
+    public const STATUS_VISTORIA_CONCLUIDA          = 'Vistoria concluída';
     public const STATUS_DEFERIDO                    = 'Deferido';
     public const STATUS_LICENCA_EMITIDA             = 'Licença emitida';
     public const STATUS_INDEFERIDO                  = 'Indeferido';
     public const STATUS_ENCERRADO                   = 'Encerrado';
-    public const STATUS_EXPIRADO                    = 'Expirado';
+    public const STATUS_ARQUIVADO_COMPLEMENTACAO    = 'Arquivado por falta de complementação';
+    public const DIAS_LIMITE_COMPLEMENTACAO         = 120;
+    public const STATUS_ANALISE_ATIVA = [
+        self::STATUS_EM_ANALISE,
+        self::STATUS_EM_ANALISE_TECNICA,
+        self::STATUS_ANALISE_CONCLUIDA,
+        self::STATUS_AGUARDANDO_VISTORIA,
+        self::STATUS_VISTORIA_CONCLUIDA,
+    ];
 
     public const STATUS_TERMINAIS = [
         self::STATUS_LICENCA_EMITIDA,
         self::STATUS_INDEFERIDO,
         self::STATUS_ENCERRADO,
-        self::STATUS_EXPIRADO,
+        self::STATUS_ARQUIVADO_COMPLEMENTACAO,
     ];
 
     public const STATUS_DISPONIVEIS = [
         self::STATUS_PROTOCOLADO,
         self::STATUS_EM_ANALISE,
+        self::STATUS_EM_ANALISE_TECNICA,
+        self::STATUS_ANALISE_CONCLUIDA,
         self::STATUS_AGUARDANDO_COMPLEMENTACAO,
+        self::STATUS_AGUARDANDO_VISTORIA,
+        self::STATUS_VISTORIA_CONCLUIDA,
         self::STATUS_DEFERIDO,
         self::STATUS_LICENCA_EMITIDA,
         self::STATUS_INDEFERIDO,
         self::STATUS_ENCERRADO,
-        self::STATUS_EXPIRADO,
+        self::STATUS_ARQUIVADO_COMPLEMENTACAO,
     ];
 
     protected $fillable = [
@@ -161,15 +178,41 @@ class Requerimento extends Model
         return $this->status ?: self::STATUS_PROTOCOLADO;
     }
 
+    public function isTerminal(): bool
+    {
+        return in_array($this->status ?: self::STATUS_PROTOCOLADO, self::STATUS_TERMINAIS, true);
+    }
+
     /** Status que o setor pode atribuir a partir da etapa atual. */
     public function proximosStatusPossiveis(): array
     {
         return match ($this->status ?: self::STATUS_PROTOCOLADO) {
             self::STATUS_PROTOCOLADO => [
                 self::STATUS_EM_ANALISE,
-                self::STATUS_ENCERRADO,
             ],
             self::STATUS_EM_ANALISE => [
+                self::STATUS_EM_ANALISE_TECNICA,
+                self::STATUS_AGUARDANDO_COMPLEMENTACAO,
+                self::STATUS_ENCERRADO,
+            ],
+            self::STATUS_EM_ANALISE_TECNICA => [
+                self::STATUS_ANALISE_CONCLUIDA,
+                self::STATUS_AGUARDANDO_COMPLEMENTACAO,
+                self::STATUS_ENCERRADO,
+            ],
+            self::STATUS_ANALISE_CONCLUIDA => [
+                self::STATUS_AGUARDANDO_VISTORIA,
+                self::STATUS_AGUARDANDO_COMPLEMENTACAO,
+                self::STATUS_DEFERIDO,
+                self::STATUS_INDEFERIDO,
+                self::STATUS_ENCERRADO,
+            ],
+            self::STATUS_AGUARDANDO_VISTORIA => [
+                self::STATUS_VISTORIA_CONCLUIDA,
+                self::STATUS_AGUARDANDO_COMPLEMENTACAO,
+                self::STATUS_ENCERRADO,
+            ],
+            self::STATUS_VISTORIA_CONCLUIDA => [
                 self::STATUS_AGUARDANDO_COMPLEMENTACAO,
                 self::STATUS_DEFERIDO,
                 self::STATUS_INDEFERIDO,
@@ -207,18 +250,15 @@ class Requerimento extends Model
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Verifica se o processo expirou (devolvido há mais de 90 dias sem resposta).
-     * Se expirado, atualiza o status automaticamente.
-     */
-    public function verificarExpiracao(): bool
+    /** Arquiva o processo quando a complementação fica sem resposta por 120 dias. */
+    public function arquivarSeComplementacaoVencida(): bool
     {
         if (
             $this->status === self::STATUS_AGUARDANDO_COMPLEMENTACAO
             && $this->data_devolucao
-            && $this->data_devolucao->lte(now()->subDays(90))
+            && $this->data_devolucao->lte(now()->subDays(self::DIAS_LIMITE_COMPLEMENTACAO))
         ) {
-            $this->update(['status' => self::STATUS_EXPIRADO]);
+            $this->update(['status' => self::STATUS_ARQUIVADO_COMPLEMENTACAO]);
             return true;
         }
         return false;

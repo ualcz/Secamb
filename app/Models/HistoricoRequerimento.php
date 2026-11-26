@@ -17,6 +17,7 @@ class HistoricoRequerimento extends Model
     protected $fillable = [
         'requerimento_id',
         'user_id',                     // Usuário autor do despacho (Servidor da Prefeitura ou Cidadão)
+        'setor_id',
         'status',                      // Etapa atual do processo no momento do registro
         'observacao',                  // Parecer técnico / Justificativa / Resposta do cidadão
         'solicita_novo_documento',     // Indica se foi devolvido para anexar documento complementar
@@ -40,6 +41,11 @@ class HistoricoRequerimento extends Model
     public function usuario(): BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'user_id');
+    }
+
+    public function setor(): BelongsTo
+    {
+        return $this->belongsTo(Setor::class, 'setor_id');
     }
 
     public function autor(): BelongsTo
