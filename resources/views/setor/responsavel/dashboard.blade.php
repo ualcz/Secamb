@@ -29,7 +29,7 @@
                 <label class="filter-label">Status</label>
                 <select name="status" class="input-filtro">
                     <option value="">Todos</option>
-                    @foreach(\App\Models\Requerimento::STATUS_DISPONIVEIS as $status)
+                    @foreach($statusFiltro as $status)
                         <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $status }}</option>
                     @endforeach
                 </select>
