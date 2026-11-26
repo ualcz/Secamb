@@ -4,14 +4,50 @@
     <ul class="timeline">
         @php
             $listaHistoricos = isset($historicos) ? $historicos : ($requerimento->historicos ?? collect());
+            $historicosTimeline = collect();
+
+            foreach ($listaHistoricos as $itemHistorico) {
+                $observacaoItem = (string) $itemHistorico->observacao;
+                $atividadeDocumento = $itemHistorico->tipo_evento === \App\Models\HistoricoRequerimento::TIPO_EVENTO_DOCUMENTO_ANEXADO
+                    || (
+                        $itemHistorico->setor_id
+                        && str_starts_with($observacaoItem, 'Documento anexado pelo setor.')
+                    );
+
+                if (!$atividadeDocumento) {
+                    $itemHistorico->setAttribute('eventos_documentos', collect());
+                    $historicosTimeline->push($itemHistorico);
+                    continue;
+                }
+
+                $historicoStatus = $historicosTimeline->reverse()->first(
+                    fn ($item) => $item->status === $itemHistorico->status
+                );
+
+                if (!$historicoStatus) {
+                    $historicosTimeline->push($itemHistorico);
+                    continue;
+                }
+
+                $eventosDocumento = $historicoStatus->getAttribute('eventos_documentos') ?? collect();
+                $eventosDocumento->push($itemHistorico);
+                $historicoStatus->setAttribute('eventos_documentos', $eventosDocumento);
+            }
         @endphp
 
-        @forelse($listaHistoricos as $historico)
+        @forelse($historicosTimeline as $historico)
             @php
                 $rotuloObservacao = 'Observação';
                 $textoObservacao = $historico->observacao;
                 $servicoSolicitado = null;
                 $rotaSetores = null;
+
+                if (
+                    trim((string) $textoObservacao) === 'Requerimento cadastrado no sistema.'
+                    || preg_match('/^Status alterado para .+ pelo setor\.$/u', trim((string) $textoObservacao))
+                ) {
+                    $textoObservacao = null;
+                }
 
                 if ($textoObservacao && preg_match('/\[Serviço Solicitado:\s*(.+?)\]\R?/i', $textoObservacao, $matchServico)) {
                     $servicoSolicitado = $matchServico[1];
@@ -46,12 +82,21 @@
                     $rotuloObservacao = 'Orientação';
                 }
 
-                $temDetalhes = !empty(trim($textoObservacao ?? ''))
-                    || !empty($historico->nome_documento_solicitado)
-                    || ($historico->documentos && $historico->documentos->isNotEmpty());
-                $documentoAnexadoPeloSetor = $historico->setor_id
+                $eventosDocumento = $historico->getAttribute('eventos_documentos') ?? collect();
+                $documentosProtocoloNoGrupo = $historico->status === \App\Models\Requerimento::STATUS_PROTOCOLADO
+                    && (int) $historico->user_id === (int) ($requerimento->usuario_id ?? 0)
                     && $historico->documentos
                     && $historico->documentos->isNotEmpty();
+
+                if ($documentosProtocoloNoGrupo) {
+                    $eventosDocumento->push($historico);
+                    $historico->setAttribute('eventos_documentos', $eventosDocumento);
+                }
+
+                $temDetalhes = !empty(trim($textoObservacao ?? ''))
+                    || !empty($historico->nome_documento_solicitado)
+                    || (!$documentosProtocoloNoGrupo && $historico->documentos && $historico->documentos->isNotEmpty());
+                $totalDocumentosJuntados = $eventosDocumento->sum(fn ($evento) => $evento->documentos->count());
             @endphp
             <li class="timeline-item status-{{ Str::slug($historico->status) }}">
                 <div class="timeline-badge"></div>
@@ -79,13 +124,55 @@
                         @endif
                     </div>
 
-                    @if($documentoAnexadoPeloSetor)
-                        <div class="timeline-documento-setor">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M15.5 6.5l-7.8 7.8a2.1 2.1 0 003 3l8-8a4.2 4.2 0 00-6-6l-8 8a6.3 6.3 0 009 9l7-7"/>
-                            </svg>
-                            <span>Documento anexado pelo setor <strong>{{ $historico->setor?->setor_sigla ?: $historico->setor?->setor_nome }}</strong></span>
-                        </div>
+                    @if($eventosDocumento->isNotEmpty())
+                        <details class="timeline-anexos-status">
+                            <summary class="timeline-anexos-resumo">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.82-2.83l8.48-8.48"/>
+                                </svg>
+                                <strong>Documentos anexados</strong>
+                                <span>{{ $totalDocumentosJuntados }} {{ $totalDocumentosJuntados === 1 ? 'arquivo' : 'arquivos' }}</span>
+                                <svg class="timeline-anexos-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </summary>
+                            <div class="timeline-anexos-lista">
+                                @foreach($eventosDocumento as $eventoDocumento)
+                                    @php
+                                        $contextoEvento = $documentosProtocoloNoGrupo && $eventoDocumento->is($historico)
+                                            ? ''
+                                            : trim((string) $eventoDocumento->observacao);
+                                        $prefixoLegadoAnexo = 'Documento anexado pelo setor.';
+                                        if (str_starts_with($contextoEvento, $prefixoLegadoAnexo)) {
+                                            $contextoEvento = trim(substr($contextoEvento, strlen($prefixoLegadoAnexo)));
+                                        }
+                                    @endphp
+                                    <div class="timeline-anexo-item">
+                                        <div class="timeline-anexo-meta">
+                                            <time>{{ $eventoDocumento->created_at->format('d/m/Y H:i') }}</time>
+                                            <span>por {{ $eventoDocumento->usuario?->nome ?? 'Servidor do setor' }}</span>
+                                        </div>
+                                        @if($contextoEvento !== '')
+                                            <p class="timeline-anexo-contexto"><strong>Contexto:</strong> {{ $contextoEvento }}</p>
+                                        @endif
+                                        @foreach($eventoDocumento->documentos as $documento)
+                                            <div class="timeline-anexo-arquivo">
+                                                <div>
+                                                    <strong>{{ $documento->titulo }}</strong>
+                                                    <small>{{ $documento->nome_original }} · {{ $documento->tamanho_formatado }}</small>
+                                                </div>
+                                                <div class="timeline-anexo-links">
+                                                    @if($documento->isVisualizavel())
+                                                        <a href="{{ route('documentos.preview', $documento->id) }}" target="_blank" rel="noopener noreferrer">Visualizar</a>
+                                                    @endif
+                                                    <a href="{{ route('documentos.download', $documento->id) }}">Baixar</a>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endforeach
+                            </div>
+                        </details>
                     @endif
 
                     {{-- Informação de tramitação entre setores: dentro do card, visível antes de expandir --}}
@@ -127,7 +214,7 @@
                             @endif
 
                             @include('requerimentos.partials.historico-documentos', [
-                                'documentos' => $historico->documentos,
+                                'documentos' => $documentosProtocoloNoGrupo ? collect() : $historico->documentos,
                                 'historico' => $historico,
                                 'requerimento' => $requerimento,
                             ])
