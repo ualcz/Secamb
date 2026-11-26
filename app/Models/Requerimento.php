@@ -12,6 +12,7 @@ use App\Models\DocumentoRequerimento;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Observers\RequerimentoObserver;
 use App\Mail\AtualizacaoRequerimentoMail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -295,16 +296,26 @@ class Requerimento extends Model
         if (!empty($setor?->email)) {
             $emailsSetor = is_array($setor->email) ? $setor->email : [$setor->email];
         }
-        $emailsSetor = array_values(array_unique(array_filter(array_map('trim', $emailsSetor))));
+        $emailsSetor = array_values(array_unique(array_filter(
+            array_map('trim', $emailsSetor),
+            fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL) !== false
+        )));
 
-        $emailsCidadao = array_values(array_unique(array_filter(array_map('trim', [$cidadao?->email]))));
+        $emailsCidadao = array_values(array_unique(array_filter(
+            array_map(fn ($email) => trim((string) $email), [$cidadao?->email]),
+            fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL) !== false
+        )));
 
         $to = in_array($remetente, ['setor', 'prefeitura'], true) ? $emailsCidadao : $emailsSetor;
 
         if (!empty($to)) {
-            Mail::to($to)->send(
-                new AtualizacaoRequerimentoMail($this, $mensagem, $remetente, $arquivos, $solicitaNovoDocumento)
-            );
+            try {
+                Mail::to($to)->send(
+                    new AtualizacaoRequerimentoMail($this, $mensagem, $remetente, $arquivos, $solicitaNovoDocumento)
+                );
+            } catch (\Throwable $e) {
+                Log::warning("Falha ao enviar notificação do requerimento #{$this->numero_protocolo}: " . $e->getMessage());
+            }
         }
     }
 }
