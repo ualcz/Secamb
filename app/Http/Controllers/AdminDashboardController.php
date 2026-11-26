@@ -18,7 +18,7 @@ class AdminDashboardController extends Controller
         $totalRequerimentos = Requerimento::whereYear('created_at', now()->year)->count();
         $totalEmpreendimentos = Empreendimento::get()->count();
         $totalSetores = Setor::get()->count();
-        $totalAnalise = Requerimento::where('status', Requerimento::STATUS_EM_ANALISE)->count();
+        $totalAnalise = Requerimento::whereIn('status', Requerimento::STATUS_ANALISE_ATIVA)->count();
         if ($periodo === 'semana') {
             $totalRecebidos = Requerimento::whereBetween('created_at', [
                 $inicio = now()->startOfWeek(),

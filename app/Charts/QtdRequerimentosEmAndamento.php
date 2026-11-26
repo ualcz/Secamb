@@ -11,11 +11,7 @@ class QtdRequerimentosEmAndamento
     {
         $dados = Requerimento::selectRaw('objetoDoRequerimento, MONTH(created_at) as mes, COUNT(*) as total')
             ->groupBy('objetoDoRequerimento', 'mes')
-            ->whereIn('status', [
-                Requerimento::STATUS_EM_ANALISE,
-                Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO,
-                Requerimento::STATUS_DEFERIDO,
-            ])
+            ->whereNotIn('status', Requerimento::STATUS_TERMINAIS)
             ->orderBy('mes')
             ->get();
 
