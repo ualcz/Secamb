@@ -6,6 +6,29 @@
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/consultaRequerimento.css') }}?v={{ filemtime(public_path('css/consultaRequerimento.css')) }}">
 
+<div class="consulta-metrics" aria-label="Resumo da consulta">
+    <article>
+        <span>Encontrados</span>
+        <strong>{{ number_format($totalEncontrados, 0, ',', '.') }}</strong>
+        <small>Na seleção atual</small>
+    </article>
+    <article>
+        <span>Em andamento</span>
+        <strong>{{ number_format($totalAtivos, 0, ',', '.') }}</strong>
+        <small>{{ $idadeMediaAtivos }} dias de idade média</small>
+    </article>
+    <article>
+        <span>Concluídos</span>
+        <strong>{{ number_format($totalConcluidos, 0, ',', '.') }}</strong>
+        <small>Na seleção atual</small>
+    </article>
+    <article class="{{ $complementacoesVencidas > 0 ? 'metric-alert' : '' }}">
+        <span>Aguardando complementação</span>
+        <strong>{{ number_format($totalComplementacao, 0, ',', '.') }}</strong>
+        <small>{{ $complementacoesVencidas }} vencidas há mais de 120 dias</small>
+    </article>
+</div>
+
 {{-- Filtro Avançado de Pesquisa --}}
 <div class="dash-filter-card">
     <form method="GET" action="" class="dash-filter-form">
@@ -41,7 +64,7 @@
                 <label class="filter-label">Status</label>
                 <select name="status" class="input-filtro">
                     <option value="">Todos</option>
-                    @foreach(\App\Models\Requerimento::STATUS_DISPONIVEIS as $status)
+                    @foreach($statusFiltro as $status)
                         <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $status }}</option>
                     @endforeach
                 </select>
@@ -79,7 +102,10 @@
 </div>
 
 <section class="dash-section">
-    <h3 class="dash-section-title">Requerimentos</h3>
+    <div class="consulta-section-heading">
+        <h3 class="dash-section-title">Requerimentos</h3>
+        <span>{{ $requerimentos->total() }} resultado{{ $requerimentos->total() === 1 ? '' : 's' }}</span>
+    </div>
 
     @if($requerimentos->isEmpty())
         <p style="color: #64748b; font-size: 0.875rem; margin: 0; padding: 12px 0;">
@@ -94,8 +120,8 @@
             <table class="dash-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th style="width: 140px;">Data e Hora</th>
+                        <th>Protocolo</th>
+                        <th style="width: 140px;">Entrada</th>
                         <th>Solicitante</th>
                         <th>Tipo de Pessoa</th>
                         <th>Requerimento</th>
@@ -107,7 +133,7 @@
                 <tbody>
                     @foreach($requerimentos as $requerimento)
                         <tr>
-                            <td>{{ $requerimento->id ?? '—' }}</td>
+                            <td><strong>{{ $requerimento->numero_protocolo ?: '#' . $requerimento->id }}</strong></td>
                             <td style="color: #64748b; font-size: 0.8125rem;">
                                 {{ $requerimento->created_at?->format('d/m/Y H:i') }}
                             </td>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Requerimento;
 use App\Models\Setor;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AdminConsultaController extends Controller
 {
@@ -62,12 +63,55 @@ class AdminConsultaController extends Controller
             }
         }
 
+        $metricQuery = clone $query;
+        $totalEncontrados = (clone $metricQuery)->count();
+        $totalAtivos = (clone $metricQuery)->whereNotIn('status', Requerimento::STATUS_TERMINAIS)->count();
+        $totalConcluidos = (clone $metricQuery)->whereIn('status', Requerimento::STATUS_TERMINAIS)->count();
+        $totalComplementacao = (clone $metricQuery)
+            ->where('status', Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO)
+            ->count();
+        $complementacoesVencidas = (clone $metricQuery)
+            ->where('status', Requerimento::STATUS_AGUARDANDO_COMPLEMENTACAO)
+            ->where('data_devolucao', '<=', now()->subDays(Requerimento::DIAS_LIMITE_COMPLEMENTACAO))
+            ->count();
+
+        $processosAtivos = (clone $metricQuery)
+            ->whereNotIn('status', Requerimento::STATUS_TERMINAIS)
+            ->get(['created_at']);
+        $idadeMediaAtivos = $processosAtivos->isEmpty()
+            ? 0
+            : (int) round($processosAtivos->avg(
+                fn ($processo) => $processo->created_at
+                    ? Carbon::parse($processo->created_at)->diffInDays(now())
+                    : 0
+            ));
+
         $requerimentos = $query->latest()->paginate(15)->withQueryString();
         $setores = Setor::where('ativo', true)->orderBy('setor_sigla')->get();
+        $statusBanco = Requerimento::query()
+            ->whereNotNull('status')
+            ->distinct()
+            ->pluck('status')
+            ->filter()
+            ->values();
+        $statusPresentes = $statusBanco->all();
+        $statusDisponiveis = collect(Requerimento::STATUS_DISPONIVEIS)
+            ->filter(fn ($status) => in_array($status, $statusPresentes, true))
+            ->merge($statusBanco->reject(
+                fn ($status) => in_array($status, Requerimento::STATUS_DISPONIVEIS, true)
+            ))
+            ->values();
 
         return view('admin.consultaRequerimento', [
             'requerimentos' => $requerimentos,
             'setores'       => $setores,
+            'totalEncontrados' => $totalEncontrados,
+            'totalAtivos' => $totalAtivos,
+            'totalConcluidos' => $totalConcluidos,
+            'totalComplementacao' => $totalComplementacao,
+            'complementacoesVencidas' => $complementacoesVencidas,
+            'idadeMediaAtivos' => $idadeMediaAtivos,
+            'statusFiltro' => $statusDisponiveis,
         ]);
     }
 }
