@@ -14,11 +14,15 @@ class HistoricoRequerimento extends Model
 {
     protected $table = 'historico_requerimentos';
 
+    public const TIPO_EVENTO_TRAMITACAO = 'tramitacao';
+    public const TIPO_EVENTO_DOCUMENTO_ANEXADO = 'documento_anexado';
+
     protected $fillable = [
         'requerimento_id',
         'user_id',                     // Usuário autor do despacho (Servidor da Prefeitura ou Cidadão)
         'setor_id',
         'status',                      // Etapa atual do processo no momento do registro
+        'tipo_evento',
         'observacao',                  // Parecer técnico / Justificativa / Resposta do cidadão
         'solicita_novo_documento',     // Indica se foi devolvido para anexar documento complementar
         'nome_documento_solicitado',   // Nome da certidão/documento exigido pelo fiscal ambiental
