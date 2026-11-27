@@ -24,6 +24,35 @@
             @endif
         </div>
 
+        <div class="campo campo-representante-select">
+            <label for="representante_legal_id">Representante legal titular do requerimento <span aria-hidden="true">*</span></label>
+            <select name="representante_legal_id" id="representante_legal_id" class="form-control"
+                data-step-required required disabled
+                data-usuario-atual="{{ auth()->id() }}"
+                data-valor-antigo="{{ old('representante_legal_id', '') }}">
+                <option value="">Selecione um representante legal</option>
+            </select>
+            <p class="caracterizacao-ajuda">O representante selecionado constará como titular do requerimento. O técnico que o envia permanece registrado como responsável pelo protocolo.</p>
+            <p class="caracterizacao-vazio" data-sem-representante hidden>
+                Não há representante legal ativo e com termo aceito vinculado a este empreendimento.
+            </p>
+            @error('representante_legal_id')
+                <p class="caracterizacao-vazio">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div hidden aria-hidden="true">
+            @foreach($empreendimentos ?? [] as $emp)
+                <template data-representantes-empreendimento="{{ $emp->id }}">
+                    @foreach($emp->representantes_elegiveis as $representante)
+                        <option value="{{ $representante->id }}" data-usuario-atual="{{ (int) $representante->id === (int) auth()->id() ? 'true' : 'false' }}">
+                            {{ $representante->nome }}{{ $representante->cpf ? ' — CPF: ' . $representante->cpf : '' }}
+                        </option>
+                    @endforeach
+                </template>
+            @endforeach
+        </div>
+
         <div id="card-preview-empreendimento" class="card-preview-empreendimento">
             <div class="card-preview-empreendimento-nome" id="prev-emp-nome"></div>
             <div class="card-preview-empreendimento-dados">

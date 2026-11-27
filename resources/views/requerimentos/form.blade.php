@@ -74,6 +74,7 @@
         ];
         $erroEtapaCaracterizacao = $errors->has('motivo')
             || $errors->has('empreendimento_id')
+            || $errors->has('representante_legal_id')
             || $errors->hasAny($camposEtapaCaracterizacao);
     @endphp
 

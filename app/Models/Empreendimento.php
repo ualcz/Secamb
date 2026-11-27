@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -98,6 +99,20 @@ class Empreendimento extends Model
             'empreendimento_id',
             'usuario_id'
         )->withPivot(['termo_aceito', 'termo_aceito_em', 'status'])->withTimestamps();
+    }
+
+    public function representantesElegiveisParaRequerimento(): Collection
+    {
+        $representantes = $this->representantes;
+        $elegiveis = $representantes->filter(
+            fn (Usuario $usuario) => $usuario->pivot->status === 'ativo' && $usuario->pivot->termo_aceito
+        )->values();
+
+        if ($representantes->isEmpty() && $this->criador) {
+            $elegiveis->push($this->criador);
+        }
+
+        return $elegiveis;
     }
 
     /** Técnicos autorizados a protocolar e acompanhar processos deste empreendimento. */
