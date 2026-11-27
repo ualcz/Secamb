@@ -97,6 +97,7 @@ class Requerimento extends Model
         'tipo_processo',          // Descrição textual do tipo (LP, LI, LO, etc.)
         'descricao',              // Detalhamento livre do processo
         'motivo',                 // Justificativa / mensagem do requerimento
+        'caracterizacao_empreendimento',
 
         // ─── Controle de tramitação ──────────────────────────────────────────
         'status',                 // Ver constantes STATUS_* acima
@@ -106,6 +107,7 @@ class Requerimento extends Model
 
     protected $casts = [
         'data_devolucao' => 'datetime',
+        'caracterizacao_empreendimento' => 'array',
     ];
 
     /*
