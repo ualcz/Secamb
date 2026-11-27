@@ -27,6 +27,7 @@ class RequerimentoRascunhoController extends Controller
         'estado',
         'cep',
         'empreendimento_id',
+        'representante_legal_id',
         'bacia_hidrografica',
         'recurso_hidrico',
         'latitude',
@@ -122,10 +123,25 @@ class RequerimentoRascunhoController extends Controller
         );
         $campos['objetoDoRequerimento'] = $objeto;
 
-        if (!empty($campos['empreendimento_id']) &&
-            !$request->user()->todosEmpreendimentos()->whereKey($campos['empreendimento_id'])->exists()) {
+        $empreendimento = null;
+        if (!empty($campos['empreendimento_id'])) {
+            $empreendimento = $request->user()->todosEmpreendimentos()
+                ->with(['criador', 'representantes'])
+                ->whereKey($campos['empreendimento_id'])
+                ->first();
+        }
+        if (!empty($campos['empreendimento_id']) && !$empreendimento) {
             throw ValidationException::withMessages([
                 'campos.empreendimento_id' => 'O empreendimento selecionado não está vinculado à sua conta.',
+            ]);
+        }
+        if (!empty($campos['representante_legal_id']) && (
+            !$empreendimento
+            || !$empreendimento->representantesElegiveisParaRequerimento()
+                ->contains('id', (int) $campos['representante_legal_id'])
+        )) {
+            throw ValidationException::withMessages([
+                'campos.representante_legal_id' => 'O representante selecionado não está vinculado ao empreendimento.',
             ]);
         }
 
