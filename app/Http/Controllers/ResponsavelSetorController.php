@@ -108,7 +108,16 @@ class ResponsavelSetorController extends Controller
         }
 
         // Carrega o usuário, endereço, assunto, empreendimento e os históricos (linha do tempo com documentos)
-        $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.setor', 'historicos.documentos', 'setorRetorno', 'empreendimento']);
+        $requerimento->load([
+            'usuario.endereco',
+            'protocoladoPor',
+            'assunto',
+            'historicos.usuario',
+            'historicos.setor',
+            'historicos.documentos',
+            'setorRetorno',
+            'empreendimento.tecnicos:id,nome,email,cpf,celular,tipo_registro',
+        ]);
         $setoresDestino = Setor::query()
             ->with(['assuntosAtivos' => function ($q) {
                 $q->orderBy('ordem');

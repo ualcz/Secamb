@@ -52,16 +52,16 @@
     </div>
 
     @if($requerimento->empreendimento)
-        <div style="margin-top: 1rem; padding: 14px 18px; border-radius: 8px; border: 1px solid #bbf7d0; border-left: 4px solid #059669; background-color: #f0fdf4;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <svg width="18" height="18" fill="none" stroke="#059669" stroke-width="2" viewBox="0 0 24 24">
+        <div class="empreendimento-vinculado">
+            <div class="empreendimento-vinculado-cabecalho">
+                <div class="empreendimento-vinculado-titulo">
+                    <svg width="18" height="18" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                     </svg>
-                    <strong style="color: #065f46; font-size: 0.95rem;">Empreendimento Vinculado</strong>
+                    <strong>Empreendimento Vinculado</strong>
                 </div>
                 @if($requerimento->empreendimento->porte)
-                    <span style="background: #059669; color: #fff; font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 4px;">
+                    <span class="empreendimento-vinculado-porte">
                         Porte: {{ $requerimento->empreendimento->porte }}
                     </span>
                 @endif
@@ -154,6 +154,10 @@
             @else
                 @include('requerimentos.partials.caracterizacao-resumo')
             @endif
+
+            @include('setor.requerimentos.partials.tecnicos-responsaveis', [
+                'tecnicos' => $requerimento->empreendimento->tecnicos,
+            ])
         </div>
     @endif
 
