@@ -27,6 +27,30 @@ class RequerimentoRascunhoController extends Controller
         'estado',
         'cep',
         'empreendimento_id',
+        'bacia_hidrografica',
+        'recurso_hidrico',
+        'latitude',
+        'longitude',
+        'unidade_conservacao_resposta',
+        'unidade_conservacao_nome',
+        'licenca_anterior',
+        'localizacao_licenca',
+        'licenca_anterior_tipo',
+        'licenca_anterior_processo',
+        'resolucao_cepram',
+        'resolucao_cepram_validade',
+        'portaria_inema',
+        'portaria_inema_validade',
+        'processo_semma',
+        'processo_semma_numero',
+        'processo_semma_tipo',
+        'pendencia_ambiental',
+        'notificacao_pendencia',
+        'embargo_pendencia',
+        'advertencia_pendencia',
+        'apreensao_pendencia',
+        'multa_pendencia',
+        'interdicao_pendencia',
         'objetoDoRequerimento',
         'objeto_outro',
         'motivo',
@@ -66,9 +90,19 @@ class RequerimentoRascunhoController extends Controller
     public function salvar(Request $request, int $setor)
     {
         $setorAutorizado = $this->autorizarSetor($request->user(), $setor);
+        $camposRecebidos = $request->input('campos');
+        if (is_array($camposRecebidos)) {
+            $request->merge([
+                'campos' => array_intersect_key(
+                    $camposRecebidos,
+                    array_flip(self::CAMPOS_PERMITIDOS)
+                ),
+            ]);
+        }
+
         $validated = $request->validate([
             'objeto' => 'required|string|max:255',
-            'campos' => 'required|array|max:30',
+            'campos' => 'required|array|max:50',
             'campos.*' => 'nullable|string|max:5000',
             'etapa' => 'required|in:1,2,3',
         ]);

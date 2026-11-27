@@ -85,6 +85,7 @@
         const campos = {};
         Array.from(form.elements).forEach(campo => {
             if (!campo.name || campo.name === '_token' || campo.disabled ||
+                campo.name === 'aceite_declaracao' ||
                 ['file', 'submit', 'button', 'reset', 'password'].includes(campo.type)) return;
 
             if (campo.type === 'radio') {
@@ -110,7 +111,34 @@
     }
 
     function temConteudoPreenchido(form, dados) {
-        const nomesComConteudo = ['empreendimento_id', 'motivo'];
+        const nomesComConteudo = [
+            'empreendimento_id',
+            'motivo',
+            'bacia_hidrografica',
+            'recurso_hidrico',
+            'latitude',
+            'longitude',
+            'unidade_conservacao_resposta',
+            'unidade_conservacao_nome',
+            'licenca_anterior',
+            'localizacao_licenca',
+            'licenca_anterior_tipo',
+            'licenca_anterior_processo',
+            'resolucao_cepram',
+            'resolucao_cepram_validade',
+            'portaria_inema',
+            'portaria_inema_validade',
+            'processo_semma',
+            'processo_semma_numero',
+            'processo_semma_tipo',
+            'pendencia_ambiental',
+            'notificacao_pendencia',
+            'embargo_pendencia',
+            'advertencia_pendencia',
+            'apreensao_pendencia',
+            'multa_pendencia',
+            'interdicao_pendencia',
+        ];
         const camposComConteudo = nomesComConteudo.some(nome => String(dados.campos[nome] || '').trim() !== '');
         const temArquivo = Array.from(form.querySelectorAll('input[type="file"]'))
             .some(input => input.files && input.files.length > 0);
