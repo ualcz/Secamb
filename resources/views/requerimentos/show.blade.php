@@ -176,27 +176,31 @@
                             <span class="info-label">Localização</span>
                             <span class="info-valor">{{ $requerimento->empreendimento->endereco_completo ?: 'Seabra - BA' }}</span>
                         </div>
-                        <div class="info-grupo">
-                            <span class="info-label">Bacia Hidrográfica</span>
-                            <span class="info-valor">{{ $requerimento->empreendimento->bacia_hidrografica ?? 'Não informada' }}</span>
-                        </div>
-                        <div class="info-grupo">
-                            <span class="info-label">Recurso Hídrico</span>
-                            <span class="info-valor">{{ $requerimento->empreendimento->recurso_hidrico ?? 'Não informado' }}</span>
-                        </div>
-                        @if($requerimento->empreendimento->latitude || $requerimento->empreendimento->longitude)
-                        <div class="info-grupo">
-                            <span class="info-label">Coordenadas (SIRGAS 2000)</span>
-                            <span class="info-valor">
-                                Lat: {{ $requerimento->empreendimento->latitude ?? '—' }} | Long: {{ $requerimento->empreendimento->longitude ?? '—' }}
-                            </span>
-                        </div>
-                        @endif
-                        <div class="info-grupo">
-                            <span class="info-label">Unidade de Conservação</span>
-                            <span class="info-valor">{{ $requerimento->empreendimento->unidade_conservacao ?? 'Não possui' }}</span>
-                        </div>
                     </div>
+                    @if($requerimento->caracterizacao_empreendimento)
+                        @include('requerimentos.partials.caracterizacao-resumo')
+                    @else
+                        <div class="grid-2">
+                            <div class="info-grupo">
+                                <span class="info-label">Bacia Hidrográfica</span>
+                                <span class="info-valor">{{ $requerimento->empreendimento->bacia_hidrografica ?? 'Não informada' }}</span>
+                            </div>
+                            <div class="info-grupo">
+                                <span class="info-label">Recurso Hídrico</span>
+                                <span class="info-valor">{{ $requerimento->empreendimento->recurso_hidrico ?? 'Não informado' }}</span>
+                            </div>
+                            <div class="info-grupo">
+                                <span class="info-label">Coordenadas (SIRGAS 2000)</span>
+                                <span class="info-valor">
+                                    Lat: {{ $requerimento->empreendimento->latitude ?? '—' }} | Long: {{ $requerimento->empreendimento->longitude ?? '—' }}
+                                </span>
+                            </div>
+                            <div class="info-grupo">
+                                <span class="info-label">Unidade de Conservação</span>
+                                <span class="info-valor">{{ $requerimento->empreendimento->unidade_conservacao ?? 'Não possui' }}</span>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             @endif
 

@@ -92,6 +92,7 @@
                     <span class="info-label">Localização</span>
                     <span class="info-valor">{{ $requerimento->empreendimento->endereco_completo ?: 'Seabra - BA' }}</span>
                 </div>
+                @if(!$requerimento->caracterizacao_empreendimento)
                 <div class="info-grupo">
                     <span class="info-label">Bacia Hidrográfica</span>
                     <span class="info-valor">{{ $requerimento->empreendimento->bacia_hidrografica ?? 'Não informada' }}</span>
@@ -112,9 +113,11 @@
                     <span class="info-label">Unidade de Conservação</span>
                     <span class="info-valor">{{ $requerimento->empreendimento->unidade_conservacao ?? 'Não possui' }}</span>
                 </div>
+                @endif
             </div>
 
             {{-- Licenças anteriores e processos SEMMA --}}
+            @if(!$requerimento->caracterizacao_empreendimento)
             @if($requerimento->empreendimento->licenca_anterior_tipo || $requerimento->empreendimento->resolucao_cepram || $requerimento->empreendimento->processo_semma_numero)
             <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #a7f3d0; font-size: 0.825rem; color: #065f46;">
                 <strong>Histórico Ambiental:</strong>
@@ -147,6 +150,9 @@
             <div style="margin-top: 8px; padding: 6px 10px; border-radius: 6px; background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; font-size: 0.8rem;">
                 <strong>⚠️ Pendências Declaradas:</strong> {{ implode(', ', $pendencias) }}
             </div>
+            @endif
+            @else
+                @include('requerimentos.partials.caracterizacao-resumo')
             @endif
         </div>
     @endif

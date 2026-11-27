@@ -46,6 +46,49 @@
 
         /* ── Dados do empreendimento ─────────────────────────── */
         $emp = $requerimento->empreendimento ?? null;
+        $caracterizacao = $requerimento?->caracterizacao_empreendimento;
+        if (!$caracterizacao && $emp) {
+            $unidadeConservacaoLegada = trim((string) $emp->unidade_conservacao);
+            $unidadeConservacaoRespostaLegada = $unidadeConservacaoLegada === ''
+                ? null
+                : (stripos($unidadeConservacaoLegada, 'não possui') !== false
+                    || stripos($unidadeConservacaoLegada, 'nao possui') !== false
+                    ? 'nao'
+                    : 'sim');
+            $pendenciasLegadas = [
+                'notificacao_pendencia' => $emp->notificacao_pendencia,
+                'embargo_pendencia' => $emp->embargo_pendencia,
+                'advertencia_pendencia' => $emp->advertencia_pendencia,
+                'apreensao_pendencia' => $emp->apreensao_pendencia,
+                'multa_pendencia' => $emp->multa_pendencia,
+                'interdicao_pendencia' => $emp->interdicao_pendencia,
+            ];
+            $temLicencaLegada = $emp->licenca_anterior_tipo
+                || $emp->licenca_anterior_processo
+                || $emp->resolucao_cepram
+                || $emp->portaria_inema;
+            $caracterizacao = [
+                'bacia_hidrografica' => $emp->bacia_hidrografica,
+                'recurso_hidrico' => $emp->recurso_hidrico,
+                'latitude' => $emp->latitude,
+                'longitude' => $emp->longitude,
+                'unidade_conservacao_resposta' => $unidadeConservacaoRespostaLegada,
+                'unidade_conservacao_nome' => $emp->unidade_conservacao,
+                'licenca_anterior' => $temLicencaLegada ? 'sim' : null,
+                'localizacao_licenca' => $emp->localizacao_licenca,
+                'licenca_anterior_tipo' => $emp->licenca_anterior_tipo,
+                'licenca_anterior_processo' => $emp->licenca_anterior_processo,
+                'resolucao_cepram' => $emp->resolucao_cepram,
+                'resolucao_cepram_validade' => $emp->resolucao_cepram_validade,
+                'portaria_inema' => $emp->portaria_inema,
+                'portaria_inema_validade' => $emp->portaria_inema_validade,
+                'processo_semma' => $emp->processo_semma_numero || $emp->processo_semma_tipo ? 'sim' : null,
+                'processo_semma_numero' => $emp->processo_semma_numero,
+                'processo_semma_tipo' => $emp->processo_semma_tipo,
+                'pendencia_ambiental' => count(array_filter($pendenciasLegadas)) ? 'sim' : null,
+                ...$pendenciasLegadas,
+            ];
+        }
     @endphp
 
     {{-- ══════════════════════════════════════════════════════
@@ -159,34 +202,44 @@
             <tr>
                 <td>
                     <span class="rotulo">Bacia Hidrográfica</span>
-                    <span class="valor">{{ $emp?->bacia_hidrografica ?? '—' }}</span>
+                    <span class="valor">{{ $caracterizacao['bacia_hidrografica'] ?? '—' }}</span>
                 </td>
                 <td>
                     <span class="rotulo">Recurso Hídrico</span>
-                    <span class="valor">{{ $emp?->recurso_hidrico ?? '—' }}</span>
+                    <span class="valor">{{ $caracterizacao['recurso_hidrico'] ?? '—' }}</span>
                 </td>
                 <td>
                     <span class="rotulo">Latitude (SIRGAS 2000)</span>
-                    <span class="valor">{{ $emp?->latitude ?? '—' }}</span>
+                    <span class="valor">{{ $caracterizacao['latitude'] ?? '—' }}</span>
                 </td>
                 <td>
                     <span class="rotulo">Longitude (SIRGAS 2000)</span>
-                    <span class="valor">{{ $emp?->longitude ?? '—' }}</span>
+                    <span class="valor">{{ $caracterizacao['longitude'] ?? '—' }}</span>
                 </td>
             </tr>
             @if($emp)
             <tr>
                 <td colspan="2">
                     <span class="rotulo">Situado em Unidade de Conservação ou Amortecimento?</span>
-                    <span class="valor">{{ $emp->unidade_conservacao ? $emp->unidade_conservacao : 'Não possui / Não situado' }}</span>
+                    <span class="valor">
+                        @if(($caracterizacao['unidade_conservacao_resposta'] ?? null) === 'sim')
+                            Sim — {{ $caracterizacao['unidade_conservacao_nome'] ?? 'Unidade não informada' }}
+                        @elseif(($caracterizacao['unidade_conservacao_resposta'] ?? null) === 'nao')
+                            Não
+                        @else
+                            Não informado
+                        @endif
+                    </span>
                 </td>
                 <td colspan="2">
                     <span class="rotulo">Existe Outro Processo na SEMMA?</span>
                     <span class="valor">
-                        @if($emp->processo_semma_numero || $emp->processo_semma_tipo)
-                            Sim (Nº {{ $emp->processo_semma_numero ?? '—' }} - Tipo: {{ $emp->processo_semma_tipo ?? '—' }})
+                        @if(($caracterizacao['processo_semma'] ?? null) === 'sim')
+                            Sim (Nº {{ $caracterizacao['processo_semma_numero'] ?? '—' }} - Tipo: {{ $caracterizacao['processo_semma_tipo'] ?? '—' }})
+                        @elseif(($caracterizacao['processo_semma'] ?? null) === 'nao')
+                            Não
                         @else
-                            Não informado / Não possui
+                            Não informado
                         @endif
                     </span>
                 </td>
@@ -195,14 +248,22 @@
                 <td colspan="2">
                     <span class="rotulo">Possui Licença ou Autorização Anterior?</span>
                     <span class="valor">
-                        @if($emp->licenca_anterior_tipo || $emp->licenca_anterior_processo || $emp->resolucao_cepram || $emp->portaria_inema)
-                            @if($emp->localizacao_licenca === 'municipio')
-                                Município - Tipo: {{ $emp->licenca_anterior_tipo ?? '—' }} (Proc. {{ $emp->licenca_anterior_processo ?? '—' }})
+                        @if(($caracterizacao['licenca_anterior'] ?? null) === 'sim')
+                            @if(($caracterizacao['localizacao_licenca'] ?? null) === 'municipio')
+                                Município - Tipo: {{ $caracterizacao['licenca_anterior_tipo'] ?? '—' }} (Proc. {{ $caracterizacao['licenca_anterior_processo'] ?? '—' }})
                             @else
-                                Estado - CEPRAM: {{ $emp->resolucao_cepram ?? '—' }} | INEMA: {{ $emp->portaria_inema ?? '—' }}
+                                Estado - CEPRAM: {{ $caracterizacao['resolucao_cepram'] ?? '—' }} | INEMA: {{ $caracterizacao['portaria_inema'] ?? '—' }}
+                                @if(!empty($caracterizacao['resolucao_cepram_validade']))
+                                    (CEPRAM válido até {{ \Carbon\Carbon::parse($caracterizacao['resolucao_cepram_validade'])->format('d/m/Y') }})
+                                @endif
+                                @if(!empty($caracterizacao['portaria_inema_validade']))
+                                    (INEMA válido até {{ \Carbon\Carbon::parse($caracterizacao['portaria_inema_validade'])->format('d/m/Y') }})
+                                @endif
                             @endif
+                        @elseif(($caracterizacao['licenca_anterior'] ?? null) === 'nao')
+                            Não
                         @else
-                            Não possui
+                            Não informado
                         @endif
                     </span>
                 </td>
@@ -211,15 +272,21 @@
                     <span class="valor">
                         @php
                             $pendencias = array_filter([
-                                $emp->notificacao_pendencia ? 'Notificação: ' . $emp->notificacao_pendencia : null,
-                                $emp->embargo_pendencia ? 'Embargo: ' . $emp->embargo_pendencia : null,
-                                $emp->multa_pendencia ? 'Multa: ' . $emp->multa_pendencia : null,
-                                $emp->advertencia_pendencia ? 'Advertência: ' . $emp->advertencia_pendencia : null,
-                                $emp->apreensao_pendencia ? 'Apreensão: ' . $emp->apreensao_pendencia : null,
-                                $emp->interdicao_pendencia ? 'Interdição: ' . $emp->interdicao_pendencia : null,
+                                $caracterizacao['notificacao_pendencia'] ? 'Notificação: ' . $caracterizacao['notificacao_pendencia'] : null,
+                                $caracterizacao['embargo_pendencia'] ? 'Embargo: ' . $caracterizacao['embargo_pendencia'] : null,
+                                $caracterizacao['multa_pendencia'] ? 'Multa: ' . $caracterizacao['multa_pendencia'] : null,
+                                $caracterizacao['advertencia_pendencia'] ? 'Advertência: ' . $caracterizacao['advertencia_pendencia'] : null,
+                                $caracterizacao['apreensao_pendencia'] ? 'Apreensão: ' . $caracterizacao['apreensao_pendencia'] : null,
+                                $caracterizacao['interdicao_pendencia'] ? 'Interdição: ' . $caracterizacao['interdicao_pendencia'] : null,
                             ]);
                         @endphp
-                        {{ count($pendencias) > 0 ? implode('; ', $pendencias) : 'Nenhuma pendência declarada' }}
+                        @if(($caracterizacao['pendencia_ambiental'] ?? null) === 'sim')
+                            {{ count($pendencias) > 0 ? implode('; ', $pendencias) : 'Detalhes não informados' }}
+                        @elseif(($caracterizacao['pendencia_ambiental'] ?? null) === 'nao')
+                            Não
+                        @else
+                            Não informado
+                        @endif
                     </span>
                 </td>
             </tr>
