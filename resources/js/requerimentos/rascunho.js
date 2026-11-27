@@ -113,7 +113,6 @@
     function temConteudoPreenchido(form, dados) {
         const nomesComConteudo = [
             'empreendimento_id',
-            'representante_legal_id',
             'motivo',
             'bacia_hidrografica',
             'recurso_hidrico',

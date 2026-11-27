@@ -74,7 +74,6 @@
         ];
         $erroEtapaCaracterizacao = $errors->has('motivo')
             || $errors->has('empreendimento_id')
-            || $errors->has('representante_legal_id')
             || $errors->hasAny($camposEtapaCaracterizacao);
     @endphp
 
@@ -84,7 +83,7 @@
             data-draft-files-url="{{ route('requerimentos.rascunhos.arquivos.salvar', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
             data-form-url="{{ route('requerimentos.cidadao.novo', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
             data-restore-draft="true"
-            data-step-on-error="{{ $erroEtapaCaracterizacao ? 2 : ($errors->any() ? 3 : '') }}"
+            data-step-on-error="{{ $errors->has('objetoDoRequerimento') ? 1 : ($erroEtapaCaracterizacao ? 2 : ($errors->any() ? 3 : '')) }}"
             data-motivo-invalido="{{ $errors->has('motivo') ? 'true' : 'false' }}"
             data-clear-draft="{{ session()->has('sucesso') ? 'true' : 'false' }}">
         @csrf

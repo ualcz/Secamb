@@ -13,6 +13,50 @@ use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
+test('a new request starts at step one when a saved draft exists', function () {
+    $cidadao = Usuario::create([
+        'nome' => 'Maria de Souza',
+        'email' => 'maria@example.com',
+        'password' => Hash::make('password'),
+        'role' => 'cidadao',
+        'ativo' => true,
+    ]);
+    $setor = Setor::create([
+        'setor_sigla' => 'SEMA',
+        'setor_nome' => 'Secretaria de Meio Ambiente',
+        'ativo' => true,
+        'is_interno' => false,
+    ]);
+    AssuntoRequerimento::create([
+        'setor_id' => $setor->id,
+        'descricao' => 'Licença de Operação',
+        'ativo' => true,
+    ]);
+
+    $this->actingAs($cidadao)->putJson(route('requerimentos.rascunhos.salvar', $setor->id), [
+        'objeto' => 'Licença de Operação',
+        'campos' => ['motivo' => 'Rascunho em andamento'],
+        'etapa' => 2,
+    ])->assertOk();
+
+    $formularioNovo = $this->get(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
+        ->assertOk()
+        ->assertSee('data-tem-rascunho="true"', false);
+    expect(preg_match(
+        '/<input[^>]*name="objetoDoRequerimento"[^>]*\schecked(?:\s|>)/',
+        $formularioNovo->getContent()
+    ))->toBe(0);
+
+    $formularioRascunho = $this->get(route('requerimentos.cidadao.novo', [
+        'setor' => $setor->id,
+        'objeto' => 'Licença de Operação',
+    ]))->assertOk();
+    expect(preg_match(
+        '/<input[^>]*name="objetoDoRequerimento"[^>]*value="Licença de Operação"[^>]*checked/',
+        $formularioRascunho->getContent()
+    ))->toBe(1);
+});
+
 test('a citizen can save and resume an online draft with its files', function () {
     Storage::fake('local');
 
@@ -50,12 +94,6 @@ test('a citizen can save and resume an online draft with its files', function ()
         'usuario_id' => $cidadao->id,
         'nome' => 'Empreendimento da Maria',
     ]);
-    $empreendimento->representantes()->attach($cidadao->id, [
-        'termo_aceito' => true,
-        'termo_aceito_em' => now(),
-        'status' => 'ativo',
-    ]);
-
     $formularioInicial = $this->actingAs($cidadao)
         ->get(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
         ->assertOk()
@@ -64,7 +102,7 @@ test('a citizen can save and resume an online draft with its files', function ()
         ->assertSee('<textarea name="motivo" rows="5" required', false)
         ->assertSee('data-step="3"', false)
         ->assertSee('name="aceite_declaracao"', false)
-        ->assertSee('name="representante_legal_id"', false)
+        ->assertSee('data-titular-nome="Maria de Souza"', false)
         ->assertSee('Maria de Souza', false)
         ->assertDontSee('value="outro"', false)
         ->assertDontSee('name="objeto_outro"', false)
@@ -107,7 +145,6 @@ test('a citizen can save and resume an online draft with its files', function ()
             'email' => 'maria@example.com',
             'motivo' => 'Continuar de outro dispositivo',
             'empreendimento_id' => (string) $empreendimento->id,
-            'representante_legal_id' => (string) $cidadao->id,
             'bacia_hidrografica' => 'Bacia salva no rascunho',
             'objetoDoRequerimento' => 'Licença de Operação',
             'aceite_declaracao' => [],
@@ -150,7 +187,7 @@ test('a citizen can save and resume an online draft with its files', function ()
     ]))
         ->assertOk()
         ->assertJsonPath('rascunho.campos.motivo', 'Continuar de outro dispositivo')
-        ->assertJsonPath('rascunho.campos.representante_legal_id', (string) $cidadao->id)
+        ->assertJsonMissingPath('rascunho.campos.representante_legal_id')
         ->assertJsonPath('rascunho.campos.bacia_hidrografica', 'Bacia salva no rascunho')
         ->assertJsonMissingPath('rascunho.campos.campo_nao_permitido')
         ->assertJsonPath('rascunho.objeto', 'Licença de Operação')

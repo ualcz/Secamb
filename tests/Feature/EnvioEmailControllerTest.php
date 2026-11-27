@@ -92,7 +92,7 @@ test('protocol stores and displays the generated request pdf in the initial hist
         ->assertSee('Visualizar');
 });
 
-test('a technician can protocol a request on behalf of an eligible legal representative', function () {
+test('a technician protocols the request under the enterprise owner name', function () {
     Mail::fake();
     Storage::fake('local');
 
@@ -108,13 +108,6 @@ test('a technician can protocol a request on behalf of an eligible legal represe
         'email' => 'tecnico@example.com',
         'password' => Hash::make('password'),
         'role' => 'tecnico',
-        'ativo' => true,
-    ]);
-    $representanteNaoVinculado = Usuario::create([
-        'nome' => 'Outro Representante',
-        'email' => 'outro@example.com',
-        'password' => Hash::make('password'),
-        'role' => 'cidadao',
         'ativo' => true,
     ]);
     $segundoTitular = Usuario::create([
@@ -150,24 +143,16 @@ test('a technician can protocol a request on behalf of an eligible legal represe
     $this->actingAs($tecnico)
         ->get(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
         ->assertOk()
-        ->assertSee('representante_legal_id', false)
-        ->assertSee('Representante Titular')
-        ->assertSee('Segundo Titular');
+        ->assertDontSee('name="representante_legal_id"', false)
+        ->assertSee('data-titular-nome="Representante Titular"', false);
 
     $dadosRequerimento = array_merge([
         'setor_id' => $setor->id,
         'empreendimento_id' => $empreendimento->id,
-        'representante_legal_id' => $titular->id,
         'objeto' => 'Licença de Instalação',
         'motivo' => 'Solicitação realizada pelo técnico autorizado.',
         'aceite_declaracao' => '1',
     ], dadosCaracterizacaoRequerimentoTeste());
-
-    $this->actingAs($tecnico)
-        ->from(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
-        ->post(route('cidadao.enviar-email'), array_diff_key($dadosRequerimento, ['representante_legal_id' => true]))
-        ->assertRedirect(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
-        ->assertSessionHasErrors('representante_legal_id');
 
     $this->actingAs($tecnico)
         ->post(route('cidadao.enviar-email'), $dadosRequerimento)
@@ -177,16 +162,6 @@ test('a technician can protocol a request on behalf of an eligible legal represe
     expect($requerimento->usuario_id)->toBe($titular->id)
         ->and($requerimento->protocolado_por_id)->toBe($tecnico->id)
         ->and($requerimento->historicos()->firstOrFail()->user_id)->toBe($tecnico->id);
-
-    expect(Requerimento::count())->toBe(1);
-
-    $this->actingAs($tecnico)
-        ->from(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
-        ->post(route('cidadao.enviar-email'), array_merge($dadosRequerimento, [
-            'representante_legal_id' => $representanteNaoVinculado->id,
-        ]))
-        ->assertRedirect(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
-        ->assertSessionHasErrors('representante_legal_id');
 
     expect(Requerimento::count())->toBe(1);
 });

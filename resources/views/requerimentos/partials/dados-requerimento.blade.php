@@ -1,19 +1,8 @@
 <!-- Etapa 1: Identificação e Objeto do Requerimento -->
 <div class="form-step" data-step="1">
-    <!-- 1. Identificação do Requerente -->
-    <fieldset>
-        <legend>Identificação do Requerente</legend>
-        <div class="form-linha identificacao-linha">
-            <div class="campo identificacao-nome">
-                <label>Nome:</label>
-                <input type="text" value="{{ auth()->user()->nome }}" readonly>
-            </div>
-            <div class="campo identificacao-documento">
-                <label>{{ auth()->user()->isPessoaJuridica() ? 'CNPJ' : 'CPF' }}:</label>
-                <input type="text" value="{{ auth()->user()->documento_identificacao ?? '—' }}" readonly>
-            </div>
-        </div>
-    </fieldset>
+    <p class="titular-requerimento-ajuda">
+        O requerimento será registrado em nome do titular do empreendimento selecionado na próxima etapa.
+    </p>
 
     <!-- 2. Objeto do Requerimento -->
     <fieldset>
@@ -28,7 +17,7 @@
                     $obs = $assuntoItem['observacao'] ?? null;
                     $indexAssunto = $loop->index;
                     $objetoAtual = old('objetoDoRequerimento', $objetoSelecionado);
-                    $isChecked = $objetoAtual !== null ? $objetoAtual === $descricao : $loop->first;
+                    $isChecked = $objetoAtual !== null && $objetoAtual === $descricao;
                     $objetoTemRascunho = in_array($descricao, $objetosComRascunho ?? [], true);
                 @endphp
                 <div class="objeto-opcao">
@@ -158,11 +147,13 @@
 <script>
     function atualizarPreviewEmpreendimento(select) {
         const card = document.getElementById('card-preview-empreendimento');
+        const titular = document.getElementById('titular-empreendimento');
         if (!card) return;
 
         const selectedOption = select.options[select.selectedIndex];
         if (!select.value || !selectedOption) {
             card.style.display = 'none';
+            if (titular) titular.hidden = true;
             return;
         }
 
@@ -171,6 +162,16 @@
         document.getElementById('prev-emp-porte').textContent = selectedOption.getAttribute('data-porte') || 'Não informado';
         document.getElementById('prev-emp-endereco').textContent = selectedOption.getAttribute('data-endereco') || '';
         document.getElementById('prev-emp-fase').textContent = selectedOption.getAttribute('data-fase') || '';
+
+        const titularNome = selectedOption.dataset.titularNome || '';
+        if (titular) {
+            titular.hidden = !titularNome;
+            titular.querySelector('[data-titular-nome]').textContent = titularNome;
+            titular.querySelector('[data-titular-detalhes]').textContent = [
+                selectedOption.dataset.titularDocumento,
+                selectedOption.dataset.titularEmail,
+            ].filter(Boolean).join(' · ');
+        }
 
         card.style.display = 'block';
     }

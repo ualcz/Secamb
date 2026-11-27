@@ -1,8 +1,43 @@
 /* Etapa 2: empreendimento, caracterização e justificativa */
+.caracterizacao-fieldset-empreendimento {
+    border-color: #dbe2ea;
+}
+
+.caracterizacao-fieldset-empreendimento legend {
+    padding: 0 6px;
+    color: #1e3a8a;
+    font-weight: 700;
+}
+
 .caracterizacao-fieldset .caracterizacao-ajuda {
-    margin: 0 0 15px;
-    color: #555;
-    font-size: 14px;
+    margin: 0 0 12px;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.titular-requerimento-ajuda {
+    margin: 0 0 16px;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.campo-empreendimento-select {
+    margin-bottom: 12px;
+}
+
+.titular-empreendimento {
+    margin: 8px 0 14px;
+    color: #475569;
+    font-size: 0.875rem;
+}
+
+.titular-empreendimento strong {
+    color: #1e293b;
+}
+
+.titular-empreendimento-detalhes {
+    margin-left: 4px;
+    color: #64748b;
 }
 
 .caracterizacao-dados-linha {
@@ -20,11 +55,20 @@
 .caracterizacao-fieldset .campo select,
 .caracterizacao-fieldset .campo input[type="date"] {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    min-height: 42px;
+    padding: 9px 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
     box-sizing: border-box;
-    font-size: 14px;
+    background: #fff;
+    color: #0f172a;
+    font-size: 0.9rem;
+}
+
+.caracterizacao-fieldset .campo select:focus,
+.caracterizacao-fieldset .campo input[type="date"]:focus {
+    border-color: #3b82f6;
+    outline: 2px solid rgba(59, 130, 246, 0.15);
 }
 
 .caracterizacao-fieldset .campo-pergunta > span {
@@ -50,14 +94,15 @@
 .card-preview-empreendimento {
     display: none;
     margin-top: 12px;
-    padding: 10px 12px;
-    border: 1px solid #ddd;
+    padding: 12px;
+    border: 1px solid #dbe2ea;
     border-radius: 6px;
-    background: #f9f9f9;
+    background: #f8fafc;
 }
 
 .card-preview-empreendimento-nome {
-    font-weight: bold;
+    color: #1e3a8a;
+    font-weight: 700;
 }
 
 .card-preview-empreendimento-dados {
@@ -78,5 +123,10 @@
 @media (max-width: 640px) {
     .caracterizacao-dados-linha {
         grid-template-columns: 1fr;
+    }
+
+    .titular-empreendimento-detalhes {
+        display: block;
+        margin: 3px 0 0;
     }
 }

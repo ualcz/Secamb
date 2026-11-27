@@ -79,17 +79,8 @@ class RequerimentoController extends Controller
 
         // Carrega os empreendimentos do usuário para vincular à solicitação
         $empreendimentos = $request->user()->todosEmpreendimentos()
-            ->with([
-                'criador:id,nome,email,cpf,celular,tipo_registro',
-                'representantes:id,nome,email,cpf,celular,tipo_registro',
-            ])
+            ->with('criador:id,nome,email,cpf,cnpj,celular,tipo_registro')
             ->get();
-        $empreendimentos->each(function ($empreendimento) {
-            $empreendimento->setAttribute(
-                'representantes_elegiveis',
-                $empreendimento->representantesElegiveisParaRequerimento()
-            );
-        });
         $empreendimentoSelecionadoId = $request->query('empreendimento_id');
         $objetosValidos = array_values($modeloAtivo['objetos'] ?? []);
         $objetoSelecionado = $request->query('objeto');

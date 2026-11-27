@@ -8,6 +8,16 @@ function salvarArquivosRascunho(form, inputAlterado = null) {
 
 function mudarPasso(passo) {
     const form = document.getElementById('formRequerimento');
+    if (Number(passo) === 2 && !form?.querySelector('input[name="objetoDoRequerimento"]:checked')) {
+        const primeiroObjeto = form?.querySelector('input[name="objetoDoRequerimento"]');
+        if (primeiroObjeto) {
+            primeiroObjeto.setCustomValidity('Selecione o objeto do requerimento para continuar.');
+            primeiroObjeto.reportValidity();
+            primeiroObjeto.focus();
+        }
+        return;
+    }
+
     const descricao = form?.querySelector('textarea[name="motivo"]');
     const descricaoInvalida = Number(passo) === 3 && descricao && !descricao.value.trim();
 
@@ -212,6 +222,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (form.dataset.suspendDraft === 'true') return;
 
         if (e.target.name === 'objetoDoRequerimento') {
+            form.querySelectorAll('input[name="objetoDoRequerimento"]')
+                .forEach(radio => radio.setCustomValidity(''));
             form.dataset.objetoEscolhidoUsuario = 'true';
             const objeto = e.target.value;
             const temRascunho = e.target.dataset.temRascunho === 'true';
@@ -247,6 +259,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     form.addEventListener('submit', (event) => {
         const descricao = form.querySelector('textarea[name="motivo"]');
+        if (!form.querySelector('input[name="objetoDoRequerimento"]:checked')) {
+            event.preventDefault();
+            mudarPasso(1);
+            const primeiroObjeto = form.querySelector('input[name="objetoDoRequerimento"]');
+            if (primeiroObjeto) {
+                primeiroObjeto.setCustomValidity('Selecione o objeto do requerimento para continuar.');
+                primeiroObjeto.reportValidity();
+                primeiroObjeto.focus();
+            }
+            return;
+        }
         if (!validarCaracterizacao(form) || (descricao && !descricao.value.trim())) {
             event.preventDefault();
             mudarPasso(2);
