@@ -100,6 +100,17 @@ class Empreendimento extends Model
         )->withPivot(['termo_aceito', 'termo_aceito_em', 'status'])->withTimestamps();
     }
 
+    /** Técnicos autorizados a protocolar e acompanhar processos deste empreendimento. */
+    public function tecnicos(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Usuario::class,
+            'empreendimento_tecnico',
+            'empreendimento_id',
+            'usuario_id'
+        )->withTimestamps();
+    }
+
     /**
      * Processos de Licenciamento Ambiental vinculados a este empreendimento.
      */

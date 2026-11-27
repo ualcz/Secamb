@@ -15,6 +15,10 @@
         </a>
     </div>
 
+    @if (session('sucesso'))
+        <div class="emp-alert emp-alert-success">{{ session('sucesso') }}</div>
+    @endif
+
     {{-- Notificação de Erros --}}
     @if ($errors->any())
         <div class="emp-alert emp-alert-error">
@@ -287,6 +291,41 @@
                 </button>
             </div>
         </form>
+    </div>
+
+    <div class="emp-form-card" style="margin-top: 24px;">
+        <div class="emp-form-header">
+            <h2>Técnicos autorizados</h2>
+            <p>Vincule técnicos cadastrados como Pessoa Física pelo e-mail. Eles poderão abrir solicitações e acompanhar os processos deste empreendimento.</p>
+        </div>
+
+        <form action="{{ route('empreendimentos.tecnicos.adicionar', $empreendimento) }}" method="POST" class="emp-form-grid">
+            @csrf
+            <div class="emp-form-group emp-col-8">
+                <label for="tecnico_email">E-mail do técnico</label>
+                <input type="email" name="email" id="tecnico_email" class="emp-input" value="{{ old('email') }}" required>
+            </div>
+            <div class="emp-form-group emp-col-4" style="align-self: end;">
+                <button type="submit" class="emp-btn-submit">Vincular técnico</button>
+            </div>
+        </form>
+
+        @if($tecnicos->isEmpty())
+            <p>Nenhum técnico vinculado a este empreendimento.</p>
+        @else
+            <ul style="list-style: none; padding: 0;">
+                @foreach($tecnicos as $tecnico)
+                    <li style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid #e2e8f0;">
+                        <span><strong>{{ $tecnico->nome }}</strong> — {{ $tecnico->email }}</span>
+                        <form action="{{ route('empreendimentos.tecnicos.remover', [$empreendimento, $tecnico->id]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="emp-btn-cancel">Remover</button>
+                        </form>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 
 </div>

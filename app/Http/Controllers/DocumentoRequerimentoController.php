@@ -32,7 +32,7 @@ class DocumentoRequerimentoController extends Controller
         }
 
         // 2. Aluno proprietário do requerimento
-        if ((int) $requerimento->usuario_id === (int) $usuario->id) {
+        if ($usuario->podeAcompanharRequerimento($requerimento)) {
             return;
         }
 

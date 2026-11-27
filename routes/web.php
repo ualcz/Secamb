@@ -184,6 +184,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/empreendimentos/{empreendimento}/editar', [EmpreendimentoController::class, 'edit'])->name('empreendimentos.edit');
     Route::put('/empreendimentos/{empreendimento}', [EmpreendimentoController::class, 'update'])->name('empreendimentos.update');
     Route::post('/empreendimentos/{empreendimento}/vincular', [EmpreendimentoController::class, 'solicitarRepresentacao'])->name('empreendimentos.vincular');
+    Route::post('/empreendimentos/{empreendimento}/tecnicos', [EmpreendimentoController::class, 'adicionarTecnico'])->name('empreendimentos.tecnicos.adicionar');
+    Route::delete('/empreendimentos/{empreendimento}/tecnicos/{tecnico}', [EmpreendimentoController::class, 'removerTecnico'])->whereNumber('tecnico')->name('empreendimentos.tecnicos.remover');
 });
 
 /*

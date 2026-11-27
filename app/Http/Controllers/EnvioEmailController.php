@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class EnvioEmailController extends Controller
 {
@@ -27,7 +28,7 @@ class EnvioEmailController extends Controller
         $request->validate([
             'setor'                => 'nullable|string',
             'setor_id'             => 'nullable',
-            'empreendimento_id'    => 'nullable|exists:empreendimentos,id',
+            'empreendimento_id'    => 'required|integer|exists:empreendimentos,id',
             'objeto'               => 'nullable|string|max:255',
             'objetoDoRequerimento' => 'nullable|string|max:255',
             'objeto_outro'         => 'nullable|string|max:255',
@@ -72,6 +73,11 @@ class EnvioEmailController extends Controller
         }
 
         $cidadao = auth()->user();
+        if (!$cidadao->todosEmpreendimentos()->whereKey($request->input('empreendimento_id'))->exists()) {
+            throw ValidationException::withMessages([
+                'empreendimento_id' => 'O empreendimento selecionado não está vinculado à sua conta.',
+            ]);
+        }
 
         // 2. Atualiza dados de contato do cidadão se preenchidos
         $dadosUsuario = [];

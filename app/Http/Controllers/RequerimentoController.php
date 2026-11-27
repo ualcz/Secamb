@@ -110,7 +110,13 @@ class RequerimentoController extends Controller
     {
         //Implementação da lógica de que o usuário logado só pode ver os seus próprios requerimentos;
         //Uso de chave estrangeira na tabela requerimentos;
-        $query = auth()->user()->requerimentos()->with('empreendimento');
+        $usuario = $request->user();
+        $empreendimentosAcompanhados = $usuario->todosEmpreendimentos()->select('empreendimentos.id');
+        $query = Requerimento::with('empreendimento')
+            ->where(function ($query) use ($usuario, $empreendimentosAcompanhados) {
+                $query->where('usuario_id', $usuario->id)
+                    ->orWhereIn('empreendimento_id', $empreendimentosAcompanhados);
+            });
 
         if ($request->filled('busca')) {
             $busca = $request->input('busca');
@@ -144,7 +150,7 @@ class RequerimentoController extends Controller
     public function show(Requerimento $requerimento)
     {
         $donoId = $requerimento->usuario_id ?? $requerimento->user_id;
-        if ((int) $donoId !== (int) auth()->id()) {
+        if ((int) $donoId !== (int) auth()->id() && !auth()->user()->podeAcompanharRequerimento($requerimento)) {
             abort(403, 'Acesso não autorizado.');
         }
         $requerimento->load(['usuario.endereco', 'assunto', 'historicos.usuario', 'historicos.setor', 'historicos.documentos', 'empreendimento']);
@@ -174,7 +180,7 @@ class RequerimentoController extends Controller
 
     public function reenviarRequerimento(Request $request, Requerimento $requerimento)
     {
-        if ((int) $requerimento->usuario_id !== (int) auth()->id()) {
+        if (!auth()->user()->podeAcompanharRequerimento($requerimento)) {
             abort(403, 'Acesso não autorizado.');
         }
 

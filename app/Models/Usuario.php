@@ -137,6 +137,17 @@ class Usuario extends Authenticatable
         )->withPivot(['termo_aceito', 'termo_aceito_em', 'status'])->withTimestamps();
     }
 
+    /** Empreendimentos que autorizaram este usuário como técnico. */
+    public function empreendimentosComoTecnico(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Empreendimento::class,
+            'empreendimento_tecnico',
+            'usuario_id',
+            'empreendimento_id'
+        )->withTimestamps();
+    }
+
     /**
      * Empreendimentos cujo cadastro inicial foi realizado por este usuário.
      */
@@ -146,7 +157,7 @@ class Usuario extends Authenticatable
     }
 
     /**
-     * Retorna a query de todos os empreendimentos vinculados ao usuário (criados ou representados).
+     * Retorna os empreendimentos criados, representados ou que o autorizaram como técnico.
      */
     public function todosEmpreendimentos()
     {
@@ -154,6 +165,9 @@ class Usuario extends Authenticatable
             $q->where('usuario_id', $this->id)
               ->orWhereHas('representantes', function ($sub) {
                   $sub->where('usuario_id', $this->id);
+              })
+              ->orWhereHas('tecnicos', function ($sub) {
+                  $sub->where('usuarios.id', $this->id);
               });
         });
     }
@@ -172,6 +186,17 @@ class Usuario extends Authenticatable
         }
 
         return $this->empreendimentos()->where('empreendimentos.id', $empreendimento->id)->exists();
+    }
+
+    /** Verifica se o usuário pode acompanhar processos vinculados ao empreendimento. */
+    public function podeAcompanharRequerimento(Requerimento $requerimento): bool
+    {
+        if ((int) $requerimento->usuario_id === (int) $this->id) {
+            return true;
+        }
+
+        return $requerimento->empreendimento_id !== null
+            && $this->todosEmpreendimentos()->whereKey($requerimento->empreendimento_id)->exists();
     }
 
     /*

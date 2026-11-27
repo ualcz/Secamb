@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empreendimento;
+use App\Models\Usuario;
 use App\Rules\CnpjValido;
 use App\Support\DocumentoHelper;
 use Illuminate\Http\Request;
@@ -155,7 +156,64 @@ class EmpreendimentoController extends Controller
             abort(403, 'Você não tem permissão para editar este empreendimento.');
         }
 
-        return view('empreendimentos.edit', compact('empreendimento'));
+        $tecnicos = $empreendimento->tecnicos()->orderBy('nome')->get();
+
+        return view('empreendimentos.edit', compact('empreendimento', 'tecnicos'));
+    }
+
+    /**
+     * Autoriza um cidadão cadastrado como pessoa física a atuar como técnico.
+     */
+    public function adicionarTecnico(Request $request, Empreendimento $empreendimento)
+    {
+        $usuario = $request->user();
+        if (!$usuario->podeGerenciarEmpreendimento($empreendimento)) {
+            abort(403, 'Você não tem permissão para gerenciar os técnicos deste empreendimento.');
+        }
+
+        $validated = $request->validate([
+            'email' => 'required|email|max:255',
+        ]);
+
+        $tecnico = Usuario::whereRaw('LOWER(email) = ?', [strtolower(trim($validated['email']))])->first();
+
+        if (!$tecnico || !$tecnico->isCidadao() || $tecnico->tipo_registro !== 'fisica') {
+            return back()
+                ->withInput()
+                ->withErrors(['email' => 'Não encontramos uma conta de cidadão Pessoa Física com esse e-mail. O técnico precisa se cadastrar antes de ser vinculado.']);
+        }
+
+        if ((int) $tecnico->id === (int) $usuario->id) {
+            return back()
+                ->withInput()
+                ->withErrors(['email' => 'Informe o e-mail de outro usuário para vinculá-lo como técnico.']);
+        }
+
+        $empreendimento->tecnicos()->syncWithoutDetaching([$tecnico->id]);
+
+        return redirect()
+            ->route('empreendimentos.edit', $empreendimento)
+            ->with('sucesso', "Técnico {$tecnico->nome} vinculado ao empreendimento.");
+    }
+
+    /**
+     * Revoga o acesso de um técnico ao empreendimento.
+     */
+    public function removerTecnico(Request $request, Empreendimento $empreendimento, int $tecnico)
+    {
+        if (!$request->user()->podeGerenciarEmpreendimento($empreendimento)) {
+            abort(403, 'Você não tem permissão para gerenciar os técnicos deste empreendimento.');
+        }
+
+        if (!$empreendimento->tecnicos()->whereKey($tecnico)->exists()) {
+            abort(404);
+        }
+
+        $empreendimento->tecnicos()->detach($tecnico);
+
+        return redirect()
+            ->route('empreendimentos.edit', $empreendimento)
+            ->with('sucesso', 'Acesso do técnico revogado.');
     }
 
     /**

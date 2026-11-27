@@ -138,14 +138,16 @@
                                         Nova Requisição
                                     </a>
                                         {{-- Botão Editar --}}
-                                        <a href="{{ route('empreendimentos.edit', $emp->id) }}"
-                                        class="emp-btn-edit"
-                                        title="Editar dados cadastrais do empreendimento">
-                                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                            Editar
-                                        </a>
+                                        @if(auth()->user()->podeGerenciarEmpreendimento($emp))
+                                            <a href="{{ route('empreendimentos.edit', $emp->id) }}"
+                                            class="emp-btn-edit"
+                                            title="Editar dados cadastrais e gerenciar técnicos">
+                                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                                Editar
+                                            </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -197,14 +199,16 @@
                                 </span>
                                 <div class="grid grid-cols-2 gap-2 mt-8">
                                     {{-- Botão Editar --}}
-                                    <a href="{{ route('empreendimentos.edit', $emp->id) }}"
-                                    class="emp-btn-edit"
-                                    title="Editar dados cadastrais do empreendimento">
-                                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        Editar
-                                    </a>
+                                    @if(auth()->user()->podeGerenciarEmpreendimento($emp))
+                                        <a href="{{ route('empreendimentos.edit', $emp->id) }}"
+                                        class="emp-btn-edit"
+                                        title="Editar dados cadastrais e gerenciar técnicos">
+                                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            Editar
+                                        </a>
+                                    @endif
 
                                     {{-- Botão Nova Licença / Requisição --}}
                                     <a href="{{ route('requerimentos.cidadao.novo', ['empreendimento_id' => $emp->id]) }}"

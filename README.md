@@ -29,9 +29,11 @@ Conforme detalhado no **Manual do Usuário**:
   - Consulta e listagem de empreendimentos vinculados.
   - Busca de empreendimento por CNPJ.
   - Solicitação de representação legal com aceite do Termo de Declaração.
+  - Vinculação de vários técnicos cadastrados como Pessoa Física pelo e-mail, autorizando-os a abrir solicitações e acompanhar os processos do empreendimento.
   - Cadastro de novos empreendimentos (Bacia Hidrográfica, Recurso Hídrico, Fase de Operação) e seus responsáveis legais.
 - **Módulo de Processos e Licenciamento:**
-  - Abertura de novos processos de licenciamento vinculados a um empreendimento.
+  - Abertura de novos processos de licenciamento vinculados obrigatoriamente a um empreendimento.
+  - Técnicos vinculados por e-mail podem protocolar e acompanhar os processos do empreendimento; o responsável pode vincular mais de um técnico.
   - Geração automática de número de protocolo.
   - Acompanhamento das etapas: *Protocolado*, *Em análise*, *Aguardando complementação*, *Deferido*, *Licença emitida*, *Indeferido*, *Encerrado* e *Expirado*.
   - Consulta rápida de processos através do número de protocolo.
