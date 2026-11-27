@@ -85,7 +85,8 @@ class Requerimento extends Model
         'numero_protocolo',       // Gerado automaticamente na abertura
 
         // ─── Partes envolvidas ───────────────────────────────────────────────
-        'usuario_id',             // Cidadão requerente (Pessoa Física ou Jurídica)
+        'usuario_id',             // Representante legal titular do requerimento
+        'protocolado_por_id',     // Usuário que realizou o protocolo
         'empreendimento_id',      // Empreendimento para o qual se solicita a licença
         'setor_id',               // Secretaria/Setor da Prefeitura responsável pela análise
         'setor_retorno_id',       // Setor de destino no encaminhamento interno
@@ -116,10 +117,15 @@ class Requerimento extends Model
     |--------------------------------------------------------------------------
     */
 
-    /** Cidadão que abriu o processo. */
+    /** Representante legal titular do processo. */
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'usuario_id');
+    }
+
+    public function protocoladoPor()
+    {
+        return $this->belongsTo(Usuario::class, 'protocolado_por_id');
     }
 
     /** Empreendimento vinculado ao processo. */
