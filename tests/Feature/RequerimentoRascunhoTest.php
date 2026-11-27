@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\AssuntoRequerimento;
+use App\Models\Empreendimento;
 use App\Models\RequerimentoRascunho;
 use App\Models\RequerimentoRascunhoArquivo;
 use App\Models\Setor;
@@ -45,6 +46,15 @@ test('a citizen can save and resume an online draft with its files', function ()
         'descricao' => 'Autorização Ambiental',
         'ativo' => true,
     ]);
+    $empreendimento = Empreendimento::create([
+        'usuario_id' => $cidadao->id,
+        'nome' => 'Empreendimento da Maria',
+    ]);
+    $empreendimento->representantes()->attach($cidadao->id, [
+        'termo_aceito' => true,
+        'termo_aceito_em' => now(),
+        'status' => 'ativo',
+    ]);
 
     $formularioInicial = $this->actingAs($cidadao)
         ->get(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
@@ -54,6 +64,8 @@ test('a citizen can save and resume an online draft with its files', function ()
         ->assertSee('<textarea name="motivo" rows="5" required', false)
         ->assertSee('data-step="3"', false)
         ->assertSee('name="aceite_declaracao"', false)
+        ->assertSee('name="representante_legal_id"', false)
+        ->assertSee('Maria de Souza', false)
         ->assertDontSee('value="outro"', false)
         ->assertDontSee('name="objeto_outro"', false)
         ->assertSee('Finalizar')
@@ -94,6 +106,8 @@ test('a citizen can save and resume an online draft with its files', function ()
         'campos' => [
             'email' => 'maria@example.com',
             'motivo' => 'Continuar de outro dispositivo',
+            'empreendimento_id' => (string) $empreendimento->id,
+            'representante_legal_id' => (string) $cidadao->id,
             'bacia_hidrografica' => 'Bacia salva no rascunho',
             'objetoDoRequerimento' => 'Licença de Operação',
             'aceite_declaracao' => [],
@@ -136,6 +150,7 @@ test('a citizen can save and resume an online draft with its files', function ()
     ]))
         ->assertOk()
         ->assertJsonPath('rascunho.campos.motivo', 'Continuar de outro dispositivo')
+        ->assertJsonPath('rascunho.campos.representante_legal_id', (string) $cidadao->id)
         ->assertJsonPath('rascunho.campos.bacia_hidrografica', 'Bacia salva no rascunho')
         ->assertJsonMissingPath('rascunho.campos.campo_nao_permitido')
         ->assertJsonPath('rascunho.objeto', 'Licença de Operação')

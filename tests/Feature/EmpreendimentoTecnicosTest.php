@@ -158,6 +158,45 @@ test('técnico vinculado pode acompanhar processos do empreendimento, mas não d
         ->assertForbidden();
 });
 
+test('setor pode consultar dados dos técnicos vinculados ao empreendimento do requerimento', function () {
+    $responsavel = criarUsuarioCidadao('Responsável', 'responsavel@example.com');
+    $tecnico = criarUsuarioCidadao('Técnico Ambiental', 'tecnico@example.com');
+    $naoVinculado = criarUsuarioCidadao('Outro técnico', 'outro-tecnico@example.com');
+    $tecnico->update([
+        'cpf' => '529.982.247-25',
+        'celular' => '(75) 99999-1111',
+    ]);
+    $empreendimento = Empreendimento::create([
+        'usuario_id' => $responsavel->id,
+        'nome' => 'Fazenda vinculada',
+    ]);
+    $empreendimento->tecnicos()->attach($tecnico->id);
+
+    $setor = Setor::create([
+        'setor_sigla' => 'SEMA',
+        'setor_nome' => 'Secretaria de Meio Ambiente',
+        'ativo' => true,
+        'is_interno' => false,
+    ]);
+    $setor->responsaveis()->attach($responsavel->id);
+    $requerimento = Requerimento::create([
+        'usuario_id' => $responsavel->id,
+        'empreendimento_id' => $empreendimento->id,
+        'setor_id' => $setor->id,
+        'objetoDoRequerimento' => 'Licença de Operação',
+    ]);
+
+    $this->actingAs($responsavel)
+        ->get(route('setor.requerimentos.show', [$setor->id, $requerimento->id]))
+        ->assertOk()
+        ->assertSee('Ver técnicos responsáveis (1)')
+        ->assertSee('Técnico Ambiental')
+        ->assertSee('529.982.247-25')
+        ->assertSee('tecnico@example.com')
+        ->assertSee('(75) 99999-1111')
+        ->assertDontSee('outro-tecnico@example.com');
+});
+
 test('não é possível protocolar requerimento sem empreendimento', function () {
     $cidadao = criarUsuarioCidadao('Pessoa Física', 'pessoa@example.com');
     $outroCidadao = criarUsuarioCidadao('Outro cidadão', 'outro@example.com');
