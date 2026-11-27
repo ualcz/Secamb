@@ -870,9 +870,125 @@ body.acao-processando {
     margin: 0;
 }
 
+.empreendimento-vinculado {
+    margin-top: 1rem;
+    padding: 14px 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.empreendimento-vinculado-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.empreendimento-vinculado-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1f2937;
+    font-size: 0.95rem;
+}
+
+.empreendimento-vinculado-titulo svg {
+    flex: 0 0 auto;
+}
+
+.empreendimento-vinculado-porte {
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.tecnicos-responsaveis {
+    margin-top: 1rem;
+}
+
+.tecnicos-responsaveis-resumo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    background: #f8fafc;
+    color: #1f2937;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+}
+
+.tecnicos-responsaveis-resumo::-webkit-details-marker {
+    display: none;
+}
+
+.tecnicos-responsaveis-resumo svg {
+    flex: 0 0 auto;
+    color: #64748b;
+    transition: transform 0.18s ease;
+}
+
+.tecnicos-responsaveis[open] .tecnicos-responsaveis-resumo svg {
+    transform: rotate(180deg);
+}
+
+.tecnicos-responsaveis[open] .tecnicos-responsaveis-resumo {
+    border-radius: 7px 7px 0 0;
+}
+
+.tecnicos-responsaveis-lista {
+    display: grid;
+    gap: 10px;
+    padding: 0 14px 14px;
+    border: 1px solid #e5e7eb;
+    border-top: 0;
+    border-radius: 0 0 7px 7px;
+    background: #f8fafc;
+}
+
+.tecnico-responsavel-card {
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    background: #fff;
+}
+
+.tecnico-responsavel-card h3 {
+    margin: 0 0 10px;
+    color: #1f2937;
+    font-size: 0.92rem;
+}
+
+.tecnico-responsavel-dados {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 16px;
+}
+
 @media (max-width: 650px) {
     .accordion-header {
         align-items: flex-start;
+    }
+
+    .empreendimento-vinculado {
+        padding: 12px;
+    }
+
+    .empreendimento-vinculado-cabecalho {
+        align-items: flex-start;
+    }
+
+    .tecnico-responsavel-dados {
+        grid-template-columns: 1fr;
     }
 }
 

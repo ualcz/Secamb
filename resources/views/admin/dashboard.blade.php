@@ -6,7 +6,7 @@
 @section('content')
     @php($dashboardRoute = auth()->user()->isAdmin() ? 'admin.dashboard' : 'servidor.dashboard')
     <style>
-        {!! file_get_contents(public_path('css/dashboard.css')) !!}
+        {!! file_get_contents(resource_path('css/admin/dashboard.css')) !!}
     </style>
 <div class="dashboard-shell">
     <div class="dashboard-heading">

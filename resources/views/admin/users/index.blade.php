@@ -5,7 +5,7 @@
 
 @section('content')
     <style>
-        {!! file_get_contents(public_path('css/users-table.css')) !!}
+        {!! file_get_contents(resource_path('css/admin/users-table.css')) !!}
     </style>
 
 @if (session()->has('success'))

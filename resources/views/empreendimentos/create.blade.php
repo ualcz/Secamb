@@ -4,7 +4,7 @@
 @section('tag', 'Empreendimentos')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/empreendimentos.css') }}?v={{ filemtime(public_path('css/empreendimentos.css')) }}">
+@vite('resources/css/empreendimentos/form.css')
 
 <div class="emp-container">
 

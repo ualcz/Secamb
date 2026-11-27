@@ -4,7 +4,7 @@
 @section('tag', 'Administração')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/consultaRequerimento.css') }}?v={{ filemtime(public_path('css/consultaRequerimento.css')) }}">
+@vite('resources/css/setor/consulta-requerimento.css')
 
 <x-btn-voltar />
 

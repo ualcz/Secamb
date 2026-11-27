@@ -4,7 +4,7 @@
 @section('tag', 'Perfil')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/profile/cards.css') }}?v={{ filemtime(public_path('css/profile/cards.css')) }}">
+@vite('resources/css/profile/cards.css')
 
 <div class="profile-container">
 

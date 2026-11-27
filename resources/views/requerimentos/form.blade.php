@@ -4,10 +4,12 @@
 @section('tag', 'Cidadão')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/form.css') }}?v={{ filemtime(public_path('css/form.css')) }}">
-<link rel="stylesheet" href="{{ asset('css/form-etapa-1.css') }}?v={{ filemtime(public_path('css/form-etapa-1.css')) }}">
-<link rel="stylesheet" href="{{ asset('css/form-etapa-2.css') }}?v={{ filemtime(public_path('css/form-etapa-2.css')) }}">
-<link rel="stylesheet" href="{{ asset('css/form-etapa-3.css') }}?v={{ filemtime(public_path('css/form-etapa-3.css')) }}">
+@vite([
+    'resources/css/requerimentos/form.css',
+    'resources/css/requerimentos/form-etapa-1.css',
+    'resources/css/requerimentos/form-etapa-2.css',
+    'resources/css/requerimentos/form-etapa-3.css',
+])
 
 <div class="form-box">
     <!-- Overlay de Carregamento -->

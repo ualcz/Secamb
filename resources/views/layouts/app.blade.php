@@ -5,10 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SECAMB - Prefeitura Municipal de Seabra')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="{{ asset('css/header.css') }}?v={{ filemtime(public_path('css/header.css')) }}">
-    <link rel="stylesheet" href="{{ asset('css/headerMobile.css') }}?v={{ filemtime(public_path('css/headerMobile.css')) }}">
-    <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
+    @vite([
+        'resources/css/app.css',
+        'resources/js/app.js',
+        'resources/css/layouts/header.css',
+        'resources/css/layouts/header-mobile.css',
+        'resources/css/layouts/footer.css',
+    ])
 </head>
 
 <body class="flex flex-col min-h-screen bg-zinc-100">

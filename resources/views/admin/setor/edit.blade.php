@@ -4,7 +4,7 @@
 @section('tag', 'Administração')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/admin-setor.css') }}">
+@vite('resources/css/admin/setor.css')
 <style>
     main.container {
         max-width: 95% !important;

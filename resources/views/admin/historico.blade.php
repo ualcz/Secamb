@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-<link rel="stylesheet" href="{{ asset('css/show-requerimento.css') }}?v={{ filemtime(public_path('css/show-requerimento.css')) }}">
+@vite([
+    'resources/css/requerimentos/show.css',
+])
 
 @section('content')
 @php

@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ asset('css/profile/hero.css') }}?v={{ filemtime(public_path('css/profile/hero.css')) }}">
+@vite('resources/css/profile/hero.css')
 
 <div class="profile-hero">
     <div class="profile-hero-left">

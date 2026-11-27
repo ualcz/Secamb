@@ -4,7 +4,7 @@
 @section('tag', 'Cidadão')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/meusRequerimentos.css') }}?v={{ filemtime(public_path('css/meusRequerimentos.css')) }}">
+@vite('resources/css/requerimentos/meus-requerimentos.css')
 
 <div class="req-container">
 

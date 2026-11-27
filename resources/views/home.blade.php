@@ -6,7 +6,7 @@
 
 @section('content')
 
-<link rel="stylesheet" href="{{ asset('css/home.css') }}">
+@vite('resources/css/pages/home.css')
 
 <div class="home-page">
     <section id="inicio" class="home-hero">
@@ -144,6 +144,7 @@
     </div>
 @endif
 
-<script src="{{ asset('js/home.js') }}"></script>
 
+
+<script src="{{ asset('js/home.js') }}"></script>
 @endsection
