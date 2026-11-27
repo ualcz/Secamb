@@ -88,6 +88,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
         ->name('admin.dashboard');
+    Route::patch('/admin/historico/{requerimento}/caracterizacao', [RequerimentoController::class, 'atualizarCaracterizacao'])
+        ->name('admin.historico.caracterizacao');
 
     // Gerenciamento de Setores e Assuntos de Requerimentos
     Route::get('/admin/setores/criar', [AdminSetorController::class, 'create'])->name('admin.setores.create');

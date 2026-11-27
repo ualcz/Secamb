@@ -7,6 +7,7 @@ use App\Models\RequerimentoRascunho;
 use Illuminate\Http\Request;
 use App\Models\Setor;
 use App\Services\DocumentoRequerimentoService;
+use App\Support\CaracterizacaoEmpreendimento;
 
 class RequerimentoController extends Controller
 {
@@ -176,6 +177,22 @@ class RequerimentoController extends Controller
         }
         $historicos = $requerimento->historicos;
         return view('admin.historico', compact('requerimento', 'historicos'));
+    }
+
+    public function atualizarCaracterizacao(Request $request, Requerimento $requerimento)
+    {
+        $validated = $request->validate(
+            CaracterizacaoEmpreendimento::rules(),
+            CaracterizacaoEmpreendimento::mensagens()
+        );
+
+        $requerimento->update([
+            'caracterizacao_empreendimento' => CaracterizacaoEmpreendimento::persistir($validated),
+        ]);
+
+        return redirect()
+            ->route('admin.historico', $requerimento)
+            ->with('success', 'Caracterização da solicitação atualizada.');
     }
 
     public function reenviarRequerimento(Request $request, Requerimento $requerimento)

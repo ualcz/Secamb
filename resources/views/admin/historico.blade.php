@@ -3,6 +3,52 @@
 <link rel="stylesheet" href="{{ asset('css/show-requerimento.css') }}?v={{ filemtime(public_path('css/show-requerimento.css')) }}">
 
 @section('content')
+@php
+    $caracterizacaoEdicao = $requerimento->caracterizacao_empreendimento ?? [];
+    if (!$caracterizacaoEdicao && $requerimento->empreendimento) {
+        $empreendimentoLegado = $requerimento->empreendimento;
+        $pendenciasLegadas = [
+            'notificacao_pendencia' => $empreendimentoLegado->notificacao_pendencia,
+            'embargo_pendencia' => $empreendimentoLegado->embargo_pendencia,
+            'advertencia_pendencia' => $empreendimentoLegado->advertencia_pendencia,
+            'apreensao_pendencia' => $empreendimentoLegado->apreensao_pendencia,
+            'multa_pendencia' => $empreendimentoLegado->multa_pendencia,
+            'interdicao_pendencia' => $empreendimentoLegado->interdicao_pendencia,
+        ];
+        $temLicencaLegada = $empreendimentoLegado->licenca_anterior_tipo
+            || $empreendimentoLegado->licenca_anterior_processo
+            || $empreendimentoLegado->resolucao_cepram
+            || $empreendimentoLegado->portaria_inema;
+        $unidadeConservacaoLegada = trim((string) $empreendimentoLegado->unidade_conservacao);
+        $unidadeConservacaoRespostaLegada = $unidadeConservacaoLegada === ''
+            ? ''
+            : (stripos($unidadeConservacaoLegada, 'não possui') !== false
+                || stripos($unidadeConservacaoLegada, 'nao possui') !== false
+                ? 'nao'
+                : 'sim');
+        $caracterizacaoEdicao = [
+            'bacia_hidrografica' => $empreendimentoLegado->bacia_hidrografica,
+            'recurso_hidrico' => $empreendimentoLegado->recurso_hidrico,
+            'latitude' => $empreendimentoLegado->latitude,
+            'longitude' => $empreendimentoLegado->longitude,
+            'unidade_conservacao_resposta' => $unidadeConservacaoRespostaLegada,
+            'unidade_conservacao_nome' => $empreendimentoLegado->unidade_conservacao,
+            'licenca_anterior' => $temLicencaLegada ? 'sim' : '',
+            'localizacao_licenca' => $empreendimentoLegado->localizacao_licenca,
+            'licenca_anterior_tipo' => $empreendimentoLegado->licenca_anterior_tipo,
+            'licenca_anterior_processo' => $empreendimentoLegado->licenca_anterior_processo,
+            'resolucao_cepram' => $empreendimentoLegado->resolucao_cepram,
+            'resolucao_cepram_validade' => substr((string) $empreendimentoLegado->resolucao_cepram_validade, 0, 10),
+            'portaria_inema' => $empreendimentoLegado->portaria_inema,
+            'portaria_inema_validade' => substr((string) $empreendimentoLegado->portaria_inema_validade, 0, 10),
+            'processo_semma' => $empreendimentoLegado->processo_semma_numero || $empreendimentoLegado->processo_semma_tipo ? 'sim' : '',
+            'processo_semma_numero' => $empreendimentoLegado->processo_semma_numero,
+            'processo_semma_tipo' => $empreendimentoLegado->processo_semma_tipo,
+            'pendencia_ambiental' => count(array_filter($pendenciasLegadas)) ? 'sim' : '',
+            ...$pendenciasLegadas,
+        ];
+    }
+@endphp
 <div class="detalhes-container">
     <x-btn-voltar style="grid-column: span 2;" />
 
@@ -65,6 +111,19 @@
                 </div>
             </div>
 
+            @if(session('success'))
+                <div class="alert-sucesso">{{ session('success') }}</div>
+            @endif
+            @if($errors->any())
+                <div class="erros">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             @if($requerimento->empreendimento)
                 <div style="margin-top: 1rem; padding: 14px 18px; border-radius: 8px; border: 1px solid #bbf7d0; border-left: 4px solid #059669; background-color: #f0fdf4;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -86,16 +145,24 @@
                             <span class="info-label">Localização</span>
                             <span class="info-valor">{{ $requerimento->empreendimento->endereco_completo ?: 'Seabra - BA' }}</span>
                         </div>
-                        <div class="info-grupo">
-                            <span class="info-label">Bacia Hidrográfica</span>
-                            <span class="info-valor">{{ $requerimento->empreendimento->bacia_hidrografica ?? 'Não informada' }}</span>
-                        </div>
                     </div>
+                    @include('requerimentos.partials.caracterizacao-resumo')
                 </div>
             @endif
+
+            <details style="margin-top: 1rem;">
+                <summary style="cursor: pointer; font-weight: 600;">Editar caracterização desta solicitação</summary>
+                <form action="{{ route('admin.historico.caracterizacao', $requerimento) }}" method="POST" data-caracterizacao-form>
+                    @csrf
+                    @method('PATCH')
+                    @include('requerimentos.partials.caracterizacao-campos')
+                    <button type="submit" class="btn-atualizar">Salvar caracterização</button>
+                </form>
+            </details>
         </div>
     </div>
 </div>
 
 <script src="{{ asset('js/show-requerimento.js') }}?v={{ filemtime(public_path('js/show-requerimento.js')) }}"></script>
+<script src="{{ asset('js/caracterizacao-empreendimento.js') }}?v={{ filemtime(public_path('js/caracterizacao-empreendimento.js')) }}"></script>
 @endsection
