@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Requerimento de Licenciamento Ambiental - {{ $aluno->nome }}</title>
     <style>
-        {!! file_get_contents(public_path('css/requerimento-pdf.css')) !!}
+        {!! file_get_contents(resource_path('css/pdf/requerimento.css')) !!}
     </style>
 </head>
 <body>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Requerimento - {{ $nomeRequerente->nome }}</title>
     <style>
-        {!! file_get_contents(public_path('css/comprovante-pdf.css')) !!}
+        {!! file_get_contents(resource_path('css/pdf/comprovante.css')) !!}
     </style>
 </head>
 <body>
