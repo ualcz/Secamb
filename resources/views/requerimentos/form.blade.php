@@ -5,6 +5,9 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/form.css') }}?v={{ filemtime(public_path('css/form.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/form-etapa-1.css') }}?v={{ filemtime(public_path('css/form-etapa-1.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/form-etapa-2.css') }}?v={{ filemtime(public_path('css/form-etapa-2.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/form-etapa-3.css') }}?v={{ filemtime(public_path('css/form-etapa-3.css')) }}">
 
 <div class="form-box">
     <!-- Overlay de Carregamento -->
@@ -56,13 +59,29 @@
 
     <p id="status-rascunho-requerimento" class="rascunho-status" role="status" aria-live="polite"></p>
 
+    @php
+        $camposEtapaCaracterizacao = [
+            'bacia_hidrografica', 'recurso_hidrico', 'latitude', 'longitude',
+            'unidade_conservacao_resposta', 'unidade_conservacao_nome',
+            'licenca_anterior', 'localizacao_licenca', 'licenca_anterior_tipo',
+            'licenca_anterior_processo', 'resolucao_cepram', 'resolucao_cepram_validade',
+            'portaria_inema', 'portaria_inema_validade', 'processo_semma',
+            'processo_semma_numero', 'processo_semma_tipo', 'pendencia_ambiental',
+            'notificacao_pendencia', 'embargo_pendencia', 'advertencia_pendencia',
+            'apreensao_pendencia', 'multa_pendencia', 'interdicao_pendencia',
+        ];
+        $erroEtapaCaracterizacao = $errors->has('motivo')
+            || $errors->has('empreendimento_id')
+            || $errors->hasAny($camposEtapaCaracterizacao);
+    @endphp
+
         <form id="formRequerimento" action="{{ route('cidadao.enviar-email') }}" method="POST" enctype="multipart/form-data"
             data-draft-key="requerimento-{{ auth()->id() }}-{{ $modeloAtivo['id'] ?? 'geral' }}"
             data-draft-url="{{ route('requerimentos.rascunhos.show', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
             data-draft-files-url="{{ route('requerimentos.rascunhos.arquivos.salvar', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
             data-form-url="{{ route('requerimentos.cidadao.novo', ['setor' => $modeloAtivo['id'] ?? 0]) }}"
             data-restore-draft="true"
-            data-step-on-error="{{ $errors->has('motivo') ? 2 : ($errors->any() ? 3 : '') }}"
+            data-step-on-error="{{ $erroEtapaCaracterizacao ? 2 : ($errors->any() ? 3 : '') }}"
             data-motivo-invalido="{{ $errors->has('motivo') ? 'true' : 'false' }}"
             data-clear-draft="{{ session()->has('sucesso') ? 'true' : 'false' }}">
         @csrf
@@ -81,6 +100,7 @@
 
     <script src="{{ asset('js/requerimento-rascunho.js') }}?v={{ filemtime(public_path('js/requerimento-rascunho.js')) }}"></script>
     <script src="{{ asset('js/form.js') }}?v={{ filemtime(public_path('js/form.js')) }}"></script>
+    <script src="{{ asset('js/caracterizacao-empreendimento.js') }}?v={{ filemtime(public_path('js/caracterizacao-empreendimento.js')) }}"></script>
 
 </div>
 @endsection

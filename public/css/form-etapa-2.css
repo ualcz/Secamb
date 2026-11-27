@@ -1,0 +1,82 @@
+/* Etapa 2: empreendimento, caracterização e justificativa */
+.caracterizacao-fieldset .caracterizacao-ajuda {
+    margin: 0 0 15px;
+    color: #555;
+    font-size: 14px;
+}
+
+.caracterizacao-dados-linha {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.caracterizacao-dados-linha .campo {
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+.caracterizacao-fieldset .campo select,
+.caracterizacao-fieldset .campo input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.caracterizacao-fieldset .campo-pergunta > span {
+    display: block;
+    margin-bottom: 4px;
+    color: #444;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.caracterizacao-fieldset .campo-pergunta input[type="radio"] {
+    accent-color: #0284c7;
+}
+
+.caracterizacao-fieldset [hidden] {
+    display: none !important;
+}
+
+.grupo-condicional:not([hidden]) {
+    margin-bottom: 12px;
+}
+
+.card-preview-empreendimento {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f9f9f9;
+}
+
+.card-preview-empreendimento-nome {
+    font-weight: bold;
+}
+
+.card-preview-empreendimento-dados {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 6px;
+    color: #444;
+    font-size: 13px;
+}
+
+.caracterizacao-vazio {
+    margin: 10px 0 0;
+    color: #666;
+    font-size: 14px;
+}
+
+@media (max-width: 640px) {
+    .caracterizacao-dados-linha {
+        grid-template-columns: 1fr;
+    }
+}
