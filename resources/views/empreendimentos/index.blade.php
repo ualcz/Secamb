@@ -117,9 +117,6 @@
                             </td>
                             <td data-label="Localização / Bairro">
                                 <div class="emp-location">{{ $emp->endereco ? $emp->endereco . ', ' : '' }}{{ $emp->bairro ?? 'Seabra-BA' }}</div>
-                                @if($emp->bacia_hidrografica)
-                                    <small class="emp-basin">Bacia: {{ $emp->bacia_hidrografica }}</small>
-                                @endif
                             </td>
                             <td data-label="Fase de Operação">
                                 <span class="emp-badge-fase">
@@ -189,9 +186,6 @@
                                 </div>
                                 <div class="grid grid-cols-2">
                                     <div>{{ $emp->endereco ? $emp->endereco . ', ' : '' }}{{ $emp->bairro ?? 'Seabra-BA' }}</div>
-                                    @if($emp->bacia_hidrografica)
-                                        <small style="color: #64748b;">Bacia: {{ $emp->bacia_hidrografica }}</small>
-                                    @endif
                                 </div>
 
                                 <span class="text-sm text-center rounded-2xl text-gray-600">
