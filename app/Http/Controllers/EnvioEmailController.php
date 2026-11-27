@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Mail\ConfirmacaoRequerimentoUsuarioMail;
 use App\Mail\NotificacaoSetorMail;
 use App\Models\AssuntoRequerimento;
+use App\Models\Empreendimento;
 use App\Models\Requerimento;
 use App\Models\RequerimentoRascunho;
 use App\Models\Setor;
+use App\Models\Usuario;
 use App\Services\DocumentoRequerimentoService;
 use App\Support\CaracterizacaoEmpreendimento;
 use Illuminate\Http\Request;
@@ -30,6 +32,7 @@ class EnvioEmailController extends Controller
             'setor'                => 'nullable|string',
             'setor_id'             => 'nullable',
             'empreendimento_id'    => 'required|integer|exists:empreendimentos,id',
+            'representante_legal_id' => 'nullable|integer|exists:usuarios,id',
             'objeto'               => 'nullable|string|max:255',
             'objetoDoRequerimento' => 'nullable|string|max:255',
             'objeto_outro'         => 'nullable|string|max:255',
@@ -51,6 +54,7 @@ class EnvioEmailController extends Controller
         ], [
             'aceite_declaracao.required' => 'Marque a caixa para confirmar sua concordância com a declaração.',
             'aceite_declaracao.accepted' => 'É necessário aceitar a declaração para protocolar o requerimento.',
+            'representante_legal_id' => 'Selecione um representante legal ativo vinculado ao empreendimento.',
             ...CaracterizacaoEmpreendimento::mensagens(),
         ]);
 
@@ -71,14 +75,30 @@ class EnvioEmailController extends Controller
             return back()->withErrors(['setor' => 'O setor selecionado é inválido.'])->withInput();
         }
 
-        if ($setor->is_interno && auth()->user()?->role === 'cidadao') {
+        if ($setor->is_interno && in_array(auth()->user()?->role, ['cidadao', 'tecnico'], true)) {
             return back()->withErrors(['setor' => 'Não é permitido submeter requerimentos diretamente para um setor interno.'])->withInput();
         }
 
         $cidadao = auth()->user();
-        if (!$cidadao->todosEmpreendimentos()->whereKey($request->input('empreendimento_id'))->exists()) {
+        $empreendimento = Empreendimento::with(['criador', 'representantes'])
+            ->findOrFail($request->input('empreendimento_id'));
+        if (!$cidadao->todosEmpreendimentos()->whereKey($empreendimento->id)->exists()) {
             throw ValidationException::withMessages([
                 'empreendimento_id' => 'O empreendimento selecionado não está vinculado à sua conta.',
+            ]);
+        }
+
+        $representantesElegiveis = $empreendimento->representantesElegiveisParaRequerimento();
+        $representanteLegal = $representantesElegiveis->firstWhere(
+            'id',
+            (int) ($validated['representante_legal_id'] ?? 0)
+        );
+        if (!$representanteLegal && !array_key_exists('representante_legal_id', $validated) && $representantesElegiveis->count() === 1) {
+            $representanteLegal = $representantesElegiveis->first();
+        }
+        if (!$representanteLegal) {
+            throw ValidationException::withMessages([
+                'representante_legal_id' => 'Selecione um representante legal ativo e com termo aceito para este empreendimento.',
             ]);
         }
 
@@ -165,7 +185,8 @@ class EnvioEmailController extends Controller
             }
 
             $requerimento = Requerimento::create([
-                'usuario_id'              => $cidadao->id,
+                'usuario_id'              => $representanteLegal->id,
+                'protocolado_por_id'      => $cidadao->id,
                 'empreendimento_id'       => $request->input('empreendimento_id'),
                 'setor_id'                => $setor->id,
                 'assunto_requerimento_id' => $assunto?->id,
@@ -196,7 +217,7 @@ class EnvioEmailController extends Controller
 
             app(DocumentoRequerimentoService::class)->gerarESalvarPdfRequerimento(
                 requerimento: $requerimento,
-                aluno: $cidadao,
+                aluno: $representanteLegal,
                 setorNome: $setor->setor_nome,
                 historico: $historico,
                 usuario: $cidadao,
@@ -231,8 +252,8 @@ class EnvioEmailController extends Controller
         );
 
         // Envia notificações por e-mail em segundo plano (defer), liberando a resposta HTTP imediata ao usuário
-        \Illuminate\Support\defer(function () use ($requerimento, $cidadao, $setor, $objeto) {
-            $this->enviarNotificacoes($requerimento, $cidadao, $setor, $objeto);
+        \Illuminate\Support\defer(function () use ($requerimento, $representanteLegal, $cidadao, $setor, $objeto) {
+            $this->enviarNotificacoes($requerimento, $representanteLegal, $cidadao, $setor, $objeto);
         });
 
         // Suporte a resposta JSON para animação de sucesso no loading
@@ -256,24 +277,31 @@ class EnvioEmailController extends Controller
      */
     private function enviarNotificacoes(
         Requerimento $requerimento,
-        $cidadao,
+        Usuario $representanteLegal,
+        Usuario $protocoladoPor,
         Setor $setor,
         string $objeto
     ): void {
-        // 1. Notificação ao cidadão
+        // 1. Confirmação ao titular; o usuário que protocolou recebe cópia quando for diferente.
         try {
-            $emailCidadao = trim((string) $cidadao->email);
-            if (!empty($emailCidadao)) {
-                Mail::to($emailCidadao)->send(new ConfirmacaoRequerimentoUsuarioMail(
-                    aluno: $cidadao,
+            $emailTitular = trim((string) $representanteLegal->email);
+            if (!empty($emailTitular)) {
+                $email = Mail::to($emailTitular);
+                $emailProtocolador = trim((string) $protocoladoPor->email);
+                if ($protocoladoPor->id !== $representanteLegal->id && $emailProtocolador !== '') {
+                    $email->cc($emailProtocolador);
+                }
+                $email->send(new ConfirmacaoRequerimentoUsuarioMail(
+                    aluno: $representanteLegal,
                     setorNome: $setor->setor_nome,
                     objeto: $objeto,
                     requerimento: $requerimento,
+                    protocoladoPor: $protocoladoPor,
                 ));
-                Log::info("Notificação enviada ao cidadão [{$emailCidadao}] — protocolo {$requerimento->numero_protocolo}");
+                Log::info("Confirmação enviada ao titular [{$emailTitular}] — protocolo {$requerimento->numero_protocolo}");
             }
         } catch (\Throwable $e) {
-            Log::warning("Falha ao notificar cidadão: " . $e->getMessage());
+            Log::warning("Falha ao enviar confirmação do protocolo: " . $e->getMessage());
         }
 
         // 2. Notificação ao setor
@@ -281,10 +309,11 @@ class EnvioEmailController extends Controller
             $emailSetor = trim((string) $setor->email);
             if (!empty($emailSetor)) {
                 Mail::to($emailSetor)->send(new NotificacaoSetorMail(
-                    cidadao: $cidadao,
+                    cidadao: $representanteLegal,
                     setor: $setor,
                     objeto: $objeto,
                     requerimento: $requerimento,
+                    protocoladoPor: $protocoladoPor,
                 ));
                 Log::info("Notificação enviada ao setor [{$emailSetor}] — protocolo {$requerimento->numero_protocolo}");
             }

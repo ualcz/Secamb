@@ -160,7 +160,7 @@ Route::middleware(['auth', 'responsavel'])->group(function () {
 | PAINEL / PROCESSOS - CIDADÃO
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:cidadao', 'perfil.completo'])->group(function () {
+Route::middleware(['auth', 'role:cidadao,tecnico', 'perfil.completo'])->group(function () {
     Route::post('/requerimentos/cidadao/enviar-email', [EnvioEmailController::class, 'enviar'])->name('cidadao.enviar-email');
     Route::get('/requerimentos/cidadao/rascunhos/{setor}', [RequerimentoRascunhoController::class, 'show'])->name('requerimentos.rascunhos.show');
     Route::put('/requerimentos/cidadao/rascunhos/{setor}', [RequerimentoRascunhoController::class, 'salvar'])->name('requerimentos.rascunhos.salvar');
