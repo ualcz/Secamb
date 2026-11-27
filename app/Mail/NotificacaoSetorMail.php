@@ -24,6 +24,7 @@ class NotificacaoSetorMail extends Mailable
         public Setor         $setor,
         public string        $objeto,
         public Requerimento  $requerimento,
+        public ?Usuario     $protocoladoPor = null,
     ) {}
 
     public function envelope(): Envelope

@@ -45,6 +45,12 @@
                 <span class="info-label">E-mail de Contato</span>
                 <span class="info-valor">{{ $requerimento->usuario->email }}</span>
             </div>
+            @if($requerimento->protocoladoPor && $requerimento->protocoladoPor->id !== $requerimento->usuario_id)
+                <div class="info-grupo">
+                    <span class="info-label">Protocolado por</span>
+                    <span class="info-valor">{{ $requerimento->protocoladoPor->nome }} — {{ $requerimento->protocoladoPor->email }}</span>
+                </div>
+            @endif
         </div>
 
         <hr class="divisor-secao">

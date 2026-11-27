@@ -142,6 +142,14 @@
                     <span class="valor">{{ $aluno->cpf ?? '—' }}</span>
                 </td>
             </tr>
+            @if($requerimento?->protocoladoPor && $requerimento->protocoladoPor->id !== $aluno->id)
+                <tr>
+                    <td colspan="2">
+                        <span class="rotulo">Protocolado por</span>
+                        <span class="valor">{{ $requerimento->protocoladoPor->nome }}</span>
+                    </td>
+                </tr>
+            @endif
         </table>
     </div>
 

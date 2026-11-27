@@ -33,13 +33,19 @@
             </div>
 
             <div class="info-row">
-                <span class="info-label">Cidadão:</span>
+                <span class="info-label">Titular:</span>
                 <span class="info-value">{{ $cidadao->nome }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">CPF/CNPJ:</span>
                 <span class="info-value">{{ $cidadao->cpf ?? $cidadao->cnpj ?? '—' }}</span>
             </div>
+            @if($protocoladoPor && $protocoladoPor->id !== $cidadao->id)
+                <div class="info-row">
+                    <span class="info-label">Protocolado por:</span>
+                    <span class="info-value">{{ $protocoladoPor->nome }}</span>
+                </div>
+            @endif
             <div class="info-row">
                 <span class="info-label">Objeto:</span>
                 <span class="info-value">{{ $objeto }}</span>

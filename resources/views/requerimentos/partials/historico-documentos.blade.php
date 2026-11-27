@@ -1,6 +1,9 @@
 @php
     $historicoDoProprioUsuario = isset($historico, $requerimento)
-        && (int) $historico->user_id === (int) $requerimento->usuario_id;
+        && in_array((int) $historico->user_id, array_filter([
+            (int) $requerimento->usuario_id,
+            (int) ($requerimento->protocolado_por_id ?? 0),
+        ]), true);
 
     $respostaDoAluno = $historicoDoProprioUsuario
         && $historico->status === \App\Models\Requerimento::STATUS_EM_ANALISE;

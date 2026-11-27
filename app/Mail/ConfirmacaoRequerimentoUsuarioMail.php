@@ -23,6 +23,7 @@ class ConfirmacaoRequerimentoUsuarioMail extends Mailable
         public string        $setorNome,
         public ?string       $objeto       = null,
         public ?Requerimento $requerimento = null,
+        public ?Usuario      $protocoladoPor = null,
     ) {}
 
     public function envelope(): Envelope

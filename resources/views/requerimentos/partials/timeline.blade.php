@@ -84,7 +84,10 @@
 
                 $eventosDocumento = $historico->getAttribute('eventos_documentos') ?? collect();
                 $documentosProtocoloNoGrupo = $historico->status === \App\Models\Requerimento::STATUS_PROTOCOLADO
-                    && (int) $historico->user_id === (int) ($requerimento->usuario_id ?? 0)
+                    && in_array((int) $historico->user_id, array_filter([
+                        (int) ($requerimento->usuario_id ?? 0),
+                        (int) ($requerimento->protocolado_por_id ?? 0),
+                    ]), true)
                     && $historico->documentos
                     && $historico->documentos->isNotEmpty();
 

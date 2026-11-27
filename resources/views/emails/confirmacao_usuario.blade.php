@@ -48,6 +48,12 @@
                 <span class="info-label">Status:</span>
                 <span class="info-value">Protocolado — aguardando análise</span>
             </div>
+            @if($protocoladoPor && $protocoladoPor->id !== $aluno->id)
+                <div class="info-row">
+                    <span class="info-label">Protocolado por:</span>
+                    <span class="info-value">{{ $protocoladoPor->nome }}</span>
+                </div>
+            @endif
 
             <p style="margin-top: 24px;">Você pode acompanhar o andamento do seu requerimento acessando o sistema a qualquer momento.</p>
         </div>
