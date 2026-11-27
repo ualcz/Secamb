@@ -229,5 +229,5 @@
     </div>
 </div>
 
-<script src="{{ asset('js/show-requerimento.js') }}?v={{ filemtime(public_path('js/show-requerimento.js')) }}"></script>
+@vite('resources/js/entries/requerimento-show.js')
 @endsection

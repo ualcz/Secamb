@@ -212,3 +212,10 @@ function toggleTimelineDetalhes(btn) {
         label.textContent = !aberto ? 'ocultar' : 'detalhes';
     }
 }
+
+Object.assign(window, {
+    toggleMensagemIndeferido,
+    atualizarAssuntosDestino,
+    atualizarInstrucaoAssunto,
+    toggleTimelineDetalhes,
+});

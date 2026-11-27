@@ -27,7 +27,7 @@ test('a edição usa endereço por CEP e mantém município e UF fixos em Seabra
         ->assertOk()
         ->assertDontSee('name="cidade"', false)
         ->assertDontSee('name="estado"', false)
-        ->assertSee('js/endereco.js');
+        ->assertSee('resources/js/empreendimentos/endereco.js');
 
     $this->put(route('empreendimentos.update', $empreendimento), [
         'nome' => 'Empreendimento atualizado',

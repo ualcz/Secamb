@@ -227,5 +227,5 @@
         }
     });
 </script>
-<script src="{{ asset('js/endereco.js') }}"></script>
+@vite('resources/js/empreendimentos/endereco.js')
 @endsection

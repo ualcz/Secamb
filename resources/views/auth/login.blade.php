@@ -119,7 +119,7 @@
 
     </div>
 
-    <script src="{{ asset('js/login.js') }}"></script>
+    @vite('resources/js/auth/login.js')
 </body>
 
 </html>

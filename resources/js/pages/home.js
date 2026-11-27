@@ -73,3 +73,5 @@ function closeModal(id) {
         setTimeout(() => modal.remove(), 300);
     }
 }
+
+window.closeModal = closeModal;

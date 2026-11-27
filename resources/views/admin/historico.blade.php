@@ -165,6 +165,8 @@
     </div>
 </div>
 
-<script src="{{ asset('js/show-requerimento.js') }}?v={{ filemtime(public_path('js/show-requerimento.js')) }}"></script>
-<script src="{{ asset('js/caracterizacao-empreendimento.js') }}?v={{ filemtime(public_path('js/caracterizacao-empreendimento.js')) }}"></script>
+@vite([
+    'resources/js/entries/requerimento-show.js',
+    'resources/js/requerimentos/caracterizacao.js',
+])
 @endsection

@@ -146,5 +146,5 @@
 
 
 
-<script src="{{ asset('js/home.js') }}"></script>
+@vite('resources/js/pages/home.js')
 @endsection

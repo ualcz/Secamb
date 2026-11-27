@@ -94,6 +94,14 @@ function mostrarDocumentosAssunto(index) {
     });
 }
 
+Object.assign(window, {
+    salvarRascunhoRequerimento,
+    salvarArquivosRascunho,
+    mudarPasso,
+    validarCaracterizacao,
+    mostrarDocumentosAssunto,
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
     const form = document.querySelector('form[action*="enviar-email"]');
     if (!form) return;

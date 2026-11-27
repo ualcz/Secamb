@@ -101,9 +101,7 @@
         @include('requerimentos.partials.documentos-anexos')
     </form>
 
-    <script src="{{ asset('js/requerimento-rascunho.js') }}?v={{ filemtime(public_path('js/requerimento-rascunho.js')) }}"></script>
-    <script src="{{ asset('js/form.js') }}?v={{ filemtime(public_path('js/form.js')) }}"></script>
-    <script src="{{ asset('js/caracterizacao-empreendimento.js') }}?v={{ filemtime(public_path('js/caracterizacao-empreendimento.js')) }}"></script>
+    @vite('resources/js/entries/requerimento-form.js')
 
 </div>
 @endsection
