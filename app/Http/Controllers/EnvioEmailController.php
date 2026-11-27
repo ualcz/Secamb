@@ -9,6 +9,7 @@ use App\Models\Requerimento;
 use App\Models\RequerimentoRascunho;
 use App\Models\Setor;
 use App\Services\DocumentoRequerimentoService;
+use App\Support\CaracterizacaoEmpreendimento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +26,7 @@ class EnvioEmailController extends Controller
      */
     public function enviar(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'setor'                => 'nullable|string',
             'setor_id'             => 'nullable',
             'empreendimento_id'    => 'required|integer|exists:empreendimentos,id',
@@ -44,11 +45,13 @@ class EnvioEmailController extends Controller
             'estado'               => 'nullable|string|max:2',
             'cep'                  => 'nullable|string|max:10',
             'endereco'             => 'nullable|string|max:255',
+            ...CaracterizacaoEmpreendimento::rules(),
             'arquivos.*'           => 'nullable|file|max:51200',
             'documentos.*'         => 'nullable|file|max:51200',
         ], [
             'aceite_declaracao.required' => 'Marque a caixa para confirmar sua concordância com a declaração.',
             'aceite_declaracao.accepted' => 'É necessário aceitar a declaração para protocolar o requerimento.',
+            ...CaracterizacaoEmpreendimento::mensagens(),
         ]);
 
         // 1. Identifica o setor de destino
@@ -78,6 +81,8 @@ class EnvioEmailController extends Controller
                 'empreendimento_id' => 'O empreendimento selecionado não está vinculado à sua conta.',
             ]);
         }
+
+        $caracterizacao = CaracterizacaoEmpreendimento::persistir($validated);
 
         // 2. Atualiza dados de contato do cidadão se preenchidos
         $dadosUsuario = [];
@@ -168,6 +173,7 @@ class EnvioEmailController extends Controller
                 'tipo_processo'           => $objeto,
                 'descricao'               => $motivo,
                 'motivo'                  => $motivo,
+                'caracterizacao_empreendimento' => $caracterizacao,
                 'status'                  => Requerimento::STATUS_PROTOCOLADO,
             ]);
 
