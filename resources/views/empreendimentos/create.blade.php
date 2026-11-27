@@ -168,255 +168,7 @@
                             style="text-transform: uppercase;"/>
                     </div>
 
-                    <div class="emp-form-group emp-col-6">
-                        <x-floating-input
-                            name="bacia_hidrografica"
-                            label="Bacia Hidrográfica"
-                            value="{{ old('bacia_hidrografica') }}"
-                            placeholder="Ex: Bacia do Rio Paraguaçu"/>
-                    </div>
-
-                    <div class="emp-form-group emp-col-6">
-                        <x-floating-input
-                            name="recurso_hidrico"
-                            label="Recurso Hídrico Utilizado / Impactado"
-                            value="{{ old('recurso_hidrico') }}"
-                            placeholder="Ex: Rio Campestre, Poço Artesiano"/>
-                    </div>
-
-                    <div class="emp-form-group emp-col-6">
-                        <x-floating-input
-                            name="latitude"
-                            label="Coordenadas: Latitude (SIRGAS 2000)"
-                            value="{{ old('latitude') }}"
-                            placeholder="Ex: -12.418290 ou 12°25'05'' S"/>
-                    </div>
-
-                    <div class="emp-form-group emp-col-6">
-                        <x-floating-input
-                            name="longitude"
-                            label="Coordenadas: Longitude (SIRGAS 2000)"
-                            value="{{ old('longitude') }}"
-                            placeholder="Ex: -41.769850 ou 41°46'11'' W"/>
-                    </div>
-                </div>
-
-                <div class="mb-5">
-                    <x-radio-options
-                        name="unidade_conservacao"
-                        label="Atividade situada em Unidade de Conservação ou em sua zona de amortecimento?"
-                        target="container_unidade_conservacao"
-                        required="nome_unidade_conservacao"
-                    >
-                        <div
-                            id="container_unidade_conservacao"
-                            style="display:none;"
-                            class="mt-3"
-                        >
-                            <x-floating-input
-                                name="unidade_conservacao"
-                                id="nome_unidade_conservacao"
-                                label="Nome da Unidade de Conservação"
-                            />
-                        </div>
-                    </x-radio-options>
-                </div>
-
-                <div class="mb-5">
-                    <x-radio-options
-                        name="licenca_anterior"
-                        label="O empreendimento possui licença ou autorização anterior?"
-                        target="container_licenca_anterior"
-                    >
-                        <div
-                            id="container_licenca_anterior"
-                            style="display:none;"
-                            class="mt-3"
-                        >
-
-                            <label>Especifique a localização:</label>
-
-                            <div class="flex gap-10" style="justify-content: center;">
-
-                                <div>
-                                    <input
-                                        type="radio"
-                                        name="localizacao_licenca"
-                                        value="municipio"
-                                        id="localizacao_licenca_municipio"
-                                    >
-
-                                    <label for="localizacao_licenca_municipio">
-                                        No município
-                                    </label>
-                                </div>
-
-                                <div>
-                                    <input
-                                    type="radio"
-                                    name="localizacao_licenca"
-                                    value="estado"
-                                    id="localizacao_licenca_estado"
-                                >
-
-                                    <label for="localizacao_licenca_estado">
-                                        No estado
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        
-                    <div
-                        id="container_licenca_anterior_municipio"
-                        style="display:none;" class="grid grid-cols-3 gap-4 mt-5"
-                    >
-                       <div class="col-span-2">
-                            <x-floating-input
-                                name="licenca_anterior_tipo"
-                                id="licenca_anterior_tipo"
-                                label="Tipo"
-                            />
-                        </div>
-
-                        <div class="col-span-1">
-                            <x-floating-input
-                                name="licenca_anterior_processo"
-                                id="licenca_anterior_processo"
-                                label="Número do processo"
-                            />
-                        </div>
-                    </div>
-
-                        <div
-                            id="container_licenca_anterior_estado"
-                            style="display:none;" class="grid grid-cols-2 gap-4 mt-5"
-                        >
-                            <div>
-                                <x-floating-input
-                                    name="resolucao_cepram"
-                                    id="resolucao_cepram"
-                                    label="Número da resolução CEPRAM"
-                                />
-
-                                <x-floating-input
-                                    name="portaria_inema"
-                                    id="portaria_inema"
-                                    label="Portaria INEMA"
-                                />
-                            </div>
-
-                            <div>
-                                <x-floating-input
-                                    name="resolucao_cepram_validade"
-                                    id="resolucao_cepram_validade"
-                                    type="date"
-                                    label="Validade CEPRAM"
-                                />
-
-                                <x-floating-input
-                                    name="portaria_inema_validade"
-                                    id="portaria_inema_validade"
-                                    type="date"
-                                    label="Validade INEMA"
-                                />
-                            </div>
-                        </div>
-                    </x-radio-options>
-                </div>
-
-                <div class="mb-5">
-                    <x-radio-options
-                        name="processo_semma"
-                        label="Existe outro processo referente a este empreendimento em tramitação na SEMMA?"
-                        target="container_processo_semma"
-                    >
-                        <div
-                            id="container_processo_semma"
-                            style="display:none;"
-                            class="mt-3 grid grid-cols-3 gap-4"
-                        >
-                            <div class="col-span-1">
-                                <x-floating-input
-                                    name="processo_semma_numero"
-                                    id="processo_semma_numero"
-                                    label="Número do processo"
-                                />
-                            </div>
-
-                            <div class="col-span-2">
-                                <x-floating-input
-                                    name="processo_semma_tipo"
-                                    id="processo_semma_tipo"
-                                    label="Tipo do processo"
-                                />
-                            </div>
-                        </div>
-                    </x-radio-options>
-                </div>
-
-                <div>
-                    <x-radio-options
-                        name="pendencia_ambiental"
-                        label="O requerente tem pendência ambiental junto ao INEMA, IBAMA ou na SEMMA, relativa ao empreendimento objeto deste requerimento?"
-                        target="container_pendencia_ambiental"
-                    >
-                        <div
-                            id="container_pendencia_ambiental"
-                            style="display:none;"
-                            class="mt-3 grid grid-cols-2 gap-4"
-                        >
-                            <div>
-                                <x-floating-input
-                                    name="notificacao_pendencia"
-                                    id="notificacao_pendencia"
-                                    label="Número da notificação"
-                                />
-                            </div>
-
-                            <div>
-                                <x-floating-input
-                                    name="embargo_pendencia"
-                                    id="embargo_pendencia"
-                                    label="Número do embargo"
-                                />
-                            </div>
-
-                            <div>
-                                <x-floating-input
-                                    name="advertencia_pendencia"
-                                    id="advertencia_pendencia"
-                                    label="Número da advertência"
-                                />
-                            </div>
-
-                            <div>
-                                <x-floating-input
-                                    name="apreensao_pendencia"
-                                    id="apreensao_pendencia"
-                                    label="Número da apreensão"
-                                />
-                            </div>
-
-                            <div>
-                                <x-floating-input
-                                    name="multa_pendencia"
-                                    id="multa_pendencia"
-                                    label="Número da multa"
-                                />
-                            </div>
-
-                            <div>
-                                <x-floating-input
-                                    name="interdicao_pendencia"
-                                    id="interdicao_pendencia"
-                                    label="Número da interdição"
-                                />
-                            </div>
-                        </div>
-                    </x-radio-options>
-                </div>
-                </div>
+                                    </div>
             </div>
 
             {{-- 2. Dados de Contato do Responsável --}}
@@ -455,7 +207,30 @@
                 </div>
             </div>
 
-            {{-- 3. Declaração Legal --}}
+            {{-- 3. Técnico autorizado --}}
+            <div class="emp-section">
+                <h3 class="emp-section-title">
+                    <svg width="18" height="18" fill="none" stroke="#0284c7" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2m6-10a4 4 0 100-8 4 4 0 000 8zm10 2v6m-3-3h6"/>
+                    </svg>
+                    Técnico autorizado (opcional)
+                </h3>
+                <p>Informe o e-mail de um técnico já cadastrado como cidadão Pessoa Física. Ele poderá abrir solicitações e acompanhar os processos deste empreendimento.</p>
+                <div class="emp-form-grid">
+                    <div class="emp-form-group emp-col-6">
+                        <label for="tecnico_email">E-mail do técnico</label>
+                        <input
+                            type="email"
+                            name="tecnico_email"
+                            id="tecnico_email"
+                            class="emp-input"
+                            value="{{ old('tecnico_email') }}"
+                            autocomplete="email">
+                    </div>
+                </div>
+            </div>
+
+            {{-- 4. Declaração Legal --}}
             <div class="emp-termo-box">
                 <div class="emp-termo-text">
                     <strong>Declaração do Representante Legal:</strong><br>
@@ -513,144 +288,6 @@
         }
     });
 
-    // Pertencimento à unidade de conservação ou zona de amortecimento;
-    const radios = document.querySelectorAll('input[name="unidade_conservacao"]');
-    const container = document.getElementById('container_unidade_conservacao');
-    const campo = document.getElementById('nome_unidade_conservacao');
-
-    radios.forEach(radio => {
-        radio.addEventListener('change', function () {
-            if (this.value === 'sim') {
-                container.style.display = 'block';
-                campo.setAttribute('required', 'required');
-            } else {
-                container.style.display = 'none';
-                campo.removeAttribute('required');
-            }
-        });
-    });
-
-    // Licença ou autorização anterior;
-    const radioLicencaAnterior = document.querySelectorAll('input[name="licenca_anterior"]');
-    const containerLicencaAnterior = document.getElementById('container_licenca_anterior');
-    const campoLicencaAnterior = document.getElementById('licenca_autorizacao_anterior');
-
-    radioLicencaAnterior.forEach(opcao => {
-        opcao.addEventListener('change', function () {
-            if (this.value === 'sim') {
-                containerLicencaAnterior.style.display = 'block';
-                campoLicencaAnterior.setAttribute('required', 'required');
-            } else {
-                containerLicencaAnterior.style.display = 'none';
-                campoLicencaAnterior.removeAttribute('required');
-            }
-        });
-    });
-
-    // Licença ou autorização anterior: município;
-    const radioLicenca = document.querySelectorAll('input[name="localizacao_licenca"]');
-    const containerLicencaMunicipio = document.getElementById('container_licenca_anterior_municipio');
-    const campoLicencaTipo = document.getElementById('licenca_anterior_tipo');
-    const campoLicencaProcesso = document.getElementById('licenca_anterior_processo');
-
-    radioLicenca.forEach(opcaoLocal => {
-        opcaoLocal.addEventListener('change', function () {
-            if (this.value === 'municipio') {
-                containerLicencaMunicipio.style.display = 'grid';
-                campoLicencaTipo.setAttribute('required', 'required');
-                campoLicencaProcesso.setAttribute('required', 'required');
-            } else {
-                containerLicencaMunicipio.style.display = 'none';
-                campoLicencaTipo.removeAttribute('required');
-                campoLicencaProcesso.removeAttribute('required');
-            }
-        });
-    });
-
-    // Licença ou autorização anterior: estado;
-    const containerLicencaEstado = document.getElementById('container_licenca_anterior_estado');
-    const campoResolucaoCepram = document.getElementById('resolucao_cepram');
-    const campoValidadeResolucaoCepram = document.getElementById('resolucao_cepram_validade');
-    const campoPortariaInema = document.getElementById('portaria_inema');
-    const campoValidadePortariaInema = document.getElementById('portaria_inema_validade');
-
-    radioLicenca.forEach(opcaoLocal => {
-        opcaoLocal.addEventListener('change', function () {
-            if (this.value === 'estado') {
-                containerLicencaEstado.style.display = 'grid';
-                campoResolucaoCepram.setAttribute('required', 'required');
-                campoValidadeResolucaoCepram.setAttribute('required', 'required');
-                campoPortariaInema.setAttribute('required', 'required');
-                campoValidadePortariaInema.setAttribute('required', 'required');
-            } else {
-                containerLicencaEstado.style.display = 'none';
-                campoResolucaoCepram.removeAttribute('required');
-                campoValidadeResolucaoCepram.removeAttribute('required');
-                campoPortariaInema.removeAttribute('required');
-                campoValidadePortariaInema.removeAttribute('required');
-            }
-        });
-    });
-
-    // Processo em tramitação na SEMMA;
-    const containerProcessoSemma = document.getElementById('container_processo_semma');
-    const campoNumeroProcessoSemma = document.getElementById('processo_semma_numero');
-    const campoTipoProcessoSemma = document.getElementById('processo_semma_tipo');
-
-    const radioProcessoSemma = document.querySelectorAll(
-        'input[name="processo_semma"]'
-    );
-
-    radioProcessoSemma.forEach(opcaoLocal => {
-        opcaoLocal.addEventListener('change', function () {
-            if (this.value === 'sim') {
-                containerProcessoSemma.style.display = 'grid';
-                campoNumeroProcessoSemma.setAttribute('required', 'required');
-                campoTipoProcessoSemma.setAttribute('required', 'required');
-            } else {
-                containerProcessoSemma.style.display = 'none';
-                campoNumeroProcessoSemma.removeAttribute('required');
-                campoTipoProcessoSemma.removeAttribute('required');
-            }
-        });
-    });
-
-    // Pendência ambiental;
-    const containerPendenciaAmbiental = document.getElementById('container_pendencia_ambiental');
-    const campoNotificacaoPendencia = document.getElementById('notificacao_pendencia');
-    const campoAdvertenciaPendencia = document.getElementById('advertencia_pendencia');
-
-    const campoMultaPendencia = document.getElementById('multa_pendencia');
-    const campoEmbargoPendencia = document.getElementById('embargo_pendencia');
-    const campoApreensaoPendencia = document.getElementById('apreensao_pendencia');
-    const campoInterdicaoPendencia = document.getElementById('interdicao_pendencia');
-
-    const radioPendenciaAmbiental = document.querySelectorAll(
-        'input[name="pendencia_ambiental"]'
-    );
-
-    radioPendenciaAmbiental.forEach(opcaoLocal => {
-        opcaoLocal.addEventListener('change', function () {
-            if (this.value === 'sim') {
-                containerPendenciaAmbiental.style.display = 'grid';
-                campoNotificacaoPendencia.setAttribute('required', 'required');
-                campoAdvertenciaPendencia.setAttribute('required', 'required');
-                campoMultaPendencia.setAttribute('required', 'required');
-                campoEmbargoPendencia.setAttribute('required', 'required');
-                campoApreensaoPendencia.setAttribute('required', 'required');
-                campoInterdicaoPendencia.setAttribute('required', 'required');
-            } else {
-                containerPendenciaAmbiental.style.display = 'none';
-                campoNotificacaoPendencia.removeAttribute('required');
-                campoAdvertenciaPendencia.removeAttribute('required');
-                campoMultaPendencia.removeAttribute('required');
-                campoEmbargoPendencia.removeAttribute('required');
-                campoApreensaoPendencia.removeAttribute('required');
-                campoInterdicaoPendencia.removeAttribute('required');
-
-            }
-        });
-    });
 </script>
 <script src="{{ asset('js/endereco.js') }}"></script>
 @endsection

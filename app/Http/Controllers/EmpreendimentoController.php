@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TecnicoVinculadoEmpreendimentoMail;
 use App\Models\Empreendimento;
 use App\Models\Usuario;
 use App\Rules\CnpjValido;
 use App\Support\DocumentoHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class EmpreendimentoController extends Controller
 {
@@ -63,45 +66,41 @@ class EmpreendimentoController extends Controller
             // Dados do Empreendimento (Figura 8 do manual)
             'nome'               => 'required|string|max:255',
             'cnpj'               => ['nullable', 'string', 'max:18', new CnpjValido],
-            'bacia_hidrografica' => 'nullable|string|max:255',
-            'recurso_hidrico'    => 'nullable|string|max:255',
             'fase_operacao'      => 'nullable|string|max:100',
             'tipo_atividade'     => 'nullable|string|max:255',
             'porte'              => 'nullable|string|max:30',
             'cnae'               => 'nullable|string|max:20',
-            'latitude'           => 'nullable|string|max:50',
-            'longitude'          => 'nullable|string|max:50',
             'endereco'           => 'nullable|string|max:255',
             'bairro'             => 'nullable|string|max:255',
             'cep'                => 'nullable|string|max:10',
             'cidade'             => 'nullable|string|max:100',
             'estado'             => 'nullable|string|max:2',
-            'unidade_conservacao' => 'nullable|string|max:255',
-            'localizacao_licenca' => 'nullable|string|max:255',
-            'licenca_anterior_tipo' => 'nullable|string|max:255',
-            'licenca_anterior_processo' => 'nullable|string|max:255',
-            'resolucao_cepram' => 'nullable|string|max:255',
-            'portaria_inema' => 'nullable|string|max:255',
-            'resolucao_cepram_validade' => 'nullable|date',
-            'portaria_inema_validade' => 'nullable|date',
-            'processo_semma_numero' => 'nullable|string|max:25',
-            'processo_semma_tipo' => 'nullable|string|max:255',
-            'notificacao_pendencia' => 'nullable|string|max:50',
-            'embargo_pendencia' => 'nullable|string|max:50',
-            'advertencia_pendencia' => 'nullable|string|max:50',
-            'apreensao_pendencia' => 'nullable|string|max:50',
-            'multa_pendencia' => 'nullable|string|max:50',
-            'interdicao_pendencia' => 'nullable|string|max:50',
-
             // Dados de Contato / Responsável (Figura 9 do manual)
             'contato_nome'       => 'nullable|string|max:255',
             'contato_telefone'   => 'nullable|string|max:30',
             'contato_celular'    => 'nullable|string|max:30',
             'contato_email'      => 'nullable|email|max:255',
+            'tecnico_email'      => 'nullable|email|max:255',
 
             // Aceite do termo ao cadastrar
             'termo_aceito'       => 'nullable|boolean',
         ]);
+
+        $tecnico = null;
+        if (!empty($validated['tecnico_email'])) {
+            $tecnico = $this->buscarTecnicoElegivel($validated['tecnico_email']);
+            if (!$tecnico) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['tecnico_email' => 'Não encontramos uma conta de cidadão Pessoa Física com esse e-mail. O técnico precisa se cadastrar antes de ser vinculado.']);
+            }
+
+            if ((int) $tecnico->id === (int) $usuario->id) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['tecnico_email' => 'Informe o e-mail de outro usuário para vinculá-lo como técnico.']);
+            }
+        }
 
         try {
             DB::beginTransaction();
@@ -112,6 +111,7 @@ class EmpreendimentoController extends Controller
                 'estado'     => $validated['estado'] ?? 'BA',
                 'ativo'      => true,
             ]);
+            unset($dados['tecnico_email']);
 
             $empreendimento = Empreendimento::create($dados);
 
@@ -124,17 +124,30 @@ class EmpreendimentoController extends Controller
                 ],
             ]);
 
+            if ($tecnico) {
+                $empreendimento->tecnicos()->syncWithoutDetaching([$tecnico->id]);
+            }
+
             DB::commit();
+
+            $emailTecnicoEnviado = $tecnico
+                ? $this->notificarTecnicoVinculado($tecnico, $empreendimento, $usuario)
+                : null;
+            $mensagemTecnico = !$tecnico
+                ? ''
+                : ($emailTecnicoEnviado
+                    ? " Técnico {$tecnico->nome} vinculado e notificado por e-mail."
+                    : " Técnico {$tecnico->nome} vinculado, mas não foi possível enviar o e-mail de notificação.");
 
             if ($request->input('retorno') === 'requerimento') {
                 return redirect()
                     ->route('requerimentos.cidadao.novo', ['empreendimento_id' => $empreendimento->id])
-                    ->with('sucesso', "Empreendimento '{$empreendimento->nome}' cadastrado e selecionado com sucesso!");
+                    ->with('sucesso', "Empreendimento '{$empreendimento->nome}' cadastrado e selecionado com sucesso!{$mensagemTecnico}");
             }
 
             return redirect()
                 ->route('empreendimentos.index')
-                ->with('sucesso', "Empreendimento '{$empreendimento->nome}' cadastrado com sucesso!");
+                ->with('sucesso', "Empreendimento '{$empreendimento->nome}' cadastrado com sucesso!{$mensagemTecnico}");
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -175,9 +188,8 @@ class EmpreendimentoController extends Controller
             'email' => 'required|email|max:255',
         ]);
 
-        $tecnico = Usuario::whereRaw('LOWER(email) = ?', [strtolower(trim($validated['email']))])->first();
-
-        if (!$tecnico || !$tecnico->isCidadao() || $tecnico->tipo_registro !== 'fisica') {
+        $tecnico = $this->buscarTecnicoElegivel($validated['email']);
+        if (!$tecnico) {
             return back()
                 ->withInput()
                 ->withErrors(['email' => 'Não encontramos uma conta de cidadão Pessoa Física com esse e-mail. O técnico precisa se cadastrar antes de ser vinculado.']);
@@ -189,11 +201,21 @@ class EmpreendimentoController extends Controller
                 ->withErrors(['email' => 'Informe o e-mail de outro usuário para vinculá-lo como técnico.']);
         }
 
+        $jaVinculado = $empreendimento->tecnicos()->whereKey($tecnico->id)->exists();
         $empreendimento->tecnicos()->syncWithoutDetaching([$tecnico->id]);
+        $emailTecnicoEnviado = $jaVinculado
+            ? null
+            : $this->notificarTecnicoVinculado($tecnico, $empreendimento, $usuario);
+        $mensagem = "Técnico {$tecnico->nome} vinculado ao empreendimento.";
+        if (!$jaVinculado) {
+            $mensagem .= $emailTecnicoEnviado
+                ? ' A notificação foi enviada por e-mail.'
+                : ' Não foi possível enviar o e-mail de notificação.';
+        }
 
         return redirect()
             ->route('empreendimentos.edit', $empreendimento)
-            ->with('sucesso', "Técnico {$tecnico->nome} vinculado ao empreendimento.");
+            ->with('sucesso', $mensagem);
     }
 
     /**
@@ -236,36 +258,15 @@ class EmpreendimentoController extends Controller
         $validated = $request->validate([
             'nome'               => 'required|string|max:255',
             'cnpj'               => ['nullable', 'string', 'max:18', new CnpjValido],
-            'bacia_hidrografica' => 'nullable|string|max:255',
-            'recurso_hidrico'    => 'nullable|string|max:255',
             'fase_operacao'      => 'nullable|string|max:100',
             'tipo_atividade'     => 'nullable|string|max:255',
             'porte'              => 'nullable|string|max:30',
             'cnae'               => 'nullable|string|max:20',
-            'latitude'           => 'nullable|string|max:50',
-            'longitude'          => 'nullable|string|max:50',
             'endereco'           => 'nullable|string|max:255',
             'bairro'             => 'nullable|string|max:255',
             'cep'                => 'nullable|string|max:10',
             'cidade'             => 'nullable|string|max:100',
             'estado'             => 'nullable|string|max:2',
-            'unidade_conservacao' => 'nullable|string|max:255',
-            'localizacao_licenca' => 'nullable|string|max:255',
-            'licenca_anterior_tipo' => 'nullable|string|max:255',
-            'licenca_anterior_processo' => 'nullable|string|max:255',
-            'resolucao_cepram' => 'nullable|string|max:255',
-            'portaria_inema' => 'nullable|string|max:255',
-            'resolucao_cepram_validade' => 'nullable|date',
-            'portaria_inema_validade' => 'nullable|date',
-            'processo_semma_numero' => 'nullable|string|max:25',
-            'processo_semma_tipo' => 'nullable|string|max:255',
-            'notificacao_pendencia' => 'nullable|string|max:50',
-            'embargo_pendencia' => 'nullable|string|max:50',
-            'advertencia_pendencia' => 'nullable|string|max:50',
-            'apreensao_pendencia' => 'nullable|string|max:50',
-            'multa_pendencia' => 'nullable|string|max:50',
-            'interdicao_pendencia' => 'nullable|string|max:50',
-
             'contato_nome'       => 'nullable|string|max:255',
             'contato_telefone'   => 'nullable|string|max:30',
             'contato_celular'    => 'nullable|string|max:30',
@@ -332,5 +333,37 @@ class EmpreendimentoController extends Controller
         return redirect()
             ->route('empreendimentos.index')
             ->with('sucesso', "Representação do empreendimento '{$empreendimento->nome}' adicionada com sucesso à sua lista!");
+    }
+
+    private function buscarTecnicoElegivel(string $email): ?Usuario
+    {
+        $tecnico = Usuario::whereRaw('LOWER(email) = ?', [strtolower(trim($email))])->first();
+
+        return $tecnico && $tecnico->isCidadao() && $tecnico->tipo_registro === 'fisica'
+            ? $tecnico
+            : null;
+    }
+
+    private function notificarTecnicoVinculado(
+        Usuario $tecnico,
+        Empreendimento $empreendimento,
+        Usuario $vinculador
+    ): bool {
+        try {
+            Mail::to($tecnico->email)->send(
+                new TecnicoVinculadoEmpreendimentoMail($tecnico, $empreendimento, $vinculador)
+            );
+
+            return true;
+        } catch (\Throwable $exception) {
+            Log::error('Falha ao notificar técnico sobre vínculo com empreendimento.', [
+                'tecnico_id' => $tecnico->id,
+                'empreendimento_id' => $empreendimento->id,
+                'vinculador_id' => $vinculador->id,
+                'erro' => $exception->getMessage(),
+            ]);
+
+            return false;
+        }
     }
 }

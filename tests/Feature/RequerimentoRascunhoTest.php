@@ -46,7 +46,7 @@ test('a citizen can save and resume an online draft with its files', function ()
         'ativo' => true,
     ]);
 
-    $this->actingAs($cidadao)
+    $formularioInicial = $this->actingAs($cidadao)
         ->get(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
         ->assertOk()
         ->assertSee(route('requerimentos.rascunhos.show', $setor->id), false)
@@ -60,6 +60,9 @@ test('a citizen can save and resume an online draft with its files', function ()
         ->assertDontSee('name="email"', false)
         ->assertDontSee('name="celular"', false)
         ->assertDontSee('name="rua"', false);
+    $htmlFormularioInicial = $formularioInicial->getContent();
+    expect(strpos($htmlFormularioInicial, 'data-step="2"'))
+        ->toBeLessThan(strpos($htmlFormularioInicial, 'name="empreendimento_id"'));
 
     $this->actingAs($cidadao)
         ->from(route('requerimentos.cidadao.novo', ['setor' => $setor->id]))
@@ -91,11 +94,16 @@ test('a citizen can save and resume an online draft with its files', function ()
         'campos' => [
             'email' => 'maria@example.com',
             'motivo' => 'Continuar de outro dispositivo',
+            'bacia_hidrografica' => 'Bacia salva no rascunho',
             'objetoDoRequerimento' => 'Licença de Operação',
+            'aceite_declaracao' => [],
             'campo_nao_permitido' => 'não deve ser salvo',
         ],
         'etapa' => 2,
     ])->assertOk()->assertJsonPath('salvo', true);
+
+    $rascunhoSalvo = RequerimentoRascunho::where('objeto_chave', 'Licença de Operação')->firstOrFail();
+    expect(array_key_exists('aceite_declaracao', $rascunhoSalvo->campos))->toBeFalse();
 
     $this->actingAs($cidadao)->putJson(route('requerimentos.rascunhos.salvar', $setor->id), [
         'objeto' => 'Autorização Ambiental',
@@ -128,6 +136,7 @@ test('a citizen can save and resume an online draft with its files', function ()
     ]))
         ->assertOk()
         ->assertJsonPath('rascunho.campos.motivo', 'Continuar de outro dispositivo')
+        ->assertJsonPath('rascunho.campos.bacia_hidrografica', 'Bacia salva no rascunho')
         ->assertJsonMissingPath('rascunho.campos.campo_nao_permitido')
         ->assertJsonPath('rascunho.objeto', 'Licença de Operação')
         ->assertJsonPath('rascunho.etapa', 3)
