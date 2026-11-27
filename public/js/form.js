@@ -11,6 +11,10 @@ function mudarPasso(passo) {
     const descricao = form?.querySelector('textarea[name="motivo"]');
     const descricaoInvalida = Number(passo) === 3 && descricao && !descricao.value.trim();
 
+    if (Number(passo) === 3 && !validarCaracterizacao(form)) {
+        passo = 2;
+    }
+
     if (descricaoInvalida) {
         passo = 2;
         descricao.setCustomValidity('Preencha a descrição da solicitação para continuar.');
@@ -25,6 +29,10 @@ function mudarPasso(passo) {
         etapaAlvo.style.display = 'block';
         etapaAlvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    const etapaCaracterizacao = form?.querySelector('.form-step[data-step="2"]');
+    etapaCaracterizacao?.querySelectorAll('[data-step-required]').forEach(campo => {
+        campo.required = Number(passo) === 2;
+    });
 
     if (descricao) {
         descricao.required = Number(passo) === 2;
@@ -38,6 +46,46 @@ function mudarPasso(passo) {
         form,
         Number(passo) >= 2
     );
+}
+
+function validarCaracterizacao(form) {
+    const etapa = form?.querySelector('.form-step[data-step="2"]');
+    if (!etapa) return true;
+
+    const etapaAtiva = Array.from(form.querySelectorAll('.form-step'))
+        .find(item => window.getComputedStyle(item).display !== 'none');
+    const estavaOculta = etapaAtiva !== etapa;
+    etapa.querySelectorAll('[data-step-required]').forEach(campo => {
+        campo.required = true;
+    });
+
+    const pendencia = etapa.querySelector('input[name="pendencia_ambiental"]:checked');
+    const camposPendencia = Array.from(etapa.querySelectorAll('[data-conditional-container="pendencia_ambiental:sim"] input'));
+    const primeiroCampoPendencia = camposPendencia[0];
+    const temPendenciaInformada = camposPendencia.some(campo => campo.value.trim() !== '');
+
+    if (pendencia?.value === 'sim' && primeiroCampoPendencia) {
+        primeiroCampoPendencia.setCustomValidity(
+            temPendenciaInformada ? '' : 'Informe ao menos uma pendência ambiental.'
+        );
+    } else {
+        primeiroCampoPendencia?.setCustomValidity('');
+    }
+
+    const invalido = etapa.querySelector(':invalid');
+    if (!invalido) {
+        if (estavaOculta) {
+            etapa.querySelectorAll('[data-step-required]').forEach(campo => {
+                campo.required = false;
+            });
+        }
+        return true;
+    }
+
+    if (etapaAtiva !== etapa) mudarPasso(2);
+    invalido.reportValidity();
+    invalido.focus();
+    return false;
 }
 
 function mostrarDocumentosAssunto(index) {
@@ -178,7 +226,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     let temporizadorRascunho;
     form.addEventListener('input', (event) => {
         if (form.dataset.suspendDraft === 'true') return;
-        if (event.target.name === 'motivo') event.target.setCustomValidity('');
+        if (event.target.name === 'motivo' || event.target.name?.endsWith('_pendencia')) {
+            event.target.setCustomValidity('');
+        }
         window.clearTimeout(temporizadorRascunho);
         const etapaDoFormulario = Array.from(form.querySelectorAll('.form-step'))
             .find(etapa => window.getComputedStyle(etapa).display !== 'none')?.dataset.step;
@@ -189,10 +239,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     form.addEventListener('submit', (event) => {
         const descricao = form.querySelector('textarea[name="motivo"]');
-        if (descricao && !descricao.value.trim()) {
+        if (!validarCaracterizacao(form) || (descricao && !descricao.value.trim())) {
             event.preventDefault();
             mudarPasso(2);
-            descricao.reportValidity();
+            if (descricao && !descricao.value.trim()) descricao.reportValidity();
             return;
         }
         salvarRascunhoRequerimento(form, true);

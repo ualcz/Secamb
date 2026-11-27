@@ -1,5 +1,7 @@
 <!-- Etapa 2: Descrição da Solicitação -->
 <div class="form-step" data-step="2" style="display: none;">
+    @include('requerimentos.partials.caracterizacao-requerimento')
+
     <fieldset>
         <legend>Descrição da Solicitação / Observações <span aria-hidden="true">*</span></legend>
         <div class="campo">

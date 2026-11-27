@@ -1,4 +1,4 @@
-<!-- Etapa 1: Dados do Requerimento (IdentificaÃ§Ã£o, Objeto e Justificativa) -->
+<!-- Etapa 1: Identificação e Objeto do Requerimento -->
 <div class="form-step" data-step="1">
     <!-- 1. Identificação do Requerente -->
     <fieldset>
@@ -15,51 +15,7 @@
         </div>
     </fieldset>
 
-    <!-- 2. Empreendimento Vinculado ao Processo -->
-    <fieldset>
-        <legend>Empreendimento Vinculado</legend>
-        <div style="margin-bottom: 8px;">
-            <p style="font-size: 0.85rem; color: #64748b; margin: 0 0 10px 0;">
-                Selecione o empreendimento/empresa para o qual está solicitando este licenciamento ambiental, ou mantenha em nome próprio se for pessoa física.
-            </p>
-
-            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 260px;">
-                    <select name="empreendimento_id" id="empreendimento_id" class="form-control" onchange="atualizarPreviewEmpreendimento(this)" style="width: 100%; padding: 10px 14px; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #ffffff; color: #1e293b;">
-                        <option value="">Nenhum / Requerimento em nome próprio (Pessoa Física / Cidadão)</option>
-                        @foreach($empreendimentos ?? [] as $emp)
-                            <option value="{{ $emp->id }}"
-                                data-nome="{{ $emp->nome }}"
-                                data-cnpj="{{ $emp->cnpj ?? 'Não informado' }}"
-                                data-endereco="{{ $emp->endereco_completo ?: 'Não informado' }}"
-                                data-bacia="{{ $emp->bacia_hidrografica ?? 'Não informada' }}"
-                                data-fase="{{ $emp->fase_operacao ?? 'Não informada' }}"
-                                data-porte="{{ $emp->porte ?? 'Não informado' }}"
-                                data-coordenadas="{{ $emp->latitude ? $emp->latitude . ' / ' . $emp->longitude : '' }}"
-                                {{ (string) old('empreendimento_id', $empreendimentoSelecionadoId ?? '') === (string) $emp->id ? 'selected' : '' }}>
-                                {{ $emp->nome }} {{ $emp->cnpj ? '— CNPJ: ' . $emp->cnpj : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            {{-- Card Informativo do Empreendimento Selecionado --}}
-            <div id="card-preview-empreendimento" style="display: none; margin-top: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px 16px;">
-                <div style="font-weight: 700; color: #065f46; font-size: 0.95rem;" id="prev-emp-nome"></div>
-                <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; font-size: 0.825rem; color: #1e293b;">
-                    <div><strong>CNPJ:</strong> <span id="prev-emp-cnpj"></span></div>
-                    <div><strong>Porte:</strong> <span id="prev-emp-porte"></span></div>
-                    <div><strong>Localização:</strong> <span id="prev-emp-endereco"></span></div>
-                    <div><strong>Bacia:</strong> <span id="prev-emp-bacia"></span></div>
-                    <div><strong>Fase:</strong> <span id="prev-emp-fase"></span></div>
-                    <div id="prev-emp-coords-box" style="display: none;"><strong>Coordenadas:</strong> <span id="prev-emp-coordenadas"></span></div>
-                </div>
-            </div>
-        </div>
-    </fieldset>
-
-    <!-- 3. Objeto do Requerimento -->
+    <!-- 2. Objeto do Requerimento -->
     <fieldset>
         <legend>Objeto do Requerimento</legend>
         <div class="opcoes-objeto">
@@ -214,19 +170,7 @@
         document.getElementById('prev-emp-cnpj').textContent = selectedOption.getAttribute('data-cnpj') || '';
         document.getElementById('prev-emp-porte').textContent = selectedOption.getAttribute('data-porte') || 'Não informado';
         document.getElementById('prev-emp-endereco').textContent = selectedOption.getAttribute('data-endereco') || '';
-        document.getElementById('prev-emp-bacia').textContent = selectedOption.getAttribute('data-bacia') || '';
         document.getElementById('prev-emp-fase').textContent = selectedOption.getAttribute('data-fase') || '';
-
-        const coords = selectedOption.getAttribute('data-coordenadas');
-        const coordsBox = document.getElementById('prev-emp-coords-box');
-        if (coordsBox) {
-            if (coords) {
-                document.getElementById('prev-emp-coordenadas').textContent = coords;
-                coordsBox.style.display = 'block';
-            } else {
-                coordsBox.style.display = 'none';
-            }
-        }
 
         card.style.display = 'block';
     }
